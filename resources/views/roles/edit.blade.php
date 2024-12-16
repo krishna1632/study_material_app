@@ -1,60 +1,85 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between">
-            <h2 class="font-semibold text-xl text-white leading-tight">
-                Edit Role
-            </h2>
-            <a href="{{ route('roles.index') }}" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Back</a>
-        </div>
-    </x-slot>
+@extends('layouts.admin')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('roles.update', $role->id) }}" method="POST">
-                        @csrf
-                        <div>
-                            <!-- Role Name Field -->
-                            <label for="name" class="text-lg font-medium">Role Name</label>
-                            <div class="my-3">
-                                <input value="{{ old('name', $role->name) }}" placeholder="Enter Role Name"
-                                    type="text" name="name"
-                                    class="border-gray-300 shadow-sm w-1/2 rounded-lg text-black" required>
-                                @error('name')
-                                    <p class="text-red-400 font-medium">{{ $message }}</p>
-                                @enderror
-                            </div>
+@section('title', 'Edit Role')
 
-                            <!-- Permissions Checkboxes -->
-                            <div>
-                                <label for="permissions" class="text-lg font-medium">Permissions</label>
-                                <div class="grid grid-cols-4 gap-4 mt-3">
-                                    @if ($permissions->isNotEmpty())
-                                        @foreach ($permissions as $permission)
-                                            <div>
-                                                <input type="checkbox" name="permissions[]"
-                                                    id="permission-{{ $permission->id }}"
-                                                    value="{{ $permission->name }}" class="rounded"
-                                                    @if ($hasPermissions->contains($permission->name)) checked @endif>
-                                                <label
-                                                    for="permission-{{ $permission->id }}">{{ $permission->name }}</label>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <p class="text-gray-500">No permissions available.</p>
-                                    @endif
-                                </div>
-                            </div>
+@section('content')
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="font-weight-bold">Edit Role</h2>
+        <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
 
-                            <!-- Submit Button -->
-                            <button type="submit" class="bg-slate-700 mt-5 text-sm rounded-md px-5 py-3 text-white">
-                                Update Role
-                            </button>
-                        </div>
-                    </form>
+    {{-- Edit Role Form --}}
+    <div class="card shadow mt-4">
+        <div class="card-body">
+            <form action="{{ route('roles.update', $role->id) }}" method="POST">
+                @csrf
+                
+                
+                {{-- Role Name Field --}}
+                <div class="form-group">
+                    <label for="name" class="font-weight-semibold">Role Name</label>
+                    <input type="text" name="name" id="name" value="{{ old('name', $role->name) }}" class="form-control" placeholder="Enter Role Name" required>
+                    @error('name')
+                        <p class="text-danger mt-2">{{ $message }}</p>
+                    @enderror
                 </div>
-            </div>
+
+                {{-- Permissions Section --}}
+                <div class="form-group mt-4">
+                    <label for="permissions" class="font-weight-semibold">Permissions</label>
+                    <div class="row mt-2">
+                        @if ($permissions->isNotEmpty())
+                            @foreach ($permissions as $permission)
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" id="permission-{{ $permission->id }}" class="form-check-input"
+                                            @if ($hasPermissions->contains($permission->name)) checked @endif>
+                                        <label for="permission-{{ $permission->id }}" class="form-check-label">{{ $permission->name }}</label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <p class="text-muted">No permissions available.</p>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Submit Button --}}
+                <button type="submit" class="btn btn-primary mt-4">
+                    Update Role
+                </button>
+            </form>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Success Flash Message
+    @if (session('success'))
+        Swal.fire({
+            title: 'Success!',
+            text: "{{ session('success') }}",
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @endif
+
+    // Error Flash Message
+    @if (session('error'))
+        Swal.fire({
+            title: 'Error!',
+            text: "{{ session('error') }}",
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @endif
+</script>
+@endsection

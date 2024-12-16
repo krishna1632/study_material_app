@@ -1,36 +1,43 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between">
-            <h2 class="font-semibold text-xl text-white leading-tight">
-                Permission/Create
-            </h2>
-            <a
-                href="{{ route('permissions.index') }}"class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Back</a>
+@extends('layouts.admin')
+
+@section('title', 'Create Permission')
+
+@section('content')
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between">
+            <h2 class="font-weight-bold">Create Permission</h2>
+            <a href="{{ route('permissions.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
         </div>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="dark:bg-gray-200 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <form action="{{ route('permissions.store') }}" method="POST">
+                    @csrf
 
-                    <form action="{{ route('permissions.store') }}" method="POST">
-                        @csrf
-                        <div>
-                            <label for="" class ="text-lg text-black font-medium">Name</label>
-                            <div class="my-3">
-                                <input value="{{ old('name') }}" placeholder="Enter Name" type="text"
-                                    name="name" class="border-gray-300 shadow-sm w-1/2 rounded-lg text-black">
-                                @error('name')
-                                    <p class="text-red-400 font-medium">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <button class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white">Submit</button>
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <label for="name" class="font-weight-bold">Name</label>
+                        <input 
+                            type="text" 
+                            name="name" 
+                            id="name" 
+                            value="{{ old('name') }}" 
+                            class="form-control @error('name') is-invalid @enderror" 
+                            placeholder="Enter Permission Name">
+                        
+                        @error('name')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
 
-                </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Submit
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection
