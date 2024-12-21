@@ -7,9 +7,21 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class FacultyController extends Controller
+class FacultyController extends Controller implements HasMiddleware
 {
+
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view faculties', only: ['index']),
+            new Middleware('permission:edit faculties', only: ['edit']),
+            new Middleware('permission:delete faculties', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

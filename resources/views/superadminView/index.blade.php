@@ -42,16 +42,20 @@
                                 <td class="text-center">
                                     <a href="{{ route('superadminView.show', $super->id) }}"
                                         class="btn btn-info btn-sm">View</a>
-                                    <a href="{{ route('superadminView.edit', $super->id) }}"
-                                        class="btn btn-sm btn-warning">Edit</a>
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="confirmDelete({{ $super->id }})">Delete</button>
-                                    <form id="delete-form-{{ $super->id }}"
-                                        action="{{ route('superadminView.destroy', $super->id) }}" method="POST"
-                                        style="display: none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
+                                    @can('edit superadmins')
+                                        <a href="{{ route('superadminView.edit', $super->id) }}"
+                                            class="btn btn-sm btn-warning">Edit</a>
+                                    @endcan
+                                    @can('delete superadmins')
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="confirmDelete({{ $super->id }})">Delete</button>
+                                        <form id="delete-form-{{ $super->id }}"
+                                            action="{{ route('superadminView.destroy', $super->id) }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach

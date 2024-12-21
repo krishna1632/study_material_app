@@ -142,21 +142,23 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy($id)
     {
-        // Fetch the role by ID
+        // Fetch the role
         $role = Role::findOrFail($id);
 
         try {
             // Delete the role
             $role->delete();
 
-            // Redirect back to roles index with success message
+            // Return success response for SweetAlert
             return redirect()->route('roles.index')->with('success', 'Role deleted successfully');
         } catch (\Exception $e) {
             // Handle any errors during deletion
             return redirect()->route('roles.index')->with('error', 'Error deleting the role: ' . $e->getMessage());
         }
     }
+
 
 }

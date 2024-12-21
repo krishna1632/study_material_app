@@ -7,14 +7,16 @@
                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                 Dashboard
             </a>
+            @canany(['view users', 'view faculties', 'view admins', 'view superadmins', 'view students'])
+                <div class="sb-sidenav-menu-heading">Users Management</div>
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#users"
+                    aria-expanded="false" aria-controls="users">
+                    <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                    Users
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+            @endcanany
 
-            <div class="sb-sidenav-menu-heading">Users Management</div>
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#users"
-                aria-expanded="false" aria-controls="users">
-                <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
-                Users
-                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-            </a>
 
             <div class="collapse" id="users" aria-labelledby="headingAccessManagement"
                 data-bs-parent="#sidenavAccordion">
@@ -30,12 +32,12 @@
                             Faculties
                         </a>
                     @endcan
-                    {{-- @can('view roles') --}}
-                    <a class="nav-link" href="{{ url('/admins') }}">
-                        <i class="fas fa-user"></i> Admin
-                    </a>
-                    {{-- @endcan --}}
-                    @can('view users')
+                    @can('view admins')
+                        <a class="nav-link" href="{{ url('/admins') }}">
+                            <i class="fas fa-user"></i> Admin
+                        </a>
+                    @endcan
+                    @can('view superadmins')
                         <a class="nav-link" href="{{ url('/supers') }}">
                             <i class="fas fa-user-tag"></i> SuperAdmin
                         </a>
@@ -49,14 +51,16 @@
             </div>
 
 
-            <div class="sb-sidenav-menu-heading">Access Management</div>
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                data-bs-target="#collapseAccessManagement" aria-expanded="false"
-                aria-controls="collapseAccessManagement">
-                <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
-                Permissions & Roles
-                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-            </a>
+            @canany(['view permissions', 'view roles'])
+                <div class="sb-sidenav-menu-heading">Access Management</div>
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                    data-bs-target="#collapseAccessManagement" aria-expanded="false"
+                    aria-controls="collapseAccessManagement">
+                    <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                    Permissions & Roles
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+            @endcanany
 
             <div class="collapse" id="collapseAccessManagement" aria-labelledby="headingAccessManagement"
                 data-bs-parent="#sidenavAccordion">

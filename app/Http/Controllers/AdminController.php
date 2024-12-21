@@ -7,9 +7,20 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class AdminController extends Controller
+class AdminController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view admins', only: ['index']),
+            new Middleware('permission:edit admins', only: ['edit']),
+            new Middleware('permission:delete admins', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

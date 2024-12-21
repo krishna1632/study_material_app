@@ -41,17 +41,21 @@
                                 <td>{{ \Carbon\Carbon::parse($admin->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('admins.show', $admin->id) }}" class="btn btn-info btn-sm">View</a>
-                                    <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form id="delete-form-{{ $admin->id }}"
-                                        action="{{ route('admins.destroy', $admin->id) }}" method="POST"
-                                        style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="confirmDelete({{ $admin->id }})">
-                                            Delete
-                                        </button>
-                                    </form>
+                                    @can('edit admins')
+                                        <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    @endcan
+                                    @can('delete admins')
+                                        <form id="delete-form-{{ $admin->id }}"
+                                            action="{{ route('admins.destroy', $admin->id) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="confirmDelete({{ $admin->id }})">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach

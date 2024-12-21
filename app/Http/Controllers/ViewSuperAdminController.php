@@ -6,9 +6,21 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ViewSuperAdminController extends Controller
+
+class ViewSuperAdminController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view superadmins', only: ['index']),
+            new Middleware('permission:edit superadmins', only: ['edit']),
+            new Middleware('permission:delete superadmins', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

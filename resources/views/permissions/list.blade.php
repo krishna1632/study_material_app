@@ -15,10 +15,9 @@
                 <i class="fas fa-table me-1"></i>
                 Permissions List
             </span>
-            {{-- Create button --}}
             @can('create permissions')
                 <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> Create
+                    <i class="fas fa-plus"></i> Add Permission
                 </a>
             @endcan
         </div>
@@ -28,6 +27,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Role</th> <!-- Added for consistency -->
                         <th>Created At</th>
                         <th class="text-center">Actions</th>
                     </tr>
@@ -38,15 +38,14 @@
                             <tr>
                                 <td>{{ $permission->id }}</td>
                                 <td>{{ $permission->name }}</td>
+                                <td>{{ $permission->roles->pluck('name')->implode(', ') ?? 'N/A' }}</td>
+                                <!-- Example field -->
                                 <td>{{ \Carbon\Carbon::parse($permission->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
-                                    {{-- Edit button --}}
                                     @can('edit permissions')
                                         <a href="{{ route('permissions.edit', $permission->id) }}"
                                             class="btn btn-sm btn-warning">Edit</a>
                                     @endcan
-
-                                    {{-- Delete button --}}
                                     @can('delete permissions')
                                         <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST"
                                             style="display:inline;" id="delete-form-{{ $permission->id }}">
@@ -61,7 +60,7 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="4" class="text-center text-muted">No Permissions Found</td>
+                            <td colspan="5" class="text-center text-muted">No Permissions Found</td>
                         </tr>
                     @endif
                 </tbody>
@@ -99,7 +98,6 @@
                 confirmButtonText: 'Yes, delete it!',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Trigger form submission
                     document.getElementById('delete-form-' + permissionId).submit();
                 }
             });
