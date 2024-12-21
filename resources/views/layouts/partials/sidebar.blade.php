@@ -19,7 +19,7 @@
             <div class="collapse" id="users" aria-labelledby="headingAccessManagement"
                 data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
-                    @can('view permissions')
+                    @can('view users')
                         <a class="nav-link" href="{{ route('users.list') }}">
                             <i class="fas fa-users"></i> Users
                         </a>
@@ -71,11 +71,7 @@
                             <i class="fas fa-user-tag"></i> Roles
                         </a>
                     @endcan
-                    @can('view users')
-                        <a class="nav-link" href="{{ route('users.list') }}">
-                            <i class="fas fa-users"></i> Users
-                        </a>
-                    @endcan
+
                 </nav>
             </div>
 

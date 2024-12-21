@@ -13,7 +13,10 @@
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
             User List
-            <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm float-end">Add User</a>
+
+            @can('create users')
+                <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm float-end">Add User</a>
+            @endcan
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
@@ -42,19 +45,24 @@
                                 <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
                                     <!-- Edit Button -->
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    @can('edit users')
+                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    @endcan
 
-                                    <!-- Delete Button -->
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="confirmDelete({{ $user->id }})">Delete</button>
 
-                                    <!-- Hidden Delete Form -->
-                                    <form id="delete-form-{{ $user->id }}"
-                                        action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                        style="display:none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
+                                    @can('delete users')
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="confirmDelete({{ $user->id }})">Delete</button>
+
+                                        <!-- Hidden Delete Form -->
+                                        <form id="delete-form-{{ $user->id }}"
+                                            action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                            style="display:none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach
