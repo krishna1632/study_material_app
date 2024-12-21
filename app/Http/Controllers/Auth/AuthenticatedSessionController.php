@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
             }
 
             // Default redirection for other roles
-            return redirect()->route('dashboard'); // Redirect to general dashboard
+            return redirect()->route('others.dashboard'); // Redirect to general dashboard
         }
 
         return back()->withErrors([

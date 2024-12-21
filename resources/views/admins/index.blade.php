@@ -1,19 +1,18 @@
 @extends('layouts.admin')
 
-@section('title', 'User Management')
+@section('title', 'Admin Management')
 
 @section('content')
-    <h1 class="mt-4">User Management</h1>
+    <h1 class="mt-4">Admin Management</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ url('/superadmin/dashboard') }}">Dashboard</a></li>
-        <li class="breadcrumb-item active">Users</li>
+        <li class="breadcrumb-item active">Admins</li>
     </ol>
 
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
-            User List
-            <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm float-end">Add User</a>
+            Admin List
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
@@ -23,44 +22,42 @@
                         <th>Name</th>
                         <th>Role</th>
                         <th>Email</th>
-                        <th>Phone</th>
-                        <th>Department</th>
+                        <th>Phone</th> <!-- Added Phone -->
+                        <th>Department</th> <!-- Added Department -->
                         <th>Created At</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($users->isNotEmpty())
-                        @foreach ($users as $user)
+                    @if ($admins->isNotEmpty())
+                        @foreach ($admins as $admin)
                             <tr>
-                                <td>{{ $user->id }}</td>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->roles->pluck('name')->implode(', ') }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->phone }}</td>
-                                <td>{{ $user->department }}</td>
-                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M, Y') }}</td>
+                                <td>{{ $admin->id }}</td>
+                                <td>{{ $admin->name }}</td>
+                                <td>{{ $admin->roles->pluck('name')->implode(', ') }}</td>
+                                <td>{{ $admin->email }}</td>
+                                <td>{{ $admin->phone }}</td> <!-- Display Phone -->
+                                <td>{{ $admin->department }}</td> <!-- Display Department -->
+                                <td>{{ \Carbon\Carbon::parse($admin->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
-                                    <!-- Edit Button -->
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
-
-                                    <!-- Delete Button -->
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="confirmDelete({{ $user->id }})">Delete</button>
-
-                                    <!-- Hidden Delete Form -->
-                                    <form id="delete-form-{{ $user->id }}"
-                                        action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                        style="display:none;">
+                                    <a href="{{ route('admins.show', $admin->id) }}" class="btn btn-info btn-sm">View</a>
+                                    <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form id="delete-form-{{ $admin->id }}"
+                                        action="{{ route('admins.destroy', $admin->id) }}" method="POST"
+                                        style="display:inline;">
                                         @csrf
                                         @method('DELETE')
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="confirmDelete({{ $admin->id }})">
+                                            Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No users found</td>
+                            <td colspan="8" class="text-center text-muted">No admins found</td>
                         </tr>
                     @endif
                 </tbody>
@@ -73,7 +70,7 @@
 
     <!-- SweetAlert Confirmation for Delete -->
     <script>
-        function confirmDelete(userId) {
+        function confirmDelete(adminId) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -84,7 +81,8 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + userId).submit();
+                    // Submit the delete form
+                    document.getElementById('delete-form-' + adminId).submit();
                 }
             });
         }

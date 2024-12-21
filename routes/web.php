@@ -6,7 +6,11 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuperAdminController;
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\OtherController;
+use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ViewSuperAdminController;
+use App\Http\Controllers\ViewStudentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,10 +25,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/superadmin/dashboard', [SuperAdminController::class, 'index'])
         ->name('superadmin.dashboard');
 
-    // User Dashboard Route
-    Route::get('/dashboard', [UsersController::class, 'index'])
-        ->name('dashboard');
-    Route::put('/user/profile/{id}', [UsersController::class, 'update'])->name('user.update');
+    // Other Dashboard Route
+    Route::get('/others/dashboard', [OtherController::class, 'index'])
+        ->name('others.dashboard');
 });
 
 Route::middleware('auth')->group(function () {
@@ -50,8 +53,49 @@ Route::middleware('auth')->group(function () {
 
     // User
     Route::get('/users', [UserController::class, 'index'])->name('users.list');
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::post('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+
+    // Faculty Routes
+    Route::get('/faculties', [FacultyController::class, 'index'])->name('faculties.index');
+    Route::get('/faculties/{id}/edit', [FacultyController::class, 'edit'])->name('faculties.edit');
+    Route::post('/faculties/{id}', [FacultyController::class, 'update'])->name('faculties.update');
+    Route::delete('/faculties/{id}', [FacultyController::class, 'destroy'])->name('faculties.destroy');
+
+    Route::get('/faculties/{id}', [FacultyController::class, 'show'])->name('faculties.show');
+
+
+
+
+    // Admin Routes
+    Route::get('/admins', [AdminController::class, 'index'])->name('admins.index');
+    Route::get('/admins/{id}', [AdminController::class, 'show'])->name('admins.show');
+    Route::get('/admins/{id}/edit', [AdminController::class, 'edit'])->name('admins.edit');
+    Route::post('/admins/{id}', [AdminController::class, 'update'])->name('admins.update');
+    Route::delete('/admins/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
+
+
+    //Super Admin Routes
+    Route::get('/supers', [ViewSuperAdminController::class, 'index'])->name('superadminView.index');
+    Route::get('/supers/{id}/edit', [ViewSuperAdminController::class, 'edit'])->name('superadminView.edit');
+    Route::get('/supers/{id}', [ViewSuperAdminController::class, 'show'])->name('superadminView.show');
+    Route::post('/supers/{id}', [ViewSuperAdminController::class, 'update'])->name('superadminView.update');
+    Route::delete('/supers/{id}', [ViewSuperAdminController::class, 'destroy'])->name('superadminView.destroy');
+
+    // Students Routes
+    Route::get('/students', [ViewStudentController::class, 'index'])->name('students.index');
+    Route::get('/students/{id}/edit', [ViewStudentController::class, 'edit'])->name('students.edit');
+    Route::get('/students/{id}', [ViewStudentController::class, 'show'])->name('students.show');
+    Route::post('/students/{id}', [ViewStudentController::class, 'update'])->name('students.update');
+    Route::delete('/students/{id}', [ViewStudentController::class, 'destroy'])->name('students.destroy');
+
+    // Others
+    Route::post('/others/{id}', [OtherController::class, 'update'])->name('others.update');
+
 });
 
 require __DIR__ . '/auth.php';

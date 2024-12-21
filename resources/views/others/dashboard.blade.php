@@ -13,14 +13,14 @@
             <div class="card text-center">
                 <div class="card-body">
                     <!-- Profile Picture -->
-                    <img src="{{ asset($user->profilePic) }}" alt="Profile Picture" class="rounded-circle" width="150"
+                    <img src="{{ asset($other->profilePic) }}" alt="Profile Picture" class="rounded-circle" width="150"
                         height="150">
-                    <h3 class="mt-3 text-primary">{{ $user->name }}</h3>
+                    <h3 class="mt-3 text-primary">{{ $other->name }}</h3>
                     <hr>
                     <div class="mt-4">
                         <p><strong>College:</strong> Ramanujan College</p>
                         <hr>
-                        {{-- <p><strong>Department:</strong> {{ $user->department }}</p> --}}
+                        <p><strong>Department:</strong> {{ $other->department }}</p>
 
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                     User Profile
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('users.update', ['id' => Auth::user()->id]) }}" method="POST"
+                    <form action="{{ route('others.update', ['id' => Auth::user()->id]) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
 
@@ -42,7 +42,7 @@
                         <div class="row mb-3">
                             <label for="fullName" class="col-sm-3 col-form-label">Full Name</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="fullName" value="{{ $user->name }}"
+                                <input type="text" class="form-control" id="fullName" value="{{ $other->name }}"
                                     readonly>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                                     class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="email" class="form-control" name="email" id="email"
-                                    value="{{ $user->email }}">
+                                    value="{{ $other->email }}">
                             </div>
                         </div>
 
@@ -63,7 +63,7 @@
                                     class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="phone" id="phone"
-                                    value="{{ $user->phone }}">
+                                    value="{{ $other->phone }}">
                             </div>
                         </div>
 
