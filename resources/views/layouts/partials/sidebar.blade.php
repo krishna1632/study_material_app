@@ -89,10 +89,12 @@
                 <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
                 Study Materials
             </a>
-            <a class="nav-link" href="{{ url('admin/roadmaps') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-road"></i></div>
-                RoadMaps
-            </a>
+            @can('view roadmaps')
+                <a class="nav-link" href="{{ route('roadmaps.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-road"></i></div>
+                    RoadMaps
+                </a>
+            @endcan
             <a class="nav-link" href="{{ url('admin/syllabus') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
                 Syllabus

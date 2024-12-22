@@ -11,6 +11,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ViewSuperAdminController;
 use App\Http\Controllers\ViewStudentController;
+use App\Http\Controllers\RoadmapsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -108,6 +109,21 @@ Route::middleware('auth')->group(function () {
 
     // Others
     Route::post('/others/{id}', [OtherController::class, 'update'])->name('others.update');
+
+
+
+    // Roadmaps
+
+    Route::get('/roadmaps', [RoadmapsController::class, 'index'])->name('roadmaps.index');
+    Route::get('/roadmaps/create', [RoadmapsController::class, 'create'])->name('roadmaps.create');
+    Route::post('/roadmaps', [RoadmapsController::class, 'store'])->name('roadmaps.store');
+
+    Route::get('/roadmaps/{id}', [RoadmapsController::class, 'show'])->name('roadmaps.show');
+
+
+    Route::get('/roadmaps/{id}/edit', [RoadmapsController::class, 'edit'])->name('roadmaps.edit');
+    Route::post('/roadmaps/{id}', [RoadmapsController::class, 'update'])->name('roadmaps.update');
+    Route::delete('/roadmaps/{id}', [RoadmapsController::class, 'destroy'])->name('roadmaps.destroy');
 
 });
 
