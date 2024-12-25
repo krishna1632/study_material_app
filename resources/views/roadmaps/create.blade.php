@@ -17,31 +17,22 @@
         <div class="card-body">
             <form action="{{ route('roadmaps.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-
-                <!-- Department Field -->
                 <div class="mb-3">
                     <label for="department" class="form-label">Department</label>
-                    <select name="department" id="department" class="form-control" required>
-                        <option value="" disabled selected>Select Department</option>
-                        <option value="Applied Psychology">Department of Applied Psychology</option>
-                        <option value="Computer Science">Department of Computer Science</option>
-                        <option value="B.voc(Software Development)">Department of B.voc (Software Development)</option>
-                        <option value="Economics">Department of Economics</option>
-                        <option value="English">Department of English</option>
-                        <option value="Environmental Studies">Department of Environmental Studies</option>
-                        <option value="Commerce">Department of Commerce</option>
-                        <option value="Punjabi">Department of Punjabi</option>
-                        <option value="Hindi">Department of Hindi</option>
-                        <option value="History">Department of History</option>
-                        <option value="Management Studies">Department of Management Studies</option>
-                        <option value="Mathematics">Department of Mathematics</option>
-                        <option value="Philosophy">Department of Philosophy</option>
-                        <option value="Physical Education">Department of Physical Education</option>
-                        <option value="Political Science">Department of Political Science</option>
-                        <option value="Statistics">Department of Statistics</option>
-                        <option value="B.voc(Software banking)">Department of B.voc (Software Banking)</option>
-                    </select>
+                    @if (count($departments) > 1)
+                        <select name="department" id="department" class="form-control" required>
+                            <option value="" disabled selected>Select Department</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department }}">{{ $department }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        <input type="text" name="department" id="department" class="form-control"
+                            value="{{ $departments[0] }}" readonly>
+                    @endif
                 </div>
+
+
 
                 <!-- Title Field -->
                 <div class="mb-3">

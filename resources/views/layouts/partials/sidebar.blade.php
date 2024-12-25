@@ -95,7 +95,7 @@
                     RoadMaps
                 </a>
             @endcan
-            <a class="nav-link" href="{{ url('admin/syllabus') }}">
+            <a class="nav-link" href="{{ url('/syllabus') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
                 Syllabus
             </a>

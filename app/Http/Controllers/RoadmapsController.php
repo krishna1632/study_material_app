@@ -16,7 +16,7 @@ class RoadmapsController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:view roadmaps', only: ['index']),
-            new Middleware('permission:create roles', only: ['create']),
+            new Middleware('permission:create roadmaps', only: ['create']),
             new Middleware('permission:edit roadmaps', only: ['edit']),
             new Middleware('permission:delete roadmaps', only: ['destroy']),
         ];
@@ -53,8 +53,38 @@ class RoadmapsController extends Controller implements HasMiddleware
 
     public function create()
     {
-        return view('roadmaps.create');
+        $user = auth()->user(); // Currently logged-in user
+        $roles = $user->getRoleNames(); // Fetch assigned roles for the user
+
+        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+            // If the user has Admin or SuperAdmin role, show all departments
+            $departments = [
+                'Applied Psychology',
+                'Computer Science',
+                'B.voc(Software Development)',
+                'Economics',
+                'English',
+                'Environmental Studies',
+                'Commerce',
+                'Punjabi',
+                'Hindi',
+                'History',
+                'Management Studies',
+                'Mathematics',
+                'Philosophy',
+                'Physical Education',
+                'Political Science',
+                'Statistics',
+                'B.voc(Software Banking)',
+            ];
+        } else {
+            // If the user has other roles, show only their department
+            $departments = [$user->department];
+        }
+
+        return view('roadmaps.create', compact('departments'));
     }
+
 
 
 

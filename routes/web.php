@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuperAdminController;
@@ -16,16 +17,6 @@ use App\Http\Controllers\RoadmapsController;
 Route::get('/', function () {
     return view('welcome');
 });
-
-
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Superadmin Dashboard Route
@@ -125,6 +116,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/roadmaps/{id}', [RoadmapsController::class, 'update'])->name('roadmaps.update');
     Route::delete('/roadmaps/{id}', [RoadmapsController::class, 'destroy'])->name('roadmaps.destroy');
 
+    // Syllabus
+
+    Route::get('/syllabus', [SyllabusController::class, 'index'])->name('syllabus.index');
+    Route::get('/syllabus/create', [SyllabusController::class, 'create'])->name('syllabus.create');
+    Route::post('/syllabus', [SyllabusController::class, 'store'])->name('syllabus.store');
+    Route::get('/syllabus/{id}', [SyllabusController::class, 'show'])->name('syllabus.show');
+    Route::get('/syllabus/{id}/edit', [SyllabusController::class, 'edit'])->name('syllabus.edit');
+    Route::post('/syllabus/{id}', [SyllabusController::class, 'update'])->name('syllabus.update');
+    Route::delete('/syllabus/{id}', [SyllabusController::class, 'destroy'])->name('syllabus.destroy');
 });
 
 require __DIR__ . '/auth.php';
