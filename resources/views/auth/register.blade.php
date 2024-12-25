@@ -94,6 +94,21 @@
                     @enderror
                 </div>
 
+                    <!-- Assign Role Field -->
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Assign Role</label>
+                        <select name="role" id="role" class="form-select" required>
+                            <option value="" disabled selected>Select Role</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('role')
+                            <div class="text-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+
                 <!-- Password Field -->
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>

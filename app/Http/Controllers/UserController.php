@@ -39,36 +39,41 @@ class UserController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        return view('auth.register');
+        $roles = Role::orderBy('name', 'ASC')->get(); // Saare roles fetch kar rahe hain
+        return view('auth.register', compact('roles')); 
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        // Validation
-        $request->validate([
-            'name' => 'required|string|min:3|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|unique:users,phone|max:15', // Max length added for phone
-            'department' => 'required|string|max:255', // Removed unique constraint if department repeats
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+{
+    // Validation
+    $request->validate([
+        'name' => 'required|string|min:3|max:255',
+        'email' => 'required|email|unique:users,email',
+        'phone' => 'required|string|unique:users,phone|max:15', // Max length added for phone
+        'department' => 'required|string|max:255', // Removed unique constraint if department repeats
+        'password' => 'required|string|min:8|confirmed',
+        'role' => 'required|string|exists:roles,name', // Role validation
+    ]);
 
-        // Create User
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone; // Save phone
-        $user->department = $request->department; // Save department
-        $user->password = bcrypt($request->password);
-        $user->save();
+    // Create User
+    $user = new User();
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->phone = $request->phone; // Save phone
+    $user->department = $request->department; // Save department
+    $user->password = bcrypt($request->password);
+    $user->save();
 
+    // Assign role to the user
+    $user->assignRole($request->role);
 
-        // Redirect with success message
-        return redirect()->route('users.list')->with('success', 'User created successfully!');
-    }
+    // Redirect with success message
+    return redirect()->route('users.list')->with('success', 'User created successfully!');
+}
+
 
 
 
