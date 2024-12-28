@@ -87,9 +87,12 @@
 
 <div class="collapse" id="collapseStudyMast" aria-labelledby="headingStudyMast" data-bs-parent="#sidenavAccordion">
     <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" href="#">
+
+    @can('view subjects')
+        <a class="nav-link" href="{{ route('subjects.index') }}">
             <i class="fas fa-book"></i> Subjects
         </a>
+        @endcan
         <a class="nav-link" href="{{ url('admin/upload_pyq') }}">
             <i class="fas fa-upload"></i> PYQ
         </a>

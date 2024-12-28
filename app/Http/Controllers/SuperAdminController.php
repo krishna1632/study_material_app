@@ -7,8 +7,11 @@ use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-class SuperAdminController extends Controller
+
+class SuperAdminController extends Controller 
 {
+
+   
     /**
      * Display a listing of the resource.
      */

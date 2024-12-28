@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ViewSuperAdminController;
 use App\Http\Controllers\ViewStudentController;
 use App\Http\Controllers\RoadmapsController;
+use App\Http\Controllers\SubjectController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -127,6 +128,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/syllabus/{id}', [SyllabusController::class, 'destroy'])->name('syllabus.destroy');
     Route::post('/syllabus/get-subjects', [SyllabusController::class, 'getSubjects'])->name('syllabus.getSubjects');
 
+    // Subjects
+    Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
+    Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
+    Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
+    Route::get('/subjects/{id}/edit', [SubjectController::class, 'edit'])->name('subjects.edit');
+    Route::post('/subjects/{id}', [SubjectController::class, 'update'])->name('subjects.update');
+    Route::delete('/subjects/{id}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
 });
 
 require __DIR__ . '/auth.php';
