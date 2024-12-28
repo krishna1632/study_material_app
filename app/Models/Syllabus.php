@@ -10,6 +10,6 @@ class Syllabus extends Model
     use HasFactory;
     protected $table = 'syllabus';
 
-    protected $fillable = ['subject_type', 'name', 'file'];
+    protected $fillable = ['subject_type','semester','department', 'name', 'file'];
 
 }

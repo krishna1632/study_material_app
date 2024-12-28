@@ -5,7 +5,7 @@
 @section('content')
     <h1 class="mt-4">Syllabus</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('/superadmin/dashboard') }}">Dashboard</a></li>
         <li class="breadcrumb-item active">Syllabus</li>
     </ol>
 
@@ -20,6 +20,8 @@
                 <thead>
                     <tr>
                         <th>Subject Type</th>
+                        <th>Department</th>
+                        <th>Semester</th>
                         <th>Subject Name</th>
                         <th>File</th>
                         <th>Action</th>
@@ -30,27 +32,31 @@
                         <tr>
                             <td>{{ $material->subject_type }}</td>
                             <td>{{ $material->department }}</td>
+                            <td>{{ $material->semester }}</td>
+                            <td>{{ $material->name }}</td>
                             <td>
                                 @if ($material->file)
-                                    <a href="{{ asset('storage/' . $material->file) }}" target="_blank">
-                                        <button class="btn btn-primary btn-sm">View File</button>
+                                    <a href="{{ asset('storage/' . $material->file) }}" target="_blank" class="btn btn-primary btn-sm">
+                                        View File
                                     </a>
                                 @else
                                     No File
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('syllabus.show', $material) }}" class="btn btn-info btn-sm">
+                                <a href="#" class="btn btn-info btn-sm">
                                     View
                                 </a>
-
-                                <a href="{{ route('syllabus.edit', $material->id) }}"
-                                    class="btn btn-warning btn-sm">Edit</a>
-                                <form action="#" method="POST" style="display:inline;">
+                                <a href="#" class="btn btn-warning btn-sm">
+                                    Edit
+                                </a>
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="confirmDelete({{ $material->id }})">
+                                    Delete
+                                </button>
+                                <form id="delete-form-{{ $material->id }}" action="#" method="POST" style="display: none;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Are you sure you want to delete this study material?')">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -78,4 +84,23 @@
             }
         </script>
     @endif
+
+    <!-- SweetAlert Confirmation for Delete -->
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
+        }
+    </script>
 @endsection

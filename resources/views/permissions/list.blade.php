@@ -27,7 +27,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Role</th> <!-- Added for consistency -->
+                        
                         <th>Created At</th>
                         <th class="text-center">Actions</th>
                     </tr>
@@ -38,7 +38,7 @@
                             <tr>
                                 <td>{{ $permission->id }}</td>
                                 <td>{{ $permission->name }}</td>
-                                <td>{{ $permission->roles->pluck('name')->implode(', ') ?? 'N/A' }}</td>
+                               
                                 <!-- Example field -->
                                 <td>{{ \Carbon\Carbon::parse($permission->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">

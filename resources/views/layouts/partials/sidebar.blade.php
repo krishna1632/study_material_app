@@ -2,11 +2,8 @@
     <div class="sb-sidenav-menu">
         <div class="nav">
 
-            <!-- Dashboard Link -->
-            <a class="nav-link" href="{{ url('superadmin/dashboard') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                Dashboard
-            </a>
+          
+           
             @canany(['view users', 'view faculties', 'view admins', 'view superadmins', 'view students'])
                 <div class="sb-sidenav-menu-heading">Users Management</div>
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#users"
@@ -81,24 +78,34 @@
 
             <!-- Study Mast Section -->
             <div class="sb-sidenav-menu-heading">Study Mast</div>
-            <a class="nav-link" href="{{ url('admin/upload_pyq') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-upload"></i></div>
-                Upload PYQ
+<a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+   data-bs-target="#collapseStudyMast" aria-expanded="false" aria-controls="collapseStudyMast">
+    <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+    Study Mast
+    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+</a>
+
+<div class="collapse" id="collapseStudyMast" aria-labelledby="headingStudyMast" data-bs-parent="#sidenavAccordion">
+    <nav class="sb-sidenav-menu-nested nav">
+        <a class="nav-link" href="#">
+            <i class="fas fa-book"></i> Subjects
+        </a>
+        <a class="nav-link" href="{{ url('admin/upload_pyq') }}">
+            <i class="fas fa-upload"></i> PYQ
+        </a>
+        <a class="nav-link" href="{{ url('admin/study_materials') }}">
+            <i class="fas fa-book"></i> Study Materials
+        </a>
+        @can('view roadmaps')
+            <a class="nav-link" href="{{ route('roadmaps.index') }}">
+                <i class="fas fa-road"></i> RoadMaps
             </a>
-            <a class="nav-link" href="{{ url('admin/study_materials') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                Study Materials
-            </a>
-            @can('view roadmaps')
-                <a class="nav-link" href="{{ route('roadmaps.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-road"></i></div>
-                    RoadMaps
-                </a>
-            @endcan
-            <a class="nav-link" href="{{ url('/syllabus') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
-                Syllabus
-            </a>
+        @endcan
+        <a class="nav-link" href="{{ url('/syllabus') }}">
+            <i class="fas fa-file-alt"></i> Syllabus
+        </a>
+    </nav>
+</div>
 
             <!-- Access Management Section -->
 

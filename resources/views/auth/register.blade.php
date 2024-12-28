@@ -53,61 +53,62 @@
                     <label for="department" class="form-label">Department</label>
                     <select name="department" id="department" class="form-select" required>
                         <option value="" disabled selected>Select Department</option>
-                        <option value="Applied Psychology">Department of Applied
-                            Psychology</option>
-                        <option value="Computer Science">
-                            Department of Computer Science</option>
-                        <option value="B.voc(Software Development)">Department of B.voc
-                            (Software Development)</option>
-                        <option value="Economics">Department of
-                            Economics</option>
-                        <option value="English">Department of
-                            English</option>
-                        <option value="Environmental Studies">Department of
-                            Environmental Studies</option>
-                        <option value="Commerce">Department of
-                            Commerce</option>
-                        <option value="Punjabi">Department of
-                            Punjabi</option>
-                        <option value="Hindi">Department of Hindi
-                        </option>
-                        <option value="History">Department of
-                            History</option>
-                        <option value="Management Studies">Department of Management
-                            Studies</option>
-                        <option value="Mathematics">Department
-                            of Mathematics</option>
-                        <option value="Philosophy">Department of
-                            Philosophy</option>
-                        <option value="Physical Education">Department of Physical
-                            Education</option>
-                        <option value="Political Science">
-                            Department of Political Science</option>
-                        <option value="Statistics">Department of
-                            Statistics</option>
+                        <option value="Applied Psychology">Department of Applied Psychology</option>
+                        <option value="Computer Science">Department of Computer Science</option>
+                        <option value="B.voc(Software Development)">Department of B.voc (Software Development)</option>
+                        <option value="Economics">Department of Economics</option>
+                        <option value="English">Department of English</option>
+                        <option value="Environmental Studies">Department of Environmental Studies</option>
+                        <option value="Commerce">Department of Commerce</option>
+                        <option value="Punjabi">Department of Punjabi</option>
+                        <option value="Hindi">Department of Hindi</option>
+                        <option value="History">Department of History</option>
+                        <option value="Management Studies">Department of Management Studies</option>
+                        <option value="Mathematics">Department of Mathematics</option>
+                        <option value="Philosophy">Department of Philosophy</option>
+                        <option value="Physical Education">Department of Physical Education</option>
+                        <option value="Political Science">Department of Political Science</option>
+                        <option value="Statistics">Department of Statistics</option>
                         <option value="admin">Admin</option>
-                        <option value="B.voc(Software banking)">Department of B.voc
-                            (Banking)</option>
+                        <option value="B.voc(Software banking)">Department of B.voc (Banking)</option>
                     </select>
                     @error('department')
                         <div class="text-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
 
-                    <!-- Assign Role Field -->
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Assign Role</label>
-                        <select name="role" id="role" class="form-select" required>
-                            <option value="" disabled selected>Select Role</option>
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->name }}">{{ $role->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('role')
-                            <div class="text-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <!-- Assign Role Field -->
+                <div class="mb-3">
+                    <label for="role" class="form-label">Assign Role</label>
+                    <select name="role" id="role" class="form-select" required>
+                        <option value="" disabled selected>Select Role</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('role')
+                        <div class="text-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
 
+                <!-- Semester Field -->
+                <div class="mb-3" id="semester-field" style="display: none;">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select name="semester" id="semester" class="form-select">
+                        <option value="" disabled selected>Select Semester</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                    @error('semester')
+                        <div class="text-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
 
                 <!-- Password Field -->
                 <div class="mb-3">
@@ -154,4 +155,29 @@
             }
         </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const roleSelect = document.getElementById('role'); // Role Dropdown
+            const semesterField = document.getElementById('semester-field'); // Semester Field Div
+            const semesterSelect = document.getElementById('semester'); // Semester Dropdown
+
+            // Function to toggle semester field visibility
+            function toggleSemesterField() {
+                if (roleSelect.value === 'student') {
+                    semesterField.style.display = 'block'; // Show Semester Field
+                    semesterSelect.setAttribute('required', 'required');
+                } else {
+                    semesterField.style.display = 'none'; // Hide Semester Field
+                    semesterSelect.removeAttribute('required');
+                }
+            }
+
+            // Run on page load
+            toggleSemesterField();
+
+            // Attach event listener for role change
+            roleSelect.addEventListener('change', toggleSemesterField);
+        });
+    </script>
 @endsection

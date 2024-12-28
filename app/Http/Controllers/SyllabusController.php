@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Syllabus;
 use Illuminate\Support\Facades\Storage;
@@ -10,136 +9,248 @@ use Illuminate\Support\Facades\Storage;
 class SyllabusController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the syllabus.
      */
     public function index()
     {
-        $user = auth()->user(); // Currently logged-in user
+        $user = auth()->user();
+        $department = $user->department;
 
-        // Agar user ka role `student` hai
-        if ($user->hasRole('student')) {
-            // Core syllabus sirf uske department ka dikhaye
-            $syllabus = Syllabus::where(function ($query) use ($user) {
-                $query->where('subject_type', 'Core')
-                    ->where('department', $user->department);
-            })->orWhere(function ($query) {
-                // Elective syllabus ke liye koi restriction nahi
-                $query->whereIn('subject_type', ['SEC', 'VAC', 'GE', 'AEC', 'DSE']);
-            })->get();
-        } else {
-            // Agar user ka role student nahi hai, to sab syllabus dikhaye
+        if ($user->hasRole('Admin') || $user->hasRole('SuperAdmin')) {
             $syllabus = Syllabus::all();
+        } else {
+            $syllabus = Syllabus::where('department', $department)->get();
         }
 
         return view('syllabus.index', compact('syllabus'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new syllabus.
      */
     public function create()
     {
-        $subjectTypes = [
-            'Core' => ['BMS', 'B.Voc Software Development', 'B.com Hons'],
-            'SEC' => ['Frontend', 'Analytics with Python', 'Blockchain'],
-            'VAC' => ['Vedic Maths 1', 'Vedic Maths 2', 'Digital Empowerment'],
-            'GE' => ['Maths', 'CS', 'Management'],
-            'AEC' => ['EVS 1', 'Hindi-C', 'EVS 2'],
-            'DSE' => ['DIP', 'Big Data'],
-        ];
+        $user = auth()->user();
+        $roles = $user->getRoleNames();
 
-        return view('syllabus.create', compact('subjectTypes'));
+        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+            $departments = [
+                'Applied Psychology',
+                'Computer Science',
+                'B.voc(Software Development)',
+                'Economics',
+                'English',
+                'Environmental Studies',
+                'Commerce',
+                'Punjabi',
+                'Hindi',
+                'History',
+                'Management Studies',
+                'Mathematics',
+                'Philosophy',
+                'Physical Education',
+                'Political Science',
+                'Statistics',
+                'B.voc(Software Banking)',
+            ];
+        } else {
+            $departments = [$user->department];
+        }
+
+        $subjectTypes = ['Core', 'SEC', 'GE', 'VAC', 'DSE', 'AEC'];
+        $semesters = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6'];
+
+        return view('syllabus.create', compact('departments', 'subjectTypes', 'semesters'));
     }
 
+    public function getSubjects(Request $request)
+    {
+        $subjectType = $request->input('subject_type');
+        $department = $request->input('department');
+        $semester = $request->input('semester');
+    
+        // Ensure subject type, department, and semester are provided
+        if (!$subjectType || !$department || !$semester) {
+            return response()->json(['error' => 'Please select all fields.'], 400);
+        }
+    
+        // Hardcoded data for subjects
+        $subjectsData = [
+            'Applied Psychology' => [
+                'Semester 1' => [
+                    'Core' => ['Introduction to Psychology', 'Biological Basis of Behaviour'],
+                    'GE' => ['Positive Psychology', 'Psychology in Everyday Life']
+                ],
+                'Semester 2' => [
+                    'Core' => ['Cognitive Psychology', 'Social Psychology'],
+                    'GE' => ['Human Strengths', 'Organizational Behaviour']
+                ]
+            ],
+            'Computer Science' => [
+                'Semester 1' => [
+                    'Core' => ['Programming in C', 'Discrete Mathematics'],
+                    'GE' => ['Basics of Computers', 'Introduction to Algorithms']
+                ],
+                'Semester 2' => [
+                    'Core' => ['Data Structures', 'Digital Logic'],
+                    'GE' => ['Computer Networks', 'Web Development Basics']
+                ]
+            ],
+        ];
+    
+        // Fetch subjects based on input
+        $subjects = $subjectsData[$department][$semester][$subjectType] ?? [];
+    
+        // Check if any subjects are found
+        if (empty($subjects)) {
+            return response()->json(['message' => 'No subjects found for the selected criteria.'], 404);
+        }
+    
+        // Return the list of subjects as JSON
+        return response()->json(['subjects' => $subjects]);
+    }
+    
+    
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created syllabus in storage.
      */
     public function store(Request $request)
     {
-        // Validate the incoming request
-        $request->validate([
+        $validated = $request->validate([
             'subject_type' => 'required|string|max:255',
-            'department' => 'required|string|max:255', // Ensure 'department' is required
-            'file' => 'required|file|mimes:pdf,doc,docx|max:10240', // Max size 10MB
+            'department' => 'required_if:subject_type,Core|string|max:255',
+            'semester' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
-        // Store the uploaded file
-        $filePath = $request->file('file')->store('syllabus_files', 'public'); // 'syllabus_files' folder in 'storage/app/public'
+        $filePath = $request->file('file')->store('syllabus', 'public');
 
-        // Create a new syllabus entry in the database
         Syllabus::create([
-            'subject_type' => $request->subject_type,
-            'department' => $request->name, // Ensure department is stored
-            'file_path' => $filePath, // Store the file path in the database
-            'is_visible' => true, // Default visibility
+            'subject_type' => $validated['subject_type'],
+            'department' => $validated['department'] ?? null,
+            'semester' => $validated['semester'],
+            'name' => $validated['name'],
+            'file_path' => $filePath,
         ]);
 
-        // Redirect back to the syllabus index page with success message
-        return redirect()->route('syllabus.index')->with('success', 'Syllabus uploaded successfully.');
+        return redirect()->route('syllabus.index')->with('success', 'Syllabus uploaded successfully!');
     }
 
     /**
-     * Display the specified resource.
+     * Show the specified syllabus.
      */
-    public function show(Syllabus $syllabus)
+    public function show($id)
     {
+        $syllabus = Syllabus::find($id);
+
+        if (!$syllabus) {
+            return redirect()->route('syllabus.index')->with('error', 'Syllabus not found!');
+        }
+
         return view('syllabus.show', compact('syllabus'));
     }
 
-
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified syllabus.
      */
-    public function edit(Syllabus $syllabus)
+    public function edit($id)
     {
-        return view('syllabus.edit', compact('syllabus'));
+        $syllabus = Syllabus::find($id);
+
+        if (!$syllabus) {
+            return redirect()->route('syllabus.index')->with('error', 'Syllabus not found!');
+        }
+
+        $user = auth()->user();
+        $roles = $user->getRoleNames();
+
+        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+            $departments = [
+                'Applied Psychology',
+                'Computer Science',
+                'B.voc(Software Development)',
+                'Economics',
+                'English',
+                'Environmental Studies',
+                'Commerce',
+                'Punjabi',
+                'Hindi',
+                'History',
+                'Management Studies',
+                'Mathematics',
+                'Philosophy',
+                'Physical Education',
+                'Political Science',
+                'Statistics',
+                'B.voc(Software Banking)',
+            ];
+        } else {
+            $departments = [$user->department];
+        }
+
+        $subjectTypes = ['Core', 'SEC', 'GE', 'VAC', 'DSE', 'AEC'];
+        $semesters = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6'];
+
+        return view('syllabus.edit', compact('syllabus', 'departments', 'subjectTypes', 'semesters'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified syllabus in storage.
      */
-    public function update(Request $request, Syllabus $syllabus)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'subject_type' => 'nullable|string|max:255',
-            'department' => 'nullable|string|max:255',
-            'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // File validation
+        $syllabus = Syllabus::find($id);
+
+        if (!$syllabus) {
+            return redirect()->route('syllabus.index')->with('error', 'Syllabus not found!');
+        }
+
+        $validated = $request->validate([
+            'subject_type' => 'required|string|max:255',
+            'department' => 'required_if:subject_type,Core|string|max:255',
+            'semester' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
-        // Find the syllabus
-        $syllabus->subject_type = $request->subject_type;
-        $syllabus->department = $request->department;
-
-        // Handle file upload
         if ($request->hasFile('file')) {
-            // Delete the old file if it exists
-            if ($syllabus->file) {
-                Storage::delete('public/' . $syllabus->file);
+            if (Storage::exists('public/' . $syllabus->file_path)) {
+                Storage::delete('public/' . $syllabus->file_path);
             }
 
-            // Upload the new file
-            $file = time() . '_' . $request->file->getClientOriginalName();
-            $request->file->storeAs('public/syllabus', $file); // Store in storage/app/public/yllabus
-            $syllabus->file = 'syllabus/' . $file; // Save relative path for public access
+            $filePath = $request->file('file')->store('syllabus', 'public');
+            $syllabus->file_path = $filePath;
         }
 
-        $syllabus->save();
+        $syllabus->update([
+            'subject_type' => $validated['subject_type'],
+            'department' => $validated['department'] ?? null,
+            'semester' => $validated['semester'],
+            'name' => $validated['name'],
+            'file_path' => $syllabus->file_path,
+        ]);
 
-        return redirect()->route('syllabus.index')->with('success', 'Syllabus updated successfully.');
+        return redirect()->route('syllabus.index')->with('success', 'Syllabus updated successfully!');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified syllabus from storage.
      */
-    public function destroy(Syllabus $syllabus)
+    public function destroy($id)
     {
-        if ($syllabus->file) {
-            Storage::delete('public/' . $syllabus->file);
+        $syllabus = Syllabus::find($id);
+
+        if (!$syllabus) {
+            return redirect()->route('syllabus.index')->with('error', 'Syllabus not found!');
         }
 
-        // Delete the study material from the database
+        if (Storage::exists('public/' . $syllabus->file_path)) {
+            Storage::delete('public/' . $syllabus->file_path);
+        }
+
         $syllabus->delete();
 
-        return redirect()->route('syllabus.index')->with('success', 'Syllabus deleted successfully.');
+        return redirect()->route('syllabus.index')->with('success', 'Syllabus deleted successfully!');
     }
 }

@@ -54,6 +54,7 @@ class UserController extends Controller implements HasMiddleware
         'email' => 'required|email|unique:users,email',
         'phone' => 'required|string|unique:users,phone|max:15', // Max length added for phone
         'department' => 'required|string|max:255', // Removed unique constraint if department repeats
+         'semester' => 'required|integer|min:1|max:10',
         'password' => 'required|string|min:8|confirmed',
         'role' => 'required|string|exists:roles,name', // Role validation
     ]);
@@ -64,6 +65,7 @@ class UserController extends Controller implements HasMiddleware
     $user->email = $request->email;
     $user->phone = $request->phone; // Save phone
     $user->department = $request->department; // Save department
+    $user->semester = $request->semester;
     $user->password = bcrypt($request->password);
     $user->save();
 
@@ -113,6 +115,7 @@ class UserController extends Controller implements HasMiddleware
             'email' => 'required|email|unique:users,email,' . $id . ',id',
             'phone' => 'required|string|max:15|unique:users,phone,' . $id . ',id', // Validate phone
             'department' => 'required|string|max:255', // Validate department
+            'semester' => 'required|integer|min:1|max:10',
         ]);
 
         if ($validator->fails()) {
@@ -124,6 +127,7 @@ class UserController extends Controller implements HasMiddleware
         $user->email = $request->email;
         $user->phone = $request->phone; // Save phone
         $user->department = $request->department; // Save department
+        $user->semester = $request->semester;
         $user->save();
 
         // Sync roles

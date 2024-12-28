@@ -125,6 +125,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/syllabus/{id}/edit', [SyllabusController::class, 'edit'])->name('syllabus.edit');
     Route::post('/syllabus/{id}', [SyllabusController::class, 'update'])->name('syllabus.update');
     Route::delete('/syllabus/{id}', [SyllabusController::class, 'destroy'])->name('syllabus.destroy');
+    Route::post('/syllabus/get-subjects', [SyllabusController::class, 'getSubjects'])->name('syllabus.getSubjects');
+
 });
 
 require __DIR__ . '/auth.php';

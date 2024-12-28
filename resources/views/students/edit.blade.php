@@ -61,6 +61,27 @@
                     @enderror
                 </div>
 
+                    <!-- Semester Field (Visible Only for Students) -->
+                    @if (old('role', $student->roles->first()->name) === 'student' || $user->roles->contains('student'))
+    <div class="form-group mb-3">
+        <label for="semester" class="form-label font-weight-bold">Semester</label>
+        <select name="semester" id="semester" class="form-select">
+            <option value="" disabled>Select Semester</option>
+            <option value="1" {{ old('semester', $student->semester) == 1 ? 'selected' : '' }}>1</option>
+            <option value="2" {{ old('semester', $student->semester) == 2 ? 'selected' : '' }}>2</option>
+            <option value="3" {{ old('semester', $student->semester) == 3 ? 'selected' : '' }}>3</option>
+            <option value="4" {{ old('semester', $student->semester) == 4 ? 'selected' : '' }}>4</option>
+            <option value="5" {{ old('semester', $student->semester) == 5 ? 'selected' : '' }}>5</option>
+            <option value="6" {{ old('semester', $student->semester) == 6 ? 'selected' : '' }}>6</option>
+            <option value="7" {{ old('semester', $student->semester) == 7 ? 'selected' : '' }}>7</option>
+            <option value="8" {{ old('semester', $student->semester) == 8 ? 'selected' : '' }}>8</option>
+        </select>
+        @error('semester')
+            <span class="text-danger small">{{ $message }}</span>
+        @enderror
+    </div>
+@endif
+
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">
                     <label for="roles" class="form-label font-weight-bold">Roles</label>

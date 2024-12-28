@@ -20,6 +20,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Semester</th>
                         <th>Role</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -34,6 +35,7 @@
                             <tr>
                                 <td>{{ $student->id }}</td>
                                 <td>{{ $student->name }}</td>
+                                <td>{{ $student->semester }}</td>
                                 <td>{{ $student->roles->pluck('name')->implode(', ') }}</td>
                                 <td>{{ $student->email }}</td>
                                 <td>{{ $student->phone }}</td>

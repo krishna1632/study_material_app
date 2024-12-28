@@ -84,6 +84,7 @@ class ViewStudentController extends Controller implements HasMiddleware
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'phone' => 'nullable|string|max:15',
             'department' => 'required|string|max:255',
+            'semester' => 'required|integer|min:1|max:10',
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id', // Validate roles are valid
         ]);
@@ -96,6 +97,7 @@ class ViewStudentController extends Controller implements HasMiddleware
         $student->email = $request->input('email');
         $student->phone = $request->input('phone');
         $student->department = $request->input('department');
+        $student->semester = $request->semester;
 
         // Save the updated student data
         $student->save();
