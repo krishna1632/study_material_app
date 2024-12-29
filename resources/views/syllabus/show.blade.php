@@ -9,25 +9,24 @@
                 <div class="card-body">
                     <h3 class="h2 mb-4">Syllabus Details</h3>
 
-
-
+                    <!-- Subject Type -->
                     <div class="mb-3">
                         <strong>Subject Type:</strong>
                         <p>{{ $syllabus->subject_type }}</p>
                     </div>
 
+                    <!-- Subject Name -->
                     <div class="mb-3">
                         <strong>Subject Name:</strong>
-                        <p>{{ $syllabus->name }}</p>
+                        <p>{{ $syllabus->subject_name }}</p>
                     </div>
 
-
+                    <!-- File -->
                     <div class="mb-3">
                         <strong>File:</strong>
                         @if ($syllabus->file)
                             <p>
-                                <a href="{{ asset('storage/' . $syllabus->file) }}" target="_blank"
-                                    class="btn btn-primary btn-sm">
+                                <a href="{{ asset('storage/' . $syllabus->file) }}" target="_blank" class="btn btn-primary btn-sm">
                                     View File
                                 </a>
                             </p>

@@ -13,7 +13,9 @@
         <div class="card-header">
             <i class="fas fa-book me-1"></i>
             Syllabus List
+            @can('create syllabus')
             <a href="{{ route('syllabus.create') }}" class="btn btn-primary btn-sm float-end">Add New Syllabus</a>
+            @endcan
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
@@ -33,7 +35,7 @@
                             <td>{{ $material->subject_type }}</td>
                             <td>{{ $material->department }}</td>
                             <td>{{ $material->semester }}</td>
-                            <td>{{ $material->name }}</td>
+                            <td>{{ $material->subject_name }}</td>
                             <td>
                                 @if ($material->file)
                                     <a href="{{ asset('storage/' . $material->file) }}" target="_blank" class="btn btn-primary btn-sm">
@@ -44,20 +46,24 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="#" class="btn btn-info btn-sm">
+                                <a href="{{ route('syllabus.show',$material->id) }}" class="btn btn-info btn-sm">
                                     View
                                 </a>
-                                <a href="#" class="btn btn-warning btn-sm">
+                                @can('edit syllabus')
+                                <a href="{{ route('syllabus.edit',$material->id) }}" class="btn btn-warning btn-sm">
                                     Edit
                                 </a>
-                                <button class="btn btn-danger btn-sm"
-                                    onclick="confirmDelete({{ $material->id }})">
-                                    Delete
-                                </button>
-                                <form id="delete-form-{{ $material->id }}" action="#" method="POST" style="display: none;">
+                                @endcan
+                                @can('delete sylabus')
+                                <form id="delete-form-{{ $material->id }}" action="{{ route('syllabus.destroy',$material->id) }}" method="POST" style="display: none;">
                                     @csrf
                                     @method('DELETE')
+                                    <button class="btn btn-danger btn-sm"
+                                    onclick="confirmDelete({{ $material->id }})">
+                                    Delete
+                                    </button>
                                 </form>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach

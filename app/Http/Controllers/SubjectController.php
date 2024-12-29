@@ -41,10 +41,11 @@ class SubjectController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
+        
         // Validate the incoming request
         $validatedData = $request->validate([
-            'subject_type' => 'required|string|in:Core,sec,vac,aec,ge,dse',
-            'department' => 'nullable|string|required_if:subject_type,Core|required_if:subject_type,dse',
+            'subject_type' => 'required|string|in:CORE,SEC,VAC,AEC,GE,DSE',
+            'department' => 'nullable|string|required_if:subject_type,CORE|required_if:subject_type,DSE',
             'semester' => 'required|integer|min:1|max:8',
             'subject_name' => 'required|string|max:255',
         ]);
@@ -94,8 +95,8 @@ class SubjectController extends Controller implements HasMiddleware
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'subject_type' => 'required|string|in:Core,sec,vac,aec,ge,dse',
-            'department' => 'nullable|string|required_if:subject_type,Core|required_if:subject_type,dse',
+            'subject_type' => 'required|string|in:CORE,SEC,VAC,AEC,GE,DSE',
+            'department' => 'nullable|string|required_if:subject_type,CORE|required_if:subject_type,DSE',
             'semester' => 'required|integer|min:1|max:8',
             'subject_name' => 'required|string|max:255',
         ]);

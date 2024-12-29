@@ -107,34 +107,41 @@ class UserController extends Controller implements HasMiddleware
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $user = User::findOrFail($id);
+{
+    $user = User::findOrFail($id);
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3',
-            'email' => 'required|email|unique:users,email,' . $id . ',id',
-            'phone' => 'required|string|max:15|unique:users,phone,' . $id . ',id', // Validate phone
-            'department' => 'required|string|max:255', // Validate department
-            'semester' => 'required|integer|min:1|max:10',
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|min:3|max:255',
+        'email' => 'required|email|unique:users,email,' . $id . ',id',
+        'phone' => 'required|string|max:15|unique:users,phone,' . $id . ',id',
+        'department' => 'required|string|max:255',
+        'semester' => $user->hasRole('student') ? 'required|integer|min:1|max:10' : 'nullable',
+        'role' => 'nullable|array',
+        'role.*' => 'exists:roles,name',
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    try {
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'department' => $request->department,
+            'semester' => $user->hasRole('student') ? $request->semester : null,
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        // Update user details
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone; // Save phone
-        $user->department = $request->department; // Save department
-        $user->semester = $request->semester;
-        $user->save();
-
-        // Sync roles
-        $user->syncRoles($request->role);
+        $user->syncRoles($request->role ?? []);
 
         return redirect()->route('users.list')->with('success', 'User updated successfully!');
+    } catch (\Exception $e) {
+        \Log::error('User Update Error: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Failed to update user: ' . $e->getMessage())->withInput();
     }
+}
+
 
 
     /**

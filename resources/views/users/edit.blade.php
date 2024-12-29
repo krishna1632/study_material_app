@@ -19,7 +19,6 @@
         <div class="card-body">
             <form action="{{ route('users.update', $user->id) }}" method="POST">
                 @csrf
-                @method('POST')
 
                 <!-- User Name Field -->
                 <div class="form-group mb-3">
@@ -44,66 +43,27 @@
                 <!-- User Phone Field -->
                 <div class="form-group mb-3">
                     <label for="phone" class="form-label font-weight-bold">Phone</label>
-                    <input type="text" name="phone" id="phone" class="form-control"
-                        placeholder="Enter phone number" value="{{ old('phone', $user->phone) }}" required>
+                    <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter phone number"
+                        value="{{ old('phone', $user->phone) }}" required>
                     @error('phone')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- User Department Field -->
-                <!-- User Department Field -->
                 <div class="form-group mb-3">
                     <label for="department" class="form-label font-weight-bold">Department</label>
                     <select name="department" id="department" class="form-select" required>
-                        <option value="" disabled selected>Select Department</option>
-                        <option value="Applied Psychology"
-                            {{ old('department', $user->department) == 'Applied Psychology' ? 'selected' : '' }}>Department
-                            of Applied Psychology</option>
-                        <option value="Computer Science"
-                            {{ old('department', $user->department) == 'Computer Science' ? 'selected' : '' }}>Department
-                            of Computer Science</option>
-                        <option value="B.voc(Software Development)"
-                            {{ old('department', $user->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
-                            Department of B.voc (Software Development)</option>
-                        <option value="Economics"
-                            {{ old('department', $user->department) == 'Economics' ? 'selected' : '' }}>Department of
-                            Economics</option>
-                        <option value="English" {{ old('department', $user->department) == 'English' ? 'selected' : '' }}>
-                            Department of English</option>
-                        <option value="Environmental Studies"
-                            {{ old('department', $user->department) == 'Environmental Studies' ? 'selected' : '' }}>
-                            Department of Environmental Studies</option>
-                        <option value="Commerce"
-                            {{ old('department', $user->department) == 'Commerce' ? 'selected' : '' }}>Department of
-                            Commerce</option>
-                        <option value="Punjabi" {{ old('department', $user->department) == 'Punjabi' ? 'selected' : '' }}>
-                            Department of Punjabi</option>
-                        <option value="Hindi" {{ old('department', $user->department) == 'Hindi' ? 'selected' : '' }}>
-                            Department of Hindi</option>
-                        <option value="History" {{ old('department', $user->department) == 'History' ? 'selected' : '' }}>
-                            Department of History</option>
-                        <option value="Management Studies"
-                            {{ old('department', $user->department) == 'Management Studies' ? 'selected' : '' }}>Department
-                            of Management Studies</option>
-                        <option value="Mathematics"
-                            {{ old('department', $user->department) == 'Mathematics' ? 'selected' : '' }}>Department of
-                            Mathematics</option>
-                        <option value="Philosophy"
-                            {{ old('department', $user->department) == 'Philosophy' ? 'selected' : '' }}>Department of
-                            Philosophy</option>
-                        <option value="Physical Education"
-                            {{ old('department', $user->department) == 'Physical Education' ? 'selected' : '' }}>Department
-                            of Physical Education</option>
-                        <option value="Political Science"
-                            {{ old('department', $user->department) == 'Political Science' ? 'selected' : '' }}>Department
-                            of Political Science</option>
-                        <option value="Statistics"
-                            {{ old('department', $user->department) == 'Statistics' ? 'selected' : '' }}>Department of
-                            Statistics</option>
-                        <option value="B.voc(Software banking)"
-                            {{ old('department', $user->department) == 'B.voc(Software banking)' ? 'selected' : '' }}>
-                            Department of B.voc ( Banking)</option>
+                        <option value="" disabled>Select Department</option>
+                        @foreach(['Applied Psychology', 'Computer Science', 'B.voc(Software Development)', 'Economics', 
+                                  'English', 'Environmental Studies', 'Commerce', 'Punjabi', 'Hindi', 'History', 
+                                  'Management Studies', 'Mathematics', 'Philosophy', 'Physical Education', 
+                                  'Political Science', 'Statistics', 'B.voc(Software Banking)'] as $dept)
+                            <option value="{{ $dept }}"
+                                {{ old('department', $user->department) == $dept ? 'selected' : '' }}>
+                                Department of {{ $dept }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('department')
                         <span class="text-danger small">{{ $message }}</span>
@@ -111,26 +71,22 @@
                 </div>
 
                 <!-- Semester Field (Visible Only for Students) -->
-                @if (old('role', $user->roles->first()->name) === 'student' || $user->roles->contains('student'))
-    <div class="form-group mb-3">
-        <label for="semester" class="form-label font-weight-bold">Semester</label>
-        <select name="semester" id="semester" class="form-select">
-            <option value="" disabled>Select Semester</option>
-            <option value="1" {{ old('semester', $user->semester) == 1 ? 'selected' : '' }}>1</option>
-            <option value="2" {{ old('semester', $user->semester) == 2 ? 'selected' : '' }}>2</option>
-            <option value="3" {{ old('semester', $user->semester) == 3 ? 'selected' : '' }}>3</option>
-            <option value="4" {{ old('semester', $user->semester) == 4 ? 'selected' : '' }}>4</option>
-            <option value="5" {{ old('semester', $user->semester) == 5 ? 'selected' : '' }}>5</option>
-            <option value="6" {{ old('semester', $user->semester) == 6 ? 'selected' : '' }}>6</option>
-            <option value="7" {{ old('semester', $user->semester) == 7 ? 'selected' : '' }}>7</option>
-            <option value="8" {{ old('semester', $user->semester) == 8 ? 'selected' : '' }}>8</option>
-        </select>
-        @error('semester')
-            <span class="text-danger small">{{ $message }}</span>
-        @enderror
-    </div>
-@endif
-
+                @if ($user->hasRole('student') || collect(old('role'))->contains('student'))
+                    <div class="form-group mb-3">
+                        <label for="semester" class="form-label font-weight-bold">Semester</label>
+                        <select name="semester" id="semester" class="form-select">
+                            <option value="" disabled>Select Semester</option>
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}" {{ old('semester', $user->semester) == $i ? 'selected' : '' }}>
+                                    {{ $i }}
+                                </option>
+                            @endfor
+                        </select>
+                        @error('semester')
+                            <span class="text-danger small">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endif
 
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">
@@ -142,8 +98,7 @@
                                     <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
                                         value="{{ $role->name }}" class="form-check-input"
                                         {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
-                                    <label for="role-{{ $role->id }}"
-                                        class="form-check-label">{{ $role->name }}</label>
+                                    <label for="role-{{ $role->id }}" class="form-check-label">{{ $role->name }}</label>
                                 </div>
                             @endforeach
                         @else
@@ -162,10 +117,9 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <!-- SweetAlert Success Popup -->
     @if (session('success'))
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             window.onload = function() {
                 Swal.fire({

@@ -116,6 +116,15 @@ class FacultyController extends Controller implements HasMiddleware
             'department' => $request->department,
         ]);
 
+        // Sync roles if provided
+        if ($request->has('role')) {
+            $roles = $request->input('role'); // Array of role names
+            $faculty->syncRoles($roles); // Sync roles for the faculty
+        } else {
+            // If no roles are selected, remove all roles
+            $faculty->syncRoles([]);
+        }
+
         // Redirect to the faculty index page with a success message
         return redirect()->route('faculties.index')->with('success', 'Faculty updated successfully!');
     }

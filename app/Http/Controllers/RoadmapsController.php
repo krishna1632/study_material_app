@@ -75,7 +75,7 @@ class RoadmapsController extends Controller implements HasMiddleware
                 'Physical Education',
                 'Political Science',
                 'Statistics',
-                'B.voc(Software Banking)',
+                'B.voc(Banking Operations)',
             ];
         } else {
             // If the user has other roles, show only their department

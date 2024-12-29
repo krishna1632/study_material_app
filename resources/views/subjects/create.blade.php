@@ -24,12 +24,12 @@
                         <label for="subject_type" class="form-label">Subject Type</label>
                         <select name="subject_type" id="subject_type" class="form-select" required onchange="toggleDepartmentField()">
                             <option value="" disabled selected>Select Type</option>
-                            <option value="Core">Core</option>
-                            <option value="sec">SEC</option>
-                            <option value="vac">VAC</option>
-                            <option value="aec">AEC</option>
-                            <option value="ge">GE</option>
-                            <option value="dse">DSE</option>
+                            <option value="CORE">Core</option>
+                            <option value="SEC">SEC</option>
+                            <option value="VAC">VAC</option>
+                            <option value="AEC">AEC</option>
+                            <option value="GE">GE</option>
+                            <option value="DSE">DSE</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -38,7 +38,7 @@
         <option value="" disabled selected>Select Department</option>
         <option value="Applied Psychology">Department of Applied Psychology</option>
         <option value="Computer Science">Department of Computer Science</option>
-        <option value="B.voc(Software Development)">Department of B.voc (Software Development)</option>
+        <option value="B.voc(Software Development)">B.voc (Software Development)</option>
         <option value="Economics">Department of Economics</option>
         <option value="English">Department of English</option>
         <option value="Environmental Studies">Department of Environmental Studies</option>
@@ -52,8 +52,7 @@
         <option value="Physical Education">Department of Physical Education</option>
         <option value="Political Science">Department of Political Science</option>
         <option value="Statistics">Department of Statistics</option>
-       
-        <option value="B.voc(Software banking)">Department of B.voc (Banking)</option>
+        <option value="B.voc(Banking Operations)">B.voc(Banking Operations)</option>
     </select>
     @error('department')
         <div class="text-danger mt-2">{{ $message }}</div>
@@ -99,7 +98,7 @@
             const subjectType = document.getElementById('subject_type').value;
             const departmentField = document.getElementById('department');
 
-            if (subjectType === 'Core' || subjectType === 'dse') {
+            if (subjectType === 'CORE' || subjectType === 'DSE') {
                 departmentField.disabled = false;
                 departmentField.required = true;
             } else {

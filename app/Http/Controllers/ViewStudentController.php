@@ -103,8 +103,13 @@ class ViewStudentController extends Controller implements HasMiddleware
         $student->save();
 
         // Sync roles (this will remove existing roles and add new ones)
-        if ($request->has('roles')) {
-            $student->syncRoles($request->input('roles'));
+        
+        if ($request->has('role')) {
+            $roles = $request->input('role'); // Array of role names
+            $student->syncRoles($roles); // Sync roles for the student
+        } else {
+            // If no roles are selected, remove all roles
+            $student->syncRoles([]);
         }
 
         // Redirect with success message

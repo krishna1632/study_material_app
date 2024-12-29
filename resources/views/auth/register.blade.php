@@ -70,7 +70,7 @@
                         <option value="Political Science">Department of Political Science</option>
                         <option value="Statistics">Department of Statistics</option>
                         <option value="admin">Admin</option>
-                        <option value="B.voc(Software banking)">Department of B.voc (Banking)</option>
+                        <option value="B.voc(Banking Operations)">Department of B.voc (Banking)</option>
                     </select>
                     @error('department')
                         <div class="text-danger mt-2">{{ $message }}</div>

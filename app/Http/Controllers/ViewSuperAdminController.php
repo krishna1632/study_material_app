@@ -101,8 +101,12 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
         ]);
 
         // Sync roles if provided
-        if ($request->has('roles')) {
-            $super->syncRoles($request->roles);
+        if ($request->has('role')) {
+            $roles = $request->input('role'); // Array of role names
+            $super->syncRoles($roles); // Sync roles for the superadmin
+        } else {
+            // If no roles are selected, remove all roles
+            $super->syncRoles([]);
         }
 
         // Redirect with success message

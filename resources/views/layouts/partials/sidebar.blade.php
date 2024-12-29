@@ -104,9 +104,11 @@
                 <i class="fas fa-road"></i> RoadMaps
             </a>
         @endcan
+        @can('view syllabus')
         <a class="nav-link" href="{{ url('/syllabus') }}">
             <i class="fas fa-file-alt"></i> Syllabus
         </a>
+        @endcan
     </nav>
 </div>
 

@@ -54,8 +54,60 @@
                 <!-- faculty Department Field -->
                 <div class="form-group mb-3">
                     <label for="department" class="form-label font-weight-bold">Department</label>
-                    <input type="text" name="department" id="department" class="form-control"
-                        placeholder="Enter department" value="{{ old('department', $faculty->department) }}" required>
+                    <select name="department" id="department" class="form-select" required>
+                        <option value="" disabled>Select Department</option>
+                        <option value="Applied Psychology" {{ old('department', $faculty->department) == 'Applied Psychology' ? 'selected' : '' }}>
+                            Department of Applied Psychology
+                        </option>
+                        <option value="Computer Science" {{ old('department', $faculty->department) == 'Computer Science' ? 'selected' : '' }}>
+                            Department of Computer Science
+                        </option>
+                        <option value="B.voc(Software Development)" {{ old('department', $faculty->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
+                            Department of B.voc (Software Development)
+                        </option>
+                        <option value="Economics" {{ old('department', $faculty->department) == 'Economics' ? 'selected' : '' }}>
+                            Department of Economics
+                        </option>
+                        <option value="English" {{ old('department', $faculty->department) == 'English' ? 'selected' : '' }}>
+                            Department of English
+                        </option>
+                        <option value="Environmental Studies" {{ old('department', $faculty->department) == 'Environmental Studies' ? 'selected' : '' }}>
+                            Department of Environmental Studies
+                        </option>
+                        <option value="Commerce" {{ old('department', $faculty->department) == 'Commerce' ? 'selected' : '' }}>
+                            Department of Commerce
+                        </option>
+                        <option value="Punjabi" {{ old('department', $faculty->department) == 'Punjabi' ? 'selected' : '' }}>
+                            Department of Punjabi
+                        </option>
+                        <option value="Hindi" {{ old('department', $faculty->department) == 'Hindi' ? 'selected' : '' }}>
+                            Department of Hindi
+                        </option>
+                        <option value="History" {{ old('department', $faculty->department) == 'History' ? 'selected' : '' }}>
+                            Department of History
+                        </option>
+                        <option value="Management Studies" {{ old('department', $faculty->department) == 'Management Studies' ? 'selected' : '' }}>
+                            Department of Management Studies
+                        </option>
+                        <option value="Mathematics" {{ old('department', $faculty->department) == 'Mathematics' ? 'selected' : '' }}>
+                            Department of Mathematics
+                        </option>
+                        <option value="Philosophy" {{ old('department', $faculty->department) == 'Philosophy' ? 'selected' : '' }}>
+                            Department of Philosophy
+                        </option>
+                        <option value="Physical Education" {{ old('department', $faculty->department) == 'Physical Education' ? 'selected' : '' }}>
+                            Department of Physical Education
+                        </option>
+                        <option value="Political Science" {{ old('department', $faculty->department) == 'Political Science' ? 'selected' : '' }}>
+                            Department of Political Science
+                        </option>
+                        <option value="Statistics" {{ old('department', $faculty->department) == 'Statistics' ? 'selected' : '' }}>
+                            Department of Statistics
+                        </option>
+                        <option value="B.voc(Banking)" {{ old('department', $faculty->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
+                            Department of B.voc (Banking)
+                        </option>
+                    </select>
                     @error('department')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror

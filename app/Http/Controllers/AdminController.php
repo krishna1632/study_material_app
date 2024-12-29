@@ -98,27 +98,40 @@ class AdminController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $admin = User::findOrFail($id);
+    /**
+ * Update the specified resource in storage.
+ */
+public function update(Request $request, string $id)
+{
+    $admin = User::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'phone' => 'required|string|max:15',
-            'department' => 'required|string|max:255',
-        ]);
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'phone' => 'required|string|max:15',
+        'department' => 'required|string|max:255',
+    ]);
 
-        // Update admin details
-        $admin->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'department' => $request->department,
-        ]);
+    // Update admin details
+    $admin->update([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'department' => $request->department,
+    ]);
 
-        return redirect()->route('admins.index')->with('success', 'Admin updated successfully!');
+    // Update roles
+    if ($request->has('role')) {
+        $roles = $request->input('role'); // Array of role names
+        $admin->syncRoles($roles); // Sync roles for the admin
+    } else {
+        // If no roles are selected, remove all roles
+        $admin->syncRoles([]);
     }
+
+    return redirect()->route('admins.index')->with('success', 'Admin updated successfully!');
+}
+
 
     /**
      * Remove the specified resource from storage.
