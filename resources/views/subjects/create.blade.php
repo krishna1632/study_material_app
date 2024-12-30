@@ -18,7 +18,6 @@
         <div class="card-body">
             <form action="{{ route('subjects.store') }}" method="POST">
                 @csrf
-                @method('POST')
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="subject_type" class="form-label">Subject Type</label>
@@ -53,7 +52,7 @@
                             <option value="Physical Education">Department of Physical Education</option>
                             <option value="Political Science">Department of Political Science</option>
                             <option value="Statistics">Department of Statistics</option>
-                            <option value="B.voc(Banking Operations)">B.voc(Banking Operations)</option>
+                            <option value="B.voc(Banking Operations)">B.voc (Banking Operations)</option>
                             <option value="ELECTIVE">ELECTIVE</option>
                         </select>
                         @error('department')
@@ -94,6 +93,20 @@
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    @if(session('duplicate_error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Duplicate Entry',
+                    text: '{{ session('duplicate_error') }}',
+                });
+            });
+        </script>
+    @endif
 
     <script>
         function toggleDepartmentOptions() {
