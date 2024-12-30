@@ -22,9 +22,9 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="subject_type" class="form-label">Subject Type</label>
-                        <select name="subject_type" id="subject_type" class="form-select" required onchange="toggleDepartmentField()">
+                        <select name="subject_type" id="subject_type" class="form-select" required onchange="toggleDepartmentOptions()">
                             <option value="" disabled selected>Select Type</option>
-                            <option value="CORE">Core</option>
+                            <option value="CORE">CORE</option>
                             <option value="SEC">SEC</option>
                             <option value="VAC">VAC</option>
                             <option value="AEC">AEC</option>
@@ -33,32 +33,32 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-    <label for="department" class="form-label">Department</label>
-    <select name="department" id="department" class="form-select" required>
-        <option value="" disabled selected>Select Department</option>
-        <option value="Applied Psychology">Department of Applied Psychology</option>
-        <option value="Computer Science">Department of Computer Science</option>
-        <option value="B.voc(Software Development)">B.voc (Software Development)</option>
-        <option value="Economics">Department of Economics</option>
-        <option value="English">Department of English</option>
-        <option value="Environmental Studies">Department of Environmental Studies</option>
-        <option value="Commerce">Department of Commerce</option>
-        <option value="Punjabi">Department of Punjabi</option>
-        <option value="Hindi">Department of Hindi</option>
-        <option value="History">Department of History</option>
-        <option value="Management Studies">Department of Management Studies</option>
-        <option value="Mathematics">Department of Mathematics</option>
-        <option value="Philosophy">Department of Philosophy</option>
-        <option value="Physical Education">Department of Physical Education</option>
-        <option value="Political Science">Department of Political Science</option>
-        <option value="Statistics">Department of Statistics</option>
-        <option value="B.voc(Banking Operations)">B.voc(Banking Operations)</option>
-    </select>
-    @error('department')
-        <div class="text-danger mt-2">{{ $message }}</div>
-    @enderror
-</div>
-
+                        <label for="department" class="form-label">Department</label>
+                        <select name="department" id="department" class="form-select" required>
+                            <option value="" disabled selected>Select Department</option>
+                            <option value="Applied Psychology">Department of Applied Psychology</option>
+                            <option value="Computer Science">Department of Computer Science</option>
+                            <option value="B.voc(Software Development)">B.voc (Software Development)</option>
+                            <option value="Economics">Department of Economics</option>
+                            <option value="English">Department of English</option>
+                            <option value="Environmental Studies">Department of Environmental Studies</option>
+                            <option value="Commerce">Department of Commerce</option>
+                            <option value="Punjabi">Department of Punjabi</option>
+                            <option value="Hindi">Department of Hindi</option>
+                            <option value="History">Department of History</option>
+                            <option value="Management Studies">Department of Management Studies</option>
+                            <option value="Mathematics">Department of Mathematics</option>
+                            <option value="Philosophy">Department of Philosophy</option>
+                            <option value="Physical Education">Department of Physical Education</option>
+                            <option value="Political Science">Department of Political Science</option>
+                            <option value="Statistics">Department of Statistics</option>
+                            <option value="B.voc(Banking Operations)">B.voc(Banking Operations)</option>
+                            <option value="ELECTIVE">ELECTIVE</option>
+                        </select>
+                        @error('department')
+                            <div class="text-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="row mb-3">
@@ -94,52 +94,25 @@
     </div>
 
     <script>
-        function toggleDepartmentField() {
+        function toggleDepartmentOptions() {
             const subjectType = document.getElementById('subject_type').value;
             const departmentField = document.getElementById('department');
+            const options = departmentField.options;
 
-            if (subjectType === 'CORE' || subjectType === 'DSE') {
-                departmentField.disabled = false;
-                departmentField.required = true;
-            } else {
-                departmentField.disabled = true;
-                departmentField.required = false;
-                departmentField.value = ''; // Reset the value if disabled
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+
+                if (subjectType === 'CORE' || subjectType === 'DSE') {
+                    option.style.display = option.value === 'ELECTIVE' ? 'none' : 'block';
+                } else if (['GE', 'SEC', 'VAC', 'AEC'].includes(subjectType)) {
+                    option.style.display = option.value === 'ELECTIVE' ? 'block' : 'none';
+                } else {
+                    option.style.display = 'block';
+                }
             }
+
+            // Reset the selected value
+            departmentField.value = '';
         }
-
-        // Call this function on page load to set the initial state of the department field
-        window.onload = toggleDepartmentField;
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- SweetAlert Success Popup -->
-    @if (session('success'))
-        <script>
-            window.onload = function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: "{{ session('success') }}",
-                    showConfirmButton: false,
-                    timer: 3000,
-                });
-            }
-        </script>
-    @endif
-
-    <!-- SweetAlert Error Popup -->
-    @if (session('error'))
-        <script>
-            window.onload = function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Duplicate Entry',
-                    text: "{{ session('error') }}",
-                    showConfirmButton: true,
-                });
-            }
-        </script>
-    @endif
 @endsection

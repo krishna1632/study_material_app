@@ -18,16 +18,16 @@
         <div class="card-body">
             <form action="{{ route('subjects.update', $subject->id) }}" method="POST">
                 @csrf
-                @method('POST')
+                @method('POST') <!-- Corrected method -->
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="subject_type" class="form-label">Subject Type</label>
-                        <select name="subject_type" id="subject_type" class="form-select" required>
+                        <select name="subject_type" id="subject_type" class="form-select" required onchange="toggleDepartmentOptions()">
                             <option value="CORE" {{ $subject->subject_type == 'CORE' ? 'selected' : '' }}>CORE</option>
                             <option value="SEC" {{ $subject->subject_type == 'SEC' ? 'selected' : '' }}>SEC</option>
                             <option value="VAC" {{ $subject->subject_type == 'VAC' ? 'selected' : '' }}>VAC</option>
-                            <option value="VAC" {{ $subject->subject_type == 'VAC' ? 'selected' : '' }}>AEC</option>
+                            <option value="AEC" {{ $subject->subject_type == 'AEC' ? 'selected' : '' }}>AEC</option>
                             <option value="GE" {{ $subject->subject_type == 'GE' ? 'selected' : '' }}>GE</option>
                             <option value="DSE" {{ $subject->subject_type == 'DSE' ? 'selected' : '' }}>DSE</option>
                         </select>
@@ -35,11 +35,16 @@
                     <div class="col-md-6">
                         <label for="department" class="form-label">Department</label>
                         <select name="department" id="department" class="form-select" required>
-                            <option value="Computer Science" {{ $subject->department == 'Computer Science' ? 'selected' : '' }}>Computer Science</option>
-                            <option value="B.voc(Software Development)" {{ $subject->department == 'B.voc(Software Development)' ? 'selected' : '' }}>B.voc (Software Development)</option>
-                            <option value="Economics" {{ $subject->department == 'Economics' ? 'selected' : '' }}>Economics</option>
-                            <option value="English" {{ $subject->department == 'English' ? 'selected' : '' }}>English</option>
-                            <option value="Commerce" {{ $subject->department == 'Commerce' ? 'selected' : '' }}>Commerce</option>
+                            <option value="" disabled>Select Department</option>
+                            <option value="Applied Psychology" {{ $subject->department == 'Applied Psychology' ? 'selected' : '' }}>Department of Applied Psychology</option>
+                            <option value="Computer Science" {{ $subject->department == 'Computer Science' ? 'selected' : '' }}>Department of Computer Science</option>
+                            <option value="B.voc(Software Development)" {{ $subject->department == 'B.voc(Software Development)' ? 'selected' : '' }}>Department of B.voc (Software Development)</option>
+                            <option value="Economics" {{ $subject->department == 'Economics' ? 'selected' : '' }}>Department of Economics</option>
+                            <option value="English" {{ $subject->department == 'English' ? 'selected' : '' }}>Department of English</option>
+                            <option value="Environmental Studies" {{ $subject->department == 'Environmental Studies' ? 'selected' : '' }}>Department of Environmental Studies</option>
+                            <option value="Commerce" {{ $subject->department == 'Commerce' ? 'selected' : '' }}>Department of Commerce</option>
+                            <option value="Punjabi" {{ $subject->department == 'Punjabi' ? 'selected' : '' }}>Department of Punjabi</option>
+                            <option value="ELECTIVE" {{ $subject->department == 'ELECTIVE' ? 'selected' : '' }}>ELECTIVE</option>
                         </select>
                     </div>
                 </div>
@@ -49,7 +54,7 @@
                         <label for="semester" class="form-label">Semester</label>
                         <select name="semester" id="semester" class="form-select" required>
                             @for ($i = 1; $i <= 8; $i++)
-                                <option value="{{ $i }}" {{ $subject->semester == $i ? 'selected' : '' }}> {{ $i }}</option>
+                                <option value="{{ $i }}" {{ $subject->semester == $i ? 'selected' : '' }}>{{ $i }}</option>
                             @endfor
                         </select>
                     </div>
@@ -66,6 +71,34 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function toggleDepartmentOptions() {
+            const subjectType = document.getElementById('subject_type').value;
+            const departmentField = document.getElementById('department');
+            const options = departmentField.options;
+
+            try {
+                for (let i = 0; i < options.length; i++) {
+                    const option = options[i];
+
+                    if (subjectType === 'CORE' || subjectType === 'DSE') {
+                        option.style.display = option.value === 'ELECTIVE' ? 'none' : 'block';
+                    } else if (['GE', 'SEC', 'VAC', 'AEC'].includes(subjectType)) {
+                        option.style.display = option.value === 'ELECTIVE' ? 'block' : 'none';
+                    } else {
+                        option.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error("Error updating department options:", error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleDepartmentOptions();
+        });
+    </script>
 
     @if (session('success'))
         <script>

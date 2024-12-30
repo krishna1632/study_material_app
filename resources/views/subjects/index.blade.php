@@ -21,7 +21,7 @@
                 <thead>
                     <tr>
                         <th>Subject Type</th>
-                        <th>Department</th>
+                        <th>Department/Elective</th>
                         <th>Semester</th>
                         <th>Subject Name</th>
                         <th>Action</th>

@@ -95,12 +95,6 @@ public function filterSubjects(Request $request)
     return response()->json($subjects->pluck('subject_name', 'id'));
 }
 
-
-    
-
-
-    
-
     /**
      * Store a newly created syllabus in storage.
      */
