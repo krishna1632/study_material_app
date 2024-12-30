@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Syllabus;
 use App\Models\Subject;
+use Spatie\Permission\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -25,18 +27,34 @@ class SyllabusController extends Controller implements HasMiddleware
      * Display a listing of the syllabus.
      */
     public function index()
-    {
-        $user = auth()->user();
-        $department = $user->department;
+{
+    $user = auth()->user();
+    $department = $user->department; // User's department
+    $semester = $user->semester; // Assuming semester is stored in the user's record
 
-        if ($user->hasRole('Admin') || $user->hasRole('SuperAdmin')) {
-            $syllabus = Syllabus::all();
-        } else {
-            $syllabus = Syllabus::where('department', $department)->get();
-        }
-
-        return view('syllabus.index', compact('syllabus'));
+    if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin')) {
+        // SuperAdmin or Admin: Show all data
+        $syllabus = Syllabus::all();
+    } elseif ($user->hasRole('Faculty')) {
+        // Faculty: Filter by department
+        $syllabus = Syllabus::where('department', $department)->get();
+    } elseif ($user->hasRole('student')) {
+        // Student: Filter by semester and department, including "ELECTIVE"
+        $syllabus = Syllabus::where(function ($query) use ($semester, $department) {
+            $query->where('semester', $semester)
+                  ->where(function ($q) use ($department) {
+                      $q->where('department', $department)
+                        ->orWhere('department', 'ELECTIVE');
+                  });
+        })->get();
+    } else {
+        // Default: No data
+        $syllabus = [];
     }
+
+    return view('syllabus.index', compact('syllabus'));
+}
+
 
     /**
      * Show the form for creating a new syllabus.
