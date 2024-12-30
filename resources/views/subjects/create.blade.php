@@ -22,7 +22,8 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="subject_type" class="form-label">Subject Type</label>
-                        <select name="subject_type" id="subject_type" class="form-select" required onchange="toggleDepartmentOptions()">
+                        <select name="subject_type" id="subject_type" class="form-select" required
+                            onchange="toggleDepartmentOptions()">
                             <option value="" disabled selected>Select Type</option>
                             <option value="CORE">CORE</option>
                             <option value="SEC">SEC</option>
@@ -81,7 +82,8 @@
                     </div>
                     <div class="col-md-6">
                         <label for="subject_name" class="form-label">Subject Name</label>
-                        <input type="text" name="subject_name" id="subject_name" class="form-control" placeholder="Enter Subject Name" required>
+                        <input type="text" name="subject_name" id="subject_name" class="form-control"
+                            placeholder="Enter Subject Name" required>
                     </div>
                 </div>
 

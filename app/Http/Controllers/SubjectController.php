@@ -40,49 +40,49 @@ class SubjectController extends Controller implements HasMiddleware
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    // Validate the incoming request
-    $validatedData = $request->validate([
-        'subject_type' => 'required|string|in:CORE,SEC,VAC,AEC,GE,DSE',
-        'department' => 'nullable|string', // Allow null if department is not applicable
-        'semester' => 'required|integer|min:1|max:8',
-        'subject_name' => 'required|string|max:255',
-    ]);
+    {
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'subject_type' => 'required|string|in:CORE,SEC,VAC,AEC,GE,DSE',
+            'department' => 'nullable|string', // Allow null if department is not applicable
+            'semester' => 'required|integer|min:1|max:8',
+            'subject_name' => 'required|string|max:255',
+        ]);
 
-    // Handle department logic based on subject_type
-    if (in_array($validatedData['subject_type'], ['CORE', 'DSE'])) {
-        // Ensure department is set and not 'ELECTIVE'
-        if (empty($validatedData['department']) || $validatedData['department'] === 'ELECTIVE') {
-            return redirect()->back()->withErrors(['department' => 'Department is required for CORE and DSE subjects.'])->withInput();
+        // Handle department logic based on subject_type
+        if (in_array($validatedData['subject_type'], ['CORE', 'DSE'])) {
+            // Ensure department is set and not 'ELECTIVE'
+            if (empty($validatedData['department']) || $validatedData['department'] === 'ELECTIVE') {
+                return redirect()->back()->withErrors(['department' => 'Department is required for CORE and DSE subjects.'])->withInput();
+            }
+        } elseif (in_array($validatedData['subject_type'], ['GE', 'SEC', 'VAC', 'AEC'])) {
+            // Ensure only 'ELECTIVE' is allowed as department
+            if ($validatedData['department'] !== 'ELECTIVE') {
+                return redirect()->back()->withErrors(['department' => 'Only ELECTIVE is allowed for this subject type.'])->withInput();
+            }
+        } else {
+            $validatedData['department'] = null; // Reset department for other cases
         }
-    } elseif (in_array($validatedData['subject_type'], ['GE', 'SEC', 'VAC', 'AEC'])) {
-        // Ensure only 'ELECTIVE' is allowed as department
-        if ($validatedData['department'] !== 'ELECTIVE') {
-            return redirect()->back()->withErrors(['department' => 'Only ELECTIVE is allowed for this subject type.'])->withInput();
+
+        // Check for duplicate entry
+        $duplicate = Subject::where('subject_type', $validatedData['subject_type'])
+            ->where('semester', $validatedData['semester'])
+            ->where('subject_name', $validatedData['subject_name'])
+            ->where(function ($query) use ($validatedData) {
+                $query->where('department', $validatedData['department'])
+                    ->orWhereNull('department');
+            })
+            ->exists();
+
+        if ($duplicate) {
+            return redirect()->back()->with('error', 'This subject already exists for the selected semester and department.')->withInput();
         }
-    } else {
-        $validatedData['department'] = null; // Reset department for other cases
+
+        // Create the subject
+        Subject::create($validatedData);
+
+        return redirect()->route('subjects.index')->with('success', 'Subject created successfully!');
     }
-
-    // Check for duplicate entry
-    $duplicate = Subject::where('subject_type', $validatedData['subject_type'])
-        ->where('semester', $validatedData['semester'])
-        ->where('subject_name', $validatedData['subject_name'])
-        ->where(function ($query) use ($validatedData) {
-            $query->where('department', $validatedData['department'])
-                  ->orWhereNull('department');
-        })
-        ->exists();
-
-    if ($duplicate) {
-        return redirect()->back()->with('error', 'This subject already exists for the selected semester and department.')->withInput();
-    }
-
-    // Create the subject
-    Subject::create($validatedData);
-
-    return redirect()->route('subjects.index')->with('success', 'Subject created successfully!');
-}
 
 
     /**
@@ -123,7 +123,7 @@ class SubjectController extends Controller implements HasMiddleware
             ->where('semester', $validatedData['semester'])
             ->where(function ($query) use ($validatedData) {
                 $query->where('department', $validatedData['department'])
-                      ->orWhereNull('department');
+                    ->orWhereNull('department');
             })
             ->where('id', '!=', $subject->id)
             ->exists();
