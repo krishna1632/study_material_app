@@ -7,13 +7,12 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class FacultyController extends Controller implements HasMiddleware
 {
-
-
     public static function middleware()
     {
         return [
@@ -22,6 +21,7 @@ class FacultyController extends Controller implements HasMiddleware
             new Middleware('permission:delete faculties', only: ['destroy']),
         ];
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -29,6 +29,11 @@ class FacultyController extends Controller implements HasMiddleware
     {
         // Fetch only users with the "Faculty" role
         $faculties = User::role('Faculty')->get();
+
+        // Encrypt the IDs
+        foreach ($faculties as $faculty) {
+            $faculty->encrypted_id = Crypt::encryptString($faculty->id);
+        }
 
         // Pass faculty data to the view
         return view('faculties.index', compact('faculties'));
@@ -70,8 +75,9 @@ class FacultyController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $encrypted_id)
     {
+        $id = Crypt::decryptString($encrypted_id);
         $faculty = User::findOrFail($id);
         return view('faculties.show', compact('faculty'));
     }
@@ -79,9 +85,9 @@ class FacultyController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encrypted_id)
     {
-        // Fetch the faculty user by ID
+        $id = Crypt::decryptString($encrypted_id);
         $faculty = User::findOrFail($id);
         $roles = Role::orderBy('name', 'ASC')->get();
         $hasRoles = $faculty->roles->pluck('id');
@@ -95,8 +101,10 @@ class FacultyController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $encrypted_id)
     {
+        $id = Crypt::decryptString($encrypted_id);
+
         // Fetch the faculty user by ID
         $faculty = User::findOrFail($id);
 
@@ -132,8 +140,9 @@ class FacultyController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $encrypted_id)
     {
+        $id = Crypt::decryptString($encrypted_id);
         $faculty = User::findOrFail($id);
         $faculty->delete();
 

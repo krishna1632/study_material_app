@@ -1,23 +1,23 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit User')
+@section('title', 'Edit Faculty')
 
 @section('content')
-    <h1 class="mt-4">Edit User</h1>
+    <h1 class="mt-4">Edit Faculty</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ url('/superadmin/dashboard') }}">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('users.list') }}">User Management</a></li>
-        <li class="breadcrumb-item active">Edit User</li>
+        <li class="breadcrumb-item"><a href="{{ route('faculties.index') }}">Faculty Management</a></li>
+        <li class="breadcrumb-item active">Edit Faculty</li>
     </ol>
 
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-user-edit me-1"></i>
-            Edit User Details
+            Edit Faculty Details
             <a href="{{ route('faculties.index') }}" class="btn btn-primary btn-sm float-end">Back</a>
         </div>
         <div class="card-body">
-            <form action="{{ route('faculties.update', $faculty->id) }}" method="POST">
+            <form action="{{ route('faculties.update', Crypt::encryptString($faculty->id)) }}" method="POST">
                 @csrf
                 @method('POST')
 
@@ -41,7 +41,7 @@
                     @enderror
                 </div>
 
-                <!-- faculty Phone Field -->
+                <!-- Faculty Phone Field -->
                 <div class="form-group mb-3">
                     <label for="phone" class="form-label font-weight-bold">Phone</label>
                     <input type="text" name="phone" id="phone" class="form-control"
@@ -51,7 +51,6 @@
                     @enderror
                 </div>
 
-                <!-- faculty Department Field -->
                 <div class="form-group mb-3">
                     <label for="department" class="form-label font-weight-bold">Department</label>
                     <select name="department" id="department" class="form-select" required>
@@ -113,19 +112,21 @@
                     @enderror
                 </div>
 
+
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">
                     <label for="roles" class="form-label font-weight-bold">Roles</label>
                     <div class="d-flex flex-wrap gap-3 mt-2">
                         @if ($roles->isNotEmpty())
                             @foreach ($roles as $role)
-                                <div class="form-check">
-                                    <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
-                                        value="{{ $role->name }}" class="form-check-input"
-                                        {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
-                                    <label for="role-{{ $role->id }}"
-                                        class="form-check-label">{{ $role->name }}</label>
-                                </div>
+                                @if ($role->name !== 'SuperAdmin') <!-- Exclude SuperAdmin role -->
+                                    <div class="form-check">
+                                        <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
+                                            value="{{ $role->name }}" class="form-check-input"
+                                            {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
+                                        <label for="role-{{ $role->id }}" class="form-check-label">{{ $role->name }}</label>
+                                    </div>
+                                @endif
                             @endforeach
                         @else
                             <p class="text-muted">No roles available.</p>
@@ -136,7 +137,7 @@
                 <!-- Submit Button -->
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Update User
+                        <i class="fas fa-save me-1"></i> Update Faculty
                     </button>
                 </div>
             </form>

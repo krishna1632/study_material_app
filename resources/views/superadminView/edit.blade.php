@@ -17,7 +17,7 @@
             <a href="{{ route('superadminView.index') }}" class="btn btn-primary btn-sm float-end">Back</a>
         </div>
         <div class="card-body">
-            <form action="{{ route('superadminView.update', $super->id) }}" method="POST">
+            <form action="{{ route('superadminView.update', Crypt::encryptString($super->id)) }}" method="POST">
                 @csrf
                 @method('POST')
 
@@ -41,7 +41,7 @@
                     @enderror
                 </div>
 
-                <!-- faculty Phone Field -->
+                <!-- Faculty Phone Field -->
                 <div class="form-group mb-3">
                     <label for="phone" class="form-label font-weight-bold">Phone</label>
                     <input type="text" name="phone" id="phone" class="form-control"
@@ -51,11 +51,63 @@
                     @enderror
                 </div>
 
-                <!-- faculty Department Field -->
+                <!-- Faculty Department Field (Dropdown) -->
                 <div class="form-group mb-3">
                     <label for="department" class="form-label font-weight-bold">Department</label>
-                    <input type="text" name="department" id="department" class="form-control"
-                        placeholder="Enter department" value="{{ old('department', $super->department) }}" required>
+                    <select name="department" id="department" class="form-select" required>
+                        <option value="" disabled>Select Department</option>
+                        <option value="Applied Psychology" {{ old('department', $super->department) == 'Applied Psychology' ? 'selected' : '' }}>
+                            Department of Applied Psychology
+                        </option>
+                        <option value="Computer Science" {{ old('department', $super->department) == 'Computer Science' ? 'selected' : '' }}>
+                            Department of Computer Science
+                        </option>
+                        <option value="B.voc(Software Development)" {{ old('department', $super->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
+                            Department of B.voc (Software Development)
+                        </option>
+                        <option value="Economics" {{ old('department', $super->department) == 'Economics' ? 'selected' : '' }}>
+                            Department of Economics
+                        </option>
+                        <option value="English" {{ old('department', $super->department) == 'English' ? 'selected' : '' }}>
+                            Department of English
+                        </option>
+                        <option value="Environmental Studies" {{ old('department', $super->department) == 'Environmental Studies' ? 'selected' : '' }}>
+                            Department of Environmental Studies
+                        </option>
+                        <option value="Commerce" {{ old('department', $super->department) == 'Commerce' ? 'selected' : '' }}>
+                            Department of Commerce
+                        </option>
+                        <option value="Punjabi" {{ old('department', $super->department) == 'Punjabi' ? 'selected' : '' }}>
+                            Department of Punjabi
+                        </option>
+                        <option value="Hindi" {{ old('department', $super->department) == 'Hindi' ? 'selected' : '' }}>
+                            Department of Hindi
+                        </option>
+                        <option value="History" {{ old('department', $super->department) == 'History' ? 'selected' : '' }}>
+                            Department of History
+                        </option>
+                        <option value="Management Studies" {{ old('department', $super->department) == 'Management Studies' ? 'selected' : '' }}>
+                            Department of Management Studies
+                        </option>
+                        <option value="Mathematics" {{ old('department', $super->department) == 'Mathematics' ? 'selected' : '' }}>
+                            Department of Mathematics
+                        </option>
+                        <option value="Philosophy" {{ old('department', $super->department) == 'Philosophy' ? 'selected' : '' }}>
+                            Department of Philosophy
+                        </option>
+                        <option value="Physical Education" {{ old('department', $super->department) == 'Physical Education' ? 'selected' : '' }}>
+                            Department of Physical Education
+                        </option>
+                        <option value="Political Science" {{ old('department', $super->department) == 'Political Science' ? 'selected' : '' }}>
+                            Department of Political Science
+                        </option>
+                        <option value="Statistics" {{ old('department', $super->department) == 'Statistics' ? 'selected' : '' }}>
+                            Department of Statistics
+                        </option>
+                        <option value="B.voc(Banking)" {{ old('department', $super->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
+                            Department of B.voc (Banking)
+                        </option>
+                    </select>
                     @error('department')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror

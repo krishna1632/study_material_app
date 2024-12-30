@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-
 
 class ViewSuperAdminController extends Controller implements HasMiddleware
 {
@@ -26,10 +26,16 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        // Fetch only users with the "Admin" role
+        // Fetch only users with the "SuperAdmin" role
         $super = User::role('SuperAdmin')->get();
 
-        // Pass admin data to the view
+        // Encrypt the IDs before passing to the view
+        $super->transform(function ($item) {
+            $item->encrypted_id = Crypt::encryptString($item->id);
+            return $item;
+        });
+
+        // Pass data to the view
         return view('superadminView.index', compact('super'));
     }
 
@@ -54,7 +60,13 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
      */
     public function show(string $id)
     {
-        $super = User::findOrFail($id);
+        // Decrypt the ID
+        $decryptedId = Crypt::decryptString($id);
+
+        // Find the SuperAdmin user
+        $super = User::findOrFail($decryptedId);
+
+        // Pass data to the view
         return view('superadminView.show', compact('super'));
     }
 
@@ -63,10 +75,17 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
      */
     public function edit(string $id)
     {
-        // Fetch the faculty user by ID
-        $super = User::findOrFail($id);
+        // Decrypt the ID
+        $decryptedId = Crypt::decryptString($id);
+
+        // Find the SuperAdmin user
+        $super = User::findOrFail($decryptedId);
+
+        // Get roles and current roles of the SuperAdmin
         $roles = Role::orderBy('name', 'ASC')->get();
         $hasRoles = $super->roles->pluck('id');
+
+        // Pass data to the view
         return view('superadminView.edit', [
             'super' => $super,
             'roles' => $roles,
@@ -79,13 +98,16 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        // Fetch the SuperAdmin user by ID
-        $super = User::findOrFail($id);
+        // Decrypt the ID
+        $decryptedId = Crypt::decryptString($id);
+
+        // Find the SuperAdmin user
+        $super = User::findOrFail($decryptedId);
 
         // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'email' => 'required|email|max:255|unique:users,email,' . $decryptedId,
             'phone' => 'required|string|max:15',
             'department' => 'required|string|max:255',
             'roles' => 'nullable|array',
@@ -118,8 +140,11 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        // Find the SuperAdmin user by ID
-        $super = User::findOrFail($id);
+        // Decrypt the ID
+        $decryptedId = Crypt::decryptString($id);
+
+        // Find the SuperAdmin user
+        $super = User::findOrFail($decryptedId);
 
         // Check if the user has the "SuperAdmin" role
         if (!$super->hasRole('SuperAdmin')) {

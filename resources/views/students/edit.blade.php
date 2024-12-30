@@ -17,7 +17,7 @@
             <a href="{{ route('students.index') }}" class="btn btn-primary btn-sm float-end">Back</a>
         </div>
         <div class="card-body">
-            <form action="{{ route('students.update', $student->id) }}" method="POST">
+            <form action="{{ route('students.update', Crypt::encryptString($student->id)) }}" method="POST">
                 @csrf
                 @method('POST')
 
@@ -53,9 +53,61 @@
 
                 <!-- Student Department Field -->
                 <div class="form-group mb-3">
-                    <label for="department" class="form-label font-weight-bold">Department</label>
-                    <input type="text" name="department" id="department" class="form-control"
-                        placeholder="Enter department" value="{{ old('department', $student->department) }}" required>
+                <label for="department" class="form-label font-weight-bold">Department</label>
+                    <select name="department" id="department" class="form-select" required>
+                        <option value="" disabled>Select Department</option>
+                        <option value="Applied Psychology" {{ old('department', $student->department) == 'Applied Psychology' ? 'selected' : '' }}>
+                            Department of Applied Psychology
+                        </option>
+                        <option value="Computer Science" {{ old('department', $student->department) == 'Computer Science' ? 'selected' : '' }}>
+                            Department of Computer Science
+                        </option>
+                        <option value="B.voc(Software Development)" {{ old('department', $student->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
+                            Department of B.voc (Software Development)
+                        </option>
+                        <option value="Economics" {{ old('department', $student->department) == 'Economics' ? 'selected' : '' }}>
+                            Department of Economics
+                        </option>
+                        <option value="English" {{ old('department', $student->department) == 'English' ? 'selected' : '' }}>
+                            Department of English
+                        </option>
+                        <option value="Environmental Studies" {{ old('department', $student->department) == 'Environmental Studies' ? 'selected' : '' }}>
+                            Department of Environmental Studies
+                        </option>
+                        <option value="Commerce" {{ old('department', $student->department) == 'Commerce' ? 'selected' : '' }}>
+                            Department of Commerce
+                        </option>
+                        <option value="Punjabi" {{ old('department', $student->department) == 'Punjabi' ? 'selected' : '' }}>
+                            Department of Punjabi
+                        </option>
+                        <option value="Hindi" {{ old('department', $student->department) == 'Hindi' ? 'selected' : '' }}>
+                            Department of Hindi
+                        </option>
+                        <option value="History" {{ old('department', $student->department) == 'History' ? 'selected' : '' }}>
+                            Department of History
+                        </option>
+                        <option value="Management Studies" {{ old('department', $student->department) == 'Management Studies' ? 'selected' : '' }}>
+                            Department of Management Studies
+                        </option>
+                        <option value="Mathematics" {{ old('department', $student->department) == 'Mathematics' ? 'selected' : '' }}>
+                            Department of Mathematics
+                        </option>
+                        <option value="Philosophy" {{ old('department', $student->department) == 'Philosophy' ? 'selected' : '' }}>
+                            Department of Philosophy
+                        </option>
+                        <option value="Physical Education" {{ old('department', $student->department) == 'Physical Education' ? 'selected' : '' }}>
+                            Department of Physical Education
+                        </option>
+                        <option value="Political Science" {{ old('department', $student->department) == 'Political Science' ? 'selected' : '' }}>
+                            Department of Political Science
+                        </option>
+                        <option value="Statistics" {{ old('department', $student->department) == 'Statistics' ? 'selected' : '' }}>
+                            Department of Statistics
+                        </option>
+                        <option value="B.voc(Banking)" {{ old('department', $student->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
+                            Department of B.voc (Banking)
+                        </option>
+                    </select>
                     @error('department')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror
@@ -84,23 +136,26 @@
 
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">
-                    <label for="roles" class="form-label font-weight-bold">Roles</label>
-                    <div class="d-flex flex-wrap gap-3 mt-2">
-                        @if ($roles->isNotEmpty())
-                            @foreach ($roles as $role)
-                                <div class="form-check">
-                                    <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
-                                        value="{{ $role->name }}" class="form-check-input"
-                                        {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
-                                    <label for="role-{{ $role->id }}"
-                                        class="form-check-label">{{ $role->name }}</label>
-                                </div>
-                            @endforeach
-                        @else
-                            <p class="text-muted">No roles available.</p>
-                        @endif
+    <label for="roles" class="form-label font-weight-bold">Roles</label>
+    <div class="d-flex flex-wrap gap-3 mt-2">
+        @if ($roles->isNotEmpty())
+            @foreach ($roles as $role)
+                @if ($role->name !== 'SuperAdmin' && $role->name !== 'Admin') <!-- Add condition to exclude SuperAdmin and Admin -->
+                    <div class="form-check">
+                        <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
+                            value="{{ $role->name }}" class="form-check-input"
+                            {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
+                        <label for="role-{{ $role->id }}"
+                            class="form-check-label">{{ $role->name }}</label>
                     </div>
-                </div>
+                @endif
+            @endforeach
+        @else
+            <p class="text-muted">No roles available.</p>
+        @endif
+    </div>
+</div>
+
 
                 <!-- Submit Button -->
                 <div class="text-end">

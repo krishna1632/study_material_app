@@ -18,35 +18,36 @@
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Sl No.</th>
                         <th>Name</th>
                         <th>Role</th>
                         <th>Email</th>
-                        <th>Phone</th> <!-- Added Phone -->
-                        <th>Department</th> <!-- Added Department -->
-                        <th>Created At</th>
+                        <th>Phone</th>
+                        <th>Department</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if ($admins->isNotEmpty())
-                        @foreach ($admins as $admin)
+                        @foreach ($admins as $index => $admin)
                             <tr>
-                                <td>{{ $admin->id }}</td>
+                                <!-- Display the encrypted ID -->
+                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $admin->name }}</td>
                                 <td>{{ $admin->roles->pluck('name')->implode(', ') }}</td>
                                 <td>{{ $admin->email }}</td>
-                                <td>{{ $admin->phone }}</td> <!-- Display Phone -->
-                                <td>{{ $admin->department }}</td> <!-- Display Department -->
-                                <td>{{ \Carbon\Carbon::parse($admin->created_at)->format('d M, Y') }}</td>
+                                <td>{{ $admin->phone }}</td>
+                                <td>{{ $admin->department }}</td>
+                                
                                 <td class="text-center">
-                                    <a href="{{ route('admins.show', $admin->id) }}" class="btn btn-info btn-sm">View</a>
+                                    <!-- Pass the encrypted ID in the URL -->
+                                    <a href="{{ route('admins.show', encrypt($admin->id)) }}" class="btn btn-info btn-sm">View</a>
                                     @can('edit admins')
-                                        <a href="{{ route('admins.edit', $admin->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="{{ route('admins.edit', encrypt($admin->id)) }}" class="btn btn-sm btn-warning">Edit</a>
                                     @endcan
                                     @can('delete admins')
                                         <form id="delete-form-{{ $admin->id }}"
-                                            action="{{ route('admins.destroy', $admin->id) }}" method="POST"
+                                            action="{{ route('admins.destroy', encrypt($admin->id)) }}" method="POST"
                                             style="display:inline;">
                                             @csrf
                                             @method('DELETE')
@@ -61,7 +62,7 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No admins found</td>
+                            <td colspan="7" class="text-center text-muted">No admins found</td>
                         </tr>
                     @endif
                 </tbody>

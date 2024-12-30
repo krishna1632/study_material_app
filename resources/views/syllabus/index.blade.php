@@ -55,7 +55,7 @@
                                 </a>
                                 @endcan
                                 @can('delete sylabus')
-                                <form id="delete-form-{{ $material->id }}" action="{{ route('syllabus.destroy',$material->id) }}" method="POST" style="display: none;">
+                                <form id="delete-form-{{ $material->id }}" action="{{ route('syllabus.destroy',$material->id) }}" method="POST" style="">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-danger btn-sm"

@@ -22,42 +22,39 @@
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>S.N.</th>
                         <th>Name</th>
                         <th>Role</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Department</th>
-                        <th>Created At</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if ($users->isNotEmpty())
-                        @foreach ($users as $user)
+                        @foreach ($users as $index=> $user)
                             <tr>
-                                <td>{{ $user->id }}</td>
+                                <td>{{ $index+1 }}</td> <!-- Display encrypted ID -->
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->roles->pluck('name')->implode(', ') }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->department }}</td>
-                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
                                     <!-- Edit Button -->
                                     @can('edit users')
-                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="{{ route('users.edit', Crypt::encryptString($user->id)) }}" class="btn btn-sm btn-warning">Edit</a>
                                     @endcan
-
 
                                     @can('delete users')
                                         <!-- Delete Button -->
                                         <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="confirmDelete({{ $user->id }})">Delete</button>
+                                            onclick="confirmDelete('{{ $user->encrypted_id }}')">Delete</button>
 
                                         <!-- Hidden Delete Form -->
-                                        <form id="delete-form-{{ $user->id }}"
-                                            action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                        <form id="delete-form-{{ $user->encrypted_id }}"
+                                            action="{{ route('users.destroy', Crypt::encryptString($user->id)) }}" method="POST"
                                             style="display:none;">
                                             @csrf
                                             @method('DELETE')
@@ -68,11 +65,13 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No users found</td>
+                            <td colspan="7" class="text-center text-muted">No users found</td>
                         </tr>
                     @endif
                 </tbody>
             </table>
+
+            
         </div>
     </div>
 

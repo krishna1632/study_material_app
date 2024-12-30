@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -28,6 +29,11 @@ class AdminController extends Controller implements HasMiddleware
     {
         // Fetch only users with the "Admin" role
         $admins = User::role('Admin')->get();
+
+        // Encrypt each admin's ID before passing to the view
+        foreach ($admins as $admin) {
+            $admin->encrypted_id = encrypt($admin->id);
+        }
 
         // Pass admin data to the view
         return view('admins.index', compact('admins'));
@@ -72,17 +78,25 @@ class AdminController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $encryptedId)
     {
+        // Decrypt the ID before fetching the user
+        $id = decrypt($encryptedId);
+
+        // Fetch the admin by decrypted ID
         $admin = User::findOrFail($id);
+
         return view('admins.show', compact('admin'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
+        // Decrypt the ID before fetching the user
+        $id = decrypt($encryptedId);
+
         $admin = User::findOrFail($id);
 
         // Fetch all roles
@@ -94,15 +108,16 @@ class AdminController extends Controller implements HasMiddleware
         return view('admins.edit', compact('admin', 'roles', 'hasRoles'));
     }
 
-
     /**
      * Update the specified resource in storage.
      */
-    /**
- * Update the specified resource in storage.
- */
-public function update(Request $request, string $id)
+
+
+public function update(Request $request, string $encryptedId)
 {
+    // Decrypt the ID before fetching the user
+    $id = Crypt::decryptString($encryptedId);
+
     $admin = User::findOrFail($id);
 
     $request->validate([
@@ -132,12 +147,14 @@ public function update(Request $request, string $id)
     return redirect()->route('admins.index')->with('success', 'Admin updated successfully!');
 }
 
-
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $encryptedId)
     {
+        // Decrypt the ID before fetching the user
+        $id = decrypt($encryptedId);
+
         $admin = User::findOrFail($id);
         $admin->delete();
 

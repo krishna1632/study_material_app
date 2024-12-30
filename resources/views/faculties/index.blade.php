@@ -18,7 +18,7 @@
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>S.N.</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -27,29 +27,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($faculties as $faculty)
+                    @foreach ($faculties as $index => $faculty)
                         <tr>
-                            <td>{{ $faculty->id }}</td>
+                        <td>{{ $index + 1 }}</td> <!-- Display encrypted ID -->
                             <td>{{ $faculty->name }}</td>
                             <td>{{ $faculty->email }}</td>
                             <td>{{ $faculty->phone }}</td>
                             <td>{{ $faculty->department }}</td>
                             <td>
-                                <a href="{{ route('faculties.show', $faculty->id) }}" class="btn btn-info btn-sm">View</a>
+                                <a href="{{ route('faculties.show', Crypt::encryptString($faculty->id)) }}" class="btn btn-info btn-sm">View</a>
 
                                 @can('edit faculties')
-                                    <a href="{{ route('faculties.edit', $faculty->id) }}"
-                                        class="btn btn-warning btn-sm">Edit</a>
+                                    <a href="{{ route('faculties.edit', Crypt::encryptString($faculty->id)) }}" class="btn btn-warning btn-sm">Edit</a>
                                 @endcan
 
                                 @can('delete faculties')
-                                    <form id="delete-form-{{ $faculty->id }}"
-                                        action="{{ route('faculties.destroy', $faculty->id) }}" method="POST"
-                                        style="display:inline;">
+                                    <form id="delete-form-{{ $faculty->id }}" action="{{ route('faculties.destroy', Crypt::encryptString($faculty->id)) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="confirmDelete({{ $faculty->id }})">Delete</button>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $faculty->id }})">Delete</button>
                                     </form>
                                 @endcan
                             </td>

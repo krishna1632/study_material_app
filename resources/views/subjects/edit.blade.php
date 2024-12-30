@@ -24,12 +24,12 @@
                     <div class="col-md-6">
                         <label for="subject_type" class="form-label">Subject Type</label>
                         <select name="subject_type" id="subject_type" class="form-select" required>
-                            <option value="Core" {{ $subject->subject_type == 'Core' ? 'selected' : '' }}>Core</option>
-                            <option value="sec" {{ $subject->subject_type == 'sec' ? 'selected' : '' }}>SEC</option>
-                            <option value="vac" {{ $subject->subject_type == 'vac' ? 'selected' : '' }}>VAC</option>
-                            <option value="aec" {{ $subject->subject_type == 'aec' ? 'selected' : '' }}>AEC</option>
-                            <option value="ge" {{ $subject->subject_type == 'ge' ? 'selected' : '' }}>GE</option>
-                            <option value="dse" {{ $subject->subject_type == 'dse' ? 'selected' : '' }}>DSE</option>
+                            <option value="CORE" {{ $subject->subject_type == 'CORE' ? 'selected' : '' }}>CORE</option>
+                            <option value="SEC" {{ $subject->subject_type == 'SEC' ? 'selected' : '' }}>SEC</option>
+                            <option value="VAC" {{ $subject->subject_type == 'VAC' ? 'selected' : '' }}>VAC</option>
+                            <option value="VAC" {{ $subject->subject_type == 'VAC' ? 'selected' : '' }}>AEC</option>
+                            <option value="GE" {{ $subject->subject_type == 'GE' ? 'selected' : '' }}>GE</option>
+                            <option value="DSE" {{ $subject->subject_type == 'DSE' ? 'selected' : '' }}>DSE</option>
                         </select>
                     </div>
                     <div class="col-md-6">

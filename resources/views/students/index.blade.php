@@ -18,43 +18,39 @@
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>#</th>
                         <th>Name</th>
                         <th>Semester</th>
-                        <th>Role</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Department</th>
-                        <th>Created At</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($student->isNotEmpty())
-                        @foreach ($student as $student)
+                    @if ($students->isNotEmpty())
+                        @foreach ($students as $student)
                             <tr>
-                                <td>{{ $student->id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $student->name }}</td>
                                 <td>{{ $student->semester }}</td>
-                                <td>{{ $student->roles->pluck('name')->implode(', ') }}</td>
                                 <td>{{ $student->email }}</td>
                                 <td>{{ $student->phone }}</td>
                                 <td>{{ $student->department }}</td>
-                                <td>{{ \Carbon\Carbon::parse($student->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('students.show', $student->id) }}"
+                                    <a href="{{ route('students.show', $student->encrypted_id) }}"
                                         class="btn btn-sm btn-info">View</a>
                                     @can('edit students')
-                                        <a href="{{ route('students.edit', $student->id) }}"
+                                        <a href="{{ route('students.edit', $student->encrypted_id) }}"
                                             class="btn btn-sm btn-warning">Edit</a>
                                     @endcan
                                     @can('delete students')
-                                        <form action="{{ route('students.destroy', $student->id) }}" method="POST"
-                                            style="display:inline;" id="delete-form-{{ $student->id }}">
+                                        <form action="{{ route('students.destroy', $student->encrypted_id) }}" method="POST"
+                                            style="display:inline;" id="delete-form-{{ $student->encrypted_id }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-danger btn-sm"
-                                                onclick="confirmDelete({{ $student->id }})">Delete</button>
+                                                onclick="confirmDelete('{{ $student->encrypted_id }}')">Delete</button>
                                         </form>
                                     @endcan
                                 </td>
@@ -62,7 +58,7 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No students found</td>
+                            <td colspan="7" class="text-center text-muted">No students found</td>
                         </tr>
                     @endif
                 </tbody>
@@ -89,7 +85,7 @@
     @endif
 
     <script>
-        function confirmDelete(studentId) {
+        function confirmDelete(encryptedId) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -101,7 +97,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Trigger form submission
-                    document.getElementById('delete-form-' + studentId).submit();
+                    document.getElementById('delete-form-' + encryptedId).submit();
                 }
             });
         }

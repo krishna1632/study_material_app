@@ -5,18 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class ViewStudentController extends Controller implements HasMiddleware
+class ViewStudentController extends Controller
 {
     public static function middleware()
     {
         return [
-            new Middleware('permission:view students', only: ['index']),
-            new Middleware('permission:edit students', only: ['edit']),
-            new Middleware('permission:delete students', only: ['destroy']),
+            'permission:view students' => ['only' => ['index']],
+            'permission:edit students' => ['only' => ['edit']],
+            'permission:delete students' => ['only' => ['destroy']],
         ];
     }
 
@@ -25,16 +24,17 @@ class ViewStudentController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        // Fetch only users with the "student" role
-        $student = User::role('student')->get();
+        // Fetch students and encrypt IDs
+        $students = User::role('student')->get()->map(function ($student) {
+            $student->encrypted_id = Crypt::encryptString($student->id);
+            return $student;
+        });
 
-        // Pass admin data to the view
-        return view('students.index', compact('student'));
-
+        return view('students.index', compact('students'));
     }
-
+    
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource (not implemented).
      */
     public function create()
     {
@@ -42,7 +42,7 @@ class ViewStudentController extends Controller implements HasMiddleware
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage (not implemented).
      */
     public function store(Request $request)
     {
@@ -54,7 +54,8 @@ class ViewStudentController extends Controller implements HasMiddleware
      */
     public function show(string $id)
     {
-        $student = User::findOrFail($id);
+        $decryptedId = Crypt::decryptString($id);
+        $student = User::findOrFail($decryptedId);
         return view('students.show', compact('student'));
     }
 
@@ -63,14 +64,12 @@ class ViewStudentController extends Controller implements HasMiddleware
      */
     public function edit(string $id)
     {
-        $student = User::findOrFail($id);
+        $decryptedId = Crypt::decryptString($id);
+        $student = User::findOrFail($decryptedId);
         $roles = Role::orderBy('name', 'ASC')->get();
         $hasRoles = $student->roles->pluck('id');
-        return view('students.edit', [
-            'student' => $student,
-            'roles' => $roles,
-            'hasRoles' => $hasRoles
-        ]);
+
+        return view('students.edit', compact('student', 'roles', 'hasRoles'));
     }
 
     /**
@@ -78,41 +77,36 @@ class ViewStudentController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
+        $decryptedId = Crypt::decryptString($id);
+
         // Validate incoming request
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'email' => 'required|email|max:255|unique:users,email,' . $decryptedId,
             'phone' => 'nullable|string|max:15',
             'department' => 'required|string|max:255',
             'semester' => 'required|integer|min:1|max:10',
             'roles' => 'nullable|array',
-            'roles.*' => 'exists:roles,id', // Validate roles are valid
+            'roles.*' => 'exists:roles,id',
         ]);
 
-        // Find the student by ID
-        $student = User::findOrFail($id);
-
-        // Update the student details
+        // Update student details
+        $student = User::findOrFail($decryptedId);
         $student->name = $request->input('name');
         $student->email = $request->input('email');
         $student->phone = $request->input('phone');
         $student->department = $request->input('department');
         $student->semester = $request->semester;
-
-        // Save the updated student data
         $student->save();
 
-        // Sync roles (this will remove existing roles and add new ones)
-        
-        if ($request->has('role')) {
-            $roles = $request->input('role'); // Array of role names
-            $student->syncRoles($roles); // Sync roles for the student
+        // Preserve existing roles and add/update roles
+        if ($request->has('roles')) {
+            $student->syncRoles($request->input('roles'));
         } else {
-            // If no roles are selected, remove all roles
-            $student->syncRoles([]);
+            // If no roles are selected, keep the existing roles
+            $student->syncRoles($student->roles->pluck('name')->toArray());
         }
 
-        // Redirect with success message
         return redirect()->route('students.index')->with('success', 'Student updated successfully!');
     }
 
@@ -121,14 +115,11 @@ class ViewStudentController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        // Find the student by ID
-        // Find the student by ID
-        $student = User::findOrFail($id);
-
-        // Delete the student
+        $decryptedId = Crypt::decryptString($id);
+        $student = User::findOrFail($decryptedId);
         $student->delete();
 
-        // Redirect with success message
         return redirect()->route('students.index')->with('success', 'Student deleted successfully!');
     }
+
 }

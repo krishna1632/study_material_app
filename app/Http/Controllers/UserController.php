@@ -8,11 +8,10 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller implements HasMiddleware
 {
-
-
     public static function middleware()
     {
         return [
@@ -29,8 +28,15 @@ class UserController extends Controller implements HasMiddleware
     public function index()
     {
         $users = User::oldest()->paginate(10);
+
+        // Encrypt user IDs before passing to the view
+        $encryptedUsers = $users->map(function($user) {
+            $user->encrypted_id = Crypt::encryptString($user->id); // Encrypt the ID
+            return $user;
+        });
+
         return view('users.list', [
-            'users' => $users
+            'users' => $encryptedUsers
         ]);
     }
 
@@ -47,51 +53,50 @@ class UserController extends Controller implements HasMiddleware
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    // Validation
-    $request->validate([
-        'name' => 'required|string|min:3|max:255',
-        'email' => 'required|email|unique:users,email',
-        'phone' => 'required|string|unique:users,phone|max:15', // Max length added for phone
-        'department' => 'required|string|max:255', // Removed unique constraint if department repeats
-         'semester' => 'required|integer|min:1|max:10',
-        'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|string|exists:roles,name', // Role validation
-    ]);
+    {
+        // Validation
+        $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|unique:users,phone|max:15',
+            'department' => 'required|string|max:255',
+            'semester' => 'required|integer|min:1|max:10',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|string|exists:roles,name',
+        ]);
 
-    // Create User
-    $user = new User();
-    $user->name = $request->name;
-    $user->email = $request->email;
-    $user->phone = $request->phone; // Save phone
-    $user->department = $request->department; // Save department
-    $user->semester = $request->semester;
-    $user->password = bcrypt($request->password);
-    $user->save();
+        // Create User
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->department = $request->department;
+        $user->semester = $request->semester;
+        $user->password = bcrypt($request->password);
+        $user->save();
 
-    // Assign role to the user
-    $user->assignRole($request->role);
+        // Assign role to the user
+        $user->assignRole($request->role);
 
-    // Redirect with success message
-    return redirect()->route('users.list')->with('success', 'User created successfully!');
-}
-
-
-
+        // Redirect with success message
+        return redirect()->route('users.list')->with('success', 'User created successfully!');
+    }
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        // Handle showing the specific user if needed
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
+        // Decrypt the ID
+        $id = Crypt::decryptString($encryptedId);
 
         $user = User::findOrFail($id);
         $roles = Role::orderBy('name', 'ASC')->get();
@@ -106,49 +111,49 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-{
-    $user = User::findOrFail($id);
+    public function update(Request $request, string $encryptedId)
+    {
+        // Decrypt the ID
+        $id = Crypt::decryptString($encryptedId);
 
-    $validator = Validator::make($request->all(), [
-        'name' => 'required|min:3|max:255',
-        'email' => 'required|email|unique:users,email,' . $id . ',id',
-        'phone' => 'required|string|max:15|unique:users,phone,' . $id . ',id',
-        'department' => 'required|string|max:255',
-        'semester' => $user->hasRole('student') ? 'required|integer|min:1|max:10' : 'nullable',
-        'role' => 'nullable|array',
-        'role.*' => 'exists:roles,name',
-    ]);
+        $user = User::findOrFail($id);
 
-    if ($validator->fails()) {
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    try {
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'department' => $request->department,
-            'semester' => $user->hasRole('student') ? $request->semester : null,
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'phone' => 'required|string|max:15',
+            'department' => 'required|string',
+            'semester' => $request->has('role') && in_array('student', $request->role)
+                ? 'required|integer|min:1|max:8'
+                : 'nullable',
+            'role' => 'required|array',
+            'role.*' => 'string|exists:roles,name',
         ]);
 
-        $user->syncRoles($request->role ?? []);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->department = $request->department;
+        $user->semester = $request->has('role') && in_array('student', $request->role)
+            ? $request->semester
+            : null; // Handle semester for non-student roles
 
-        return redirect()->route('users.list')->with('success', 'User updated successfully!');
-    } catch (\Exception $e) {
-        \Log::error('User Update Error: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Failed to update user: ' . $e->getMessage())->withInput();
+        $user->save();
+
+        $roles = Role::whereIn('name', $request->role)->pluck('id');
+        $user->roles()->sync($roles);
+
+        return redirect()->route('users.list')->with('success', 'User updated successfully.');
     }
-}
-
-
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $encryptedId)
     {
+        // Decrypt the ID
+        $id = Crypt::decryptString($encryptedId);
+
         // Find the user by ID
         $user = User::findOrFail($id);
 

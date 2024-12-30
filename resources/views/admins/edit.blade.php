@@ -17,11 +17,11 @@
             <a href="{{ route('admins.index') }}" class="btn btn-primary btn-sm float-end">Back</a>
         </div>
         <div class="card-body">
-            <form action="{{ route('admins.update', $admin->id) }}" method="POST">
+            <form action="{{ route('admins.update', Crypt::encryptString($admin->id)) }}" method="POST">
                 @csrf
                 @method('POST')
 
-                <!-- Faculty Name Field -->
+                <!-- Name Field -->
                 <div class="form-group mb-3">
                     <label for="name" class="form-label font-weight-bold">Name</label>
                     <input type="text" name="name" id="name" class="form-control"
@@ -31,7 +31,7 @@
                     @enderror
                 </div>
 
-                <!-- Faculty Email Field -->
+                <!-- Email Field -->
                 <div class="form-group mb-3">
                     <label for="email" class="form-label font-weight-bold">Email</label>
                     <input type="email" name="email" id="email" class="form-control"
@@ -41,7 +41,7 @@
                     @enderror
                 </div>
 
-                <!-- faculty Phone Field -->
+                <!-- Phone Field -->
                 <div class="form-group mb-3">
                     <label for="phone" class="form-label font-weight-bold">Phone</label>
                     <input type="text" name="phone" id="phone" class="form-control"
@@ -51,11 +51,63 @@
                     @enderror
                 </div>
 
-                <!-- faculty Department Field -->
+                <!-- Department Field -->
                 <div class="form-group mb-3">
                     <label for="department" class="form-label font-weight-bold">Department</label>
-                    <input type="text" name="department" id="department" class="form-control"
-                        placeholder="Enter department" value="{{ old('department', $admin->department) }}" required>
+                    <select name="department" id="department" class="form-select" required>
+                        <option value="" disabled>Select Department</option>
+                        <option value="Applied Psychology" {{ old('department', $admin->department) == 'Applied Psychology' ? 'selected' : '' }}>
+                            Department of Applied Psychology
+                        </option>
+                        <option value="Computer Science" {{ old('department', $admin->department) == 'Computer Science' ? 'selected' : '' }}>
+                            Department of Computer Science
+                        </option>
+                        <option value="B.voc(Software Development)" {{ old('department', $admin->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
+                            Department of B.voc (Software Development)
+                        </option>
+                        <option value="Economics" {{ old('department', $admin->department) == 'Economics' ? 'selected' : '' }}>
+                            Department of Economics
+                        </option>
+                        <option value="English" {{ old('department', $admin->department) == 'English' ? 'selected' : '' }}>
+                            Department of English
+                        </option>
+                        <option value="Environmental Studies" {{ old('department', $admin->department) == 'Environmental Studies' ? 'selected' : '' }}>
+                            Department of Environmental Studies
+                        </option>
+                        <option value="Commerce" {{ old('department', $admin->department) == 'Commerce' ? 'selected' : '' }}>
+                            Department of Commerce
+                        </option>
+                        <option value="Punjabi" {{ old('department', $admin->department) == 'Punjabi' ? 'selected' : '' }}>
+                            Department of Punjabi
+                        </option>
+                        <option value="Hindi" {{ old('department', $admin->department) == 'Hindi' ? 'selected' : '' }}>
+                            Department of Hindi
+                        </option>
+                        <option value="History" {{ old('department', $admin->department) == 'History' ? 'selected' : '' }}>
+                            Department of History
+                        </option>
+                        <option value="Management Studies" {{ old('department', $admin->department) == 'Management Studies' ? 'selected' : '' }}>
+                            Department of Management Studies
+                        </option>
+                        <option value="Mathematics" {{ old('department', $admin->department) == 'Mathematics' ? 'selected' : '' }}>
+                            Department of Mathematics
+                        </option>
+                        <option value="Philosophy" {{ old('department', $admin->department) == 'Philosophy' ? 'selected' : '' }}>
+                            Department of Philosophy
+                        </option>
+                        <option value="Physical Education" {{ old('department', $admin->department) == 'Physical Education' ? 'selected' : '' }}>
+                            Department of Physical Education
+                        </option>
+                        <option value="Political Science" {{ old('department', $admin->department) == 'Political Science' ? 'selected' : '' }}>
+                            Department of Political Science
+                        </option>
+                        <option value="Statistics" {{ old('department', $admin->department) == 'Statistics' ? 'selected' : '' }}>
+                            Department of Statistics
+                        </option>
+                        <option value="B.voc(Banking)" {{ old('department', $admin->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
+                            Department of B.voc (Banking)
+                        </option>
+                    </select>
                     @error('department')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror

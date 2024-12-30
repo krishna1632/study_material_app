@@ -18,40 +18,40 @@
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Sl No.</th>
                         <th>Name</th>
                         <th>Role</th>
                         <th>Email</th>
-                        <th>Phone</th> <!-- Added Phone -->
-                        <th>Department</th> <!-- Added Department -->
+                        <th>Phone</th>
+                        <th>Department</th>
                         <th>Created At</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if ($super->isNotEmpty())
-                        @foreach ($super as $super)
+                        @foreach ($super as $index => $admin)
                             <tr>
-                                <td>{{ $super->id }}</td>
-                                <td>{{ $super->name }}</td>
-                                <td>{{ $super->roles->pluck('name')->implode(', ') }}</td>
-                                <td>{{ $super->email }}</td>
-                                <td>{{ $super->phone }}</td> <!-- Display Phone -->
-                                <td>{{ $super->department }}</td> <!-- Display Department -->
-                                <td>{{ \Carbon\Carbon::parse($super->created_at)->format('d M, Y') }}</td>
+                                <td>{{ $index+1 }}</td> <!-- Display Encrypted ID -->
+                                <td>{{ $admin->name }}</td>
+                                <td>{{ $admin->roles->pluck('name')->implode(', ') }}</td>
+                                <td>{{ $admin->email }}</td>
+                                <td>{{ $admin->phone }}</td>
+                                <td>{{ $admin->department }}</td>
+                                <td>{{ \Carbon\Carbon::parse($admin->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('superadminView.show', $super->id) }}"
-                                        class="btn btn-info btn-sm">View</a>
+                                    <a href="{{ route('superadminView.show', $admin->encrypted_id) }}" 
+                                       class="btn btn-info btn-sm">View</a>
                                     @can('edit superadmins')
-                                        <a href="{{ route('superadminView.edit', $super->id) }}"
-                                            class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="{{ route('superadminView.edit', $admin->encrypted_id) }}" 
+                                           class="btn btn-sm btn-warning">Edit</a>
                                     @endcan
                                     @can('delete superadmins')
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="confirmDelete({{ $super->id }})">Delete</button>
-                                        <form id="delete-form-{{ $super->id }}"
-                                            action="{{ route('superadminView.destroy', $super->id) }}" method="POST"
-                                            style="display: none;">
+                                        <button type="button" class="btn btn-danger btn-sm" 
+                                                onclick="confirmDelete('{{ $admin->encrypted_id }}')">Delete</button>
+                                        <form id="delete-form-{{ $admin->encrypted_id }}" 
+                                              action="{{ route('superadminView.destroy', $admin->encrypted_id) }}" 
+                                              method="POST" style="display: none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -74,7 +74,7 @@
 
     <!-- SweetAlert Confirmation for Delete -->
     <script>
-        function confirmDelete(superadminId) {
+        function confirmDelete(encryptedId) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -85,8 +85,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Submit the delete form
-                    document.getElementById('delete-form-' + superadminId).submit();
+                    document.getElementById('delete-form-' + encryptedId).submit();
                 }
             });
         }
