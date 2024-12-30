@@ -3,6 +3,7 @@
 @section('title', 'Syllabus')
 
 @section('content')
+
     <h1 class="mt-4">Syllabus</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ url('/superadmin/dashboard') }}">Dashboard</a></li>

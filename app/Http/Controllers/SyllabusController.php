@@ -47,6 +47,10 @@ class SyllabusController extends Controller implements HasMiddleware
                         ->orWhere('department', 'ELECTIVE');
                   });
         })->get();
+
+        $syllabus = $syllabus->sortBy(function ($item) {
+            return $item->subject_type === 'CORE' ? 0 : 1; // CORE gets priority (0)
+        });
     } else {
         // Default: No data
         $syllabus = [];
