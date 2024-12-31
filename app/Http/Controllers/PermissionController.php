@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Crypt;
 
 class PermissionController extends Controller implements HasMiddleware
 {

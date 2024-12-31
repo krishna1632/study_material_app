@@ -90,30 +90,33 @@ class RoadmapsController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        // Validate the request
+        // Validate the incoming request data
         $validated = $request->validate([
             'department' => 'required|string|max:255',
             'title' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,doc,docx|max:2048', // Allow specific file types
+            'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // Optional file upload
             'description' => 'required|string',
         ]);
 
-        // Handle file upload
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('roadmaps', 'public'); // Store file in storage/app/public/roadmaps
+
+        try {
+            // Handle file upload
+            $filePath = $request->file('file')->store('roadmaps', 'public');
+
+            Roadmaps::create([
+                'department' => $validated['department'],
+                'title' => $validated['title'],
+                'file' => $filePath,
+                'description' => $validated['description'],
+            ]);
+
+            // Redirect back with a success message
+            return redirect()->route('roadmaps.index')->with('success', 'Roadmap added successfully!');
+        } catch (\Exception $e) {
+            // Handle errors and redirect back with an error message
+            return redirect()->back()->withErrors(['error' => 'An error occurred while adding the roadmap. Please try again later.']);
         }
-
-        // Create a new roadmap
-        Roadmaps::create([
-            'department' => $validated['department'],
-            'title' => $validated['title'],
-            'file' => $filePath ?? null,
-            'description' => $validated['description'],
-        ]);
-
-        return redirect()->route('roadmaps.index')->with('success', 'Roadmap added successfully!');
     }
-
 
 
     /**

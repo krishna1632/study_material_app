@@ -17,6 +17,7 @@
         <div class="card-body">
             <form action="{{ route('roadmaps.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('POST')
                 <div class="mb-3">
                     <label for="department" class="form-label">Department</label>
                     @if (count($departments) > 1)
