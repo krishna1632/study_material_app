@@ -32,21 +32,27 @@
                         <option value="" disabled selected>Select Subject Name</option>
                     </select>
                 </div>
+                <div class="mb-3">
+                    <button type="submit" id="fetch-materials" class="btn btn-primary" disabled>Fetch Study
+                        Materials</button>
+                </div>
             </form>
         </div>
+    </div>
+
+    <div id="study-materials-container" class="mt-4">
+        <!-- Study materials will be displayed here -->
     </div>
 
     <script>
         document.getElementById('subject_type').addEventListener('change', function() {
             const subjectType = this.value;
-            const semester = @json(auth()->user()->semester); // Get the logged-in student's semester
+            const semester = @json(auth()->user()->semester);
 
-            // Clear previous subject options
             const subjectNameDropdown = document.getElementById('subject_name');
             subjectNameDropdown.innerHTML = '<option value="" disabled selected>Fetching subjects...</option>';
             subjectNameDropdown.disabled = true;
 
-            // Fetch subjects based on the selected type and semester
             fetch(`/filter-subjects`, {
                     method: 'POST',
                     headers: {
@@ -59,7 +65,12 @@
                         department: 'Elective'
                     }),
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch subjects');
+                    }
+                    return response.json();
+                })
                 .then(subjects => {
                     subjectNameDropdown.innerHTML =
                         '<option value="" disabled selected>Select Subject Name</option>';
@@ -68,7 +79,56 @@
                     }
                     subjectNameDropdown.disabled = false;
                 })
-                .catch(error => console.error('Error fetching subjects:', error));
+                .catch(error => {
+                    console.error(error);
+                    subjectNameDropdown.innerHTML = '<option value="" disabled>No subjects found</option>';
+                });
+        });
+
+        // Enable button on subject_name change
+        document.getElementById('subject_name').addEventListener('change', function() {
+            const fetchMaterialsButton = document.getElementById('fetch-materials');
+            fetchMaterialsButton.disabled = !this.value; // Enable only if a value is selected
+        });
+
+        document.getElementById('fetch-materials').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission
+            const subjectId = document.getElementById('subject_name').value;
+            const materialsContainer = document.getElementById('study-materials-container');
+            materialsContainer.innerHTML = '<p>Fetching study materials...</p>';
+
+            fetch(`/fetch-study-materials/${subjectId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch study materials');
+                    }
+                    return response.json();
+                })
+                .then(materials => {
+                    if (materials.length > 0) {
+                        materialsContainer.innerHTML = materials.map(material => `
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">${material.subject_name}</h5>
+                                    <p class="card-text">${material.description || 'No description available'}</p>
+                                    <a href="/storage/${material.file}" class="btn btn-primary" target="_blank">Download</a>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        materialsContainer.innerHTML = '<p>No study materials available for this subject.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    materialsContainer.innerHTML = '<p>Error fetching study materials.</p>';
+                });
         });
     </script>
 @endsection

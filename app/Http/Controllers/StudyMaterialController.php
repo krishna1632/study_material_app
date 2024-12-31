@@ -93,21 +93,35 @@ class StudyMaterialController extends Controller
 
     public function filterSubjects(Request $request)
     {
-        // Validate the input
         $validated = $request->validate([
             'subject_type' => 'required|string',
             'department' => 'required|string',
             'semester' => 'required|integer',
         ]);
 
-        // Filter subjects for elective department and selected semester
+        // Fetch the subjects
         $subjects = Subject::where('subject_type', $validated['subject_type'])
             ->where('department', $validated['department'])
             ->where('semester', $validated['semester'])
             ->get();
 
-        // Return subjects as JSON response with id and name
+        if ($subjects->isEmpty()) {
+            return response()->json(['error' => 'No subjects found'], 404);
+        }
+
         return response()->json($subjects->pluck('subject_name', 'id'));
+    }
+
+    public function fetchStudyMaterials($subjectId)
+    {
+        // Check if subject exists
+        $studyMaterials = StudyMaterial::where('subject_name', $subjectId)->get();
+
+        if ($studyMaterials->isEmpty()) {
+            return response()->json(['error' => 'No study materials available'], 404);
+        }
+
+        return response()->json($studyMaterials, 200);
     }
     /**
      * Store a newly created resource in storage.
