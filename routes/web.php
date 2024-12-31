@@ -14,6 +14,7 @@ use App\Http\Controllers\ViewSuperAdminController;
 use App\Http\Controllers\ViewStudentController;
 use App\Http\Controllers\RoadmapsController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\StudyMaterialController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -129,11 +130,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/filter-subjects', [SyllabusController::class, 'filterSubjects'])->name('filter.subjects');
 
-    
-
-
-
-
     // Subjects
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
@@ -141,6 +137,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/subjects/{id}/edit', [SubjectController::class, 'edit'])->name('subjects.edit');
     Route::post('/subjects/{id}', [SubjectController::class, 'update'])->name('subjects.update');
     Route::delete('/subjects/{id}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
+
+    // Subjects
+    Route::get('/study_materials', [StudyMaterialController::class, 'index'])->name('study_materials.index');
+    Route::get('/study_materials/create', [StudyMaterialController::class, 'create'])->name('study_materials.create');
+    Route::post('/study_materials', [StudyMaterialController::class, 'store'])->name('study_materials.store');
+    Route::get('/study_materials/{id}/edit', [StudyMaterialController::class, 'edit'])->name('study_materials.edit');
+    Route::post('/study_materials/{id}', [StudyMaterialController::class, 'update'])->name('study_materials.update');
+    Route::delete('/study_materials/{id}', [StudyMaterialController::class, 'destroy'])->name('study_materials.destroy');
+    Route::get('/study_materials/elective', [StudyMaterialController::class, 'elective'])->name('study_materials.elective');
+
 });
 
 require __DIR__ . '/auth.php';

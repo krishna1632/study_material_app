@@ -38,10 +38,6 @@ class RoadmapsController extends Controller implements HasMiddleware
             // Agar role kuch aur ho, to department-wise filter karein
             $roadmaps = Roadmaps::where('department', $department)->get();
         }
-
-
-
-
         return view('roadmaps.index', compact('roadmaps'));
     }
 
