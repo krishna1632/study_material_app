@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\StudyMaterial;
 use App\Models\Subject;
 use App\Models\User;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -112,17 +113,38 @@ class StudyMaterialController extends Controller
         return response()->json($subjects->pluck('subject_name', 'id'));
     }
 
-    public function fetchStudyMaterials($subjectId)
-    {
-        // Check if subject exists
-        $studyMaterials = StudyMaterial::where('subject_name', $subjectId)->get();
+    /**
+     * Fetch study materials for a specific subject.
+     */
 
-        if ($studyMaterials->isEmpty()) {
-            return response()->json(['error' => 'No study materials available'], 404);
+    public function filterStudy(Request $request)
+    {
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|string',
+            'subject_name' => 'required|string',
+        ]);
+
+        // Fetch the filtered study materials with the required fields
+        $study = StudyMaterial::select('id', 'subject_type', 'department', 'semester', 'subject_name', 'faculty_name', 'file', 'description')
+            ->where('subject_type', $validated['subject_type'])
+            ->where('department', $validated['department'])
+            ->where('semester', $validated['semester'])
+            ->where('subject_name', $validated['subject_name'])
+            ->get();
+
+        // Check if no study material is found
+        if ($study->isEmpty()) {
+            return response()->json(['error' => 'No Study material found'], 404);
         }
 
-        return response()->json($studyMaterials, 200);
+        // Return the data as JSON
+        return response()->json($study);
     }
+
+
     /**
      * Store a newly created resource in storage.
      */

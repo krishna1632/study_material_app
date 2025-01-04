@@ -32,17 +32,22 @@
                         <option value="" disabled selected>Select Subject Name</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <button type="submit" id="fetch-materials" class="btn btn-primary" disabled>Fetch Study
-                        Materials</button>
-                </div>
             </form>
         </div>
     </div>
 
-    <div id="study-materials-container" class="mt-4">
-        <!-- Study materials will be displayed here -->
+    <div id="study-materials" class="mt-4">
+        <!-- Study materials will be dynamically loaded here -->
     </div>
+
+    <!-- Spinner for loading -->
+    <div id="loading-spinner" class="d-none text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         document.getElementById('subject_type').addEventListener('change', function() {
@@ -53,82 +58,88 @@
             subjectNameDropdown.innerHTML = '<option value="" disabled selected>Fetching subjects...</option>';
             subjectNameDropdown.disabled = true;
 
-            fetch(`/filter-subjects`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({
-                        subject_type: subjectType,
-                        semester: semester,
-                        department: 'Elective'
-                    }),
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch subjects');
-                    }
-                    return response.json();
-                })
-                .then(subjects => {
+            // Using AJAX to fetch subjects
+            $.ajax({
+                url: '/filter-subjects',
+                method: 'POST',
+                data: {
+                    subject_type: subjectType,
+                    semester: semester,
+                    department: 'ELECTIVE',
+                    _token: '{{ csrf_token() }}', // Include CSRF token
+                },
+                success: function(subjects) {
                     subjectNameDropdown.innerHTML =
                         '<option value="" disabled selected>Select Subject Name</option>';
                     for (const [id, name] of Object.entries(subjects)) {
                         subjectNameDropdown.innerHTML += `<option value="${id}">${name}</option>`;
                     }
                     subjectNameDropdown.disabled = false;
-                })
-                .catch(error => {
+                },
+                error: function(error) {
                     console.error(error);
-                    subjectNameDropdown.innerHTML = '<option value="" disabled>No subjects found</option>';
-                });
+                    subjectNameDropdown.innerHTML =
+                        '<option value="" disabled>No subjects found</option>';
+                }
+            });
         });
 
-        // Enable button on subject_name change
+
+
         document.getElementById('subject_name').addEventListener('change', function() {
-            const fetchMaterialsButton = document.getElementById('fetch-materials');
-            fetchMaterialsButton.disabled = !this.value; // Enable only if a value is selected
-        });
+            const subjectName = document.getElementById('subject_name').value;
 
-        document.getElementById('fetch-materials').addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent form submission
-            const subjectId = document.getElementById('subject_name').value;
-            const materialsContainer = document.getElementById('study-materials-container');
-            materialsContainer.innerHTML = '<p>Fetching study materials...</p>';
+            const subjectType = document.getElementById('subject_type').value;
+            const semester = @json(auth()->user()->semester);
+            const department = 'ELECTIVE';
 
-            fetch(`/fetch-study-materials/${subjectId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch study materials');
-                    }
-                    return response.json();
-                })
-                .then(materials => {
-                    if (materials.length > 0) {
-                        materialsContainer.innerHTML = materials.map(material => `
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">${material.subject_name}</h5>
-                                    <p class="card-text">${material.description || 'No description available'}</p>
-                                    <a href="/storage/${material.file}" class="btn btn-primary" target="_blank">Download</a>
-                                </div>
-                            </div>
-                        `).join('');
+            const studyMaterialsContainer = document.getElementById('study-materials');
+            studyMaterialsContainer.innerHTML = ''; // Clear previous results
+
+            // Show loading spinner
+            document.getElementById('loading-spinner').classList.remove('d-none');
+
+            // Using AJAX to fetch study materials
+            $.ajax({
+                url: '/filter-study',
+                method: 'POST',
+                data: {
+                    subject_type: subjectType,
+                    subject_name: subjectName,
+                    semester: semester,
+                    department: 'ELECTIVE',
+                    _token: '{{ csrf_token() }}', // Include CSRF token
+                },
+                success: function(studyMaterials) {
+                    document.getElementById('loading-spinner').classList.add('d-none');
+                    if (studyMaterials.length > 0) {
+                        let htmlContent = '<h3>Study Materials</h3>';
+                        htmlContent += '<ul class="list-group">';
+                        studyMaterials.forEach(material => {
+                            htmlContent += `
+                        <li class="list-group-item">
+                            <strong>${material.subject_name}</strong> - ${material.faculty_name}
+                            <p>${material.description || 'No description available'}</p>
+                            <a href="/storage/${material.file}" target="_blank" class="btn btn-primary btn-sm">Download</a>
+                        </li>`;
+                        });
+                        htmlContent += '</ul>';
+                        studyMaterialsContainer.innerHTML = htmlContent;
                     } else {
-                        materialsContainer.innerHTML = '<p>No study materials available for this subject.</p>';
+                        studyMaterialsContainer.innerHTML =
+                            '<p class="text-danger">No study materials found for the selected subject.</p>';
                     }
-                })
-                .catch(error => {
+                },
+                error: function(error) {
                     console.error(error);
-                    materialsContainer.innerHTML = '<p>Error fetching study materials.</p>';
-                });
+                    document.getElementById('loading-spinner').classList.add('d-none');
+                    studyMaterialsContainer.innerHTML =
+                        '<p class="text-danger">An error occurred while fetching study materials.</p>';
+                }
+            });
         });
     </script>
+
+
+
 @endsection

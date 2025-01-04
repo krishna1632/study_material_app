@@ -146,7 +146,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/study_materials/{id}', [StudyMaterialController::class, 'update'])->name('study_materials.update');
     Route::delete('/study_materials/{id}', [StudyMaterialController::class, 'destroy'])->name('study_materials.destroy');
     Route::get('/study_materials/elective', [StudyMaterialController::class, 'elective'])->name('study_materials.elective');
-    Route::get('/fetch-study-materials/{subjectId}', [StudyMaterialController::class, 'fetchStudyMaterials'])->name('study_materials.fetchStudyMaterials');
+    Route::post('/filter-study', [StudyMaterialController::class, 'filterStudy']);
+
+
+
 
 
 
