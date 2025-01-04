@@ -34,6 +34,7 @@
                 </div>
             </form>
         </div>
+
     </div>
 
     <div id="study-materials" class="mt-4">
@@ -87,8 +88,7 @@
 
 
         document.getElementById('subject_name').addEventListener('change', function() {
-            const subjectName = document.getElementById('subject_name').value;
-
+            const subjectName = this.value;
             const subjectType = document.getElementById('subject_type').value;
             const semester = @json(auth()->user()->semester);
             const department = 'ELECTIVE';
@@ -105,7 +105,7 @@
                 method: 'POST',
                 data: {
                     subject_type: subjectType,
-                    subject_name: subjectName,
+                    subject_name: 'Frontend Web Development',
                     semester: semester,
                     department: 'ELECTIVE',
                     _token: '{{ csrf_token() }}', // Include CSRF token
@@ -118,9 +118,11 @@
                         studyMaterials.forEach(material => {
                             htmlContent += `
                         <li class="list-group-item">
-                            <strong>${material.subject_name}</strong> - ${material.faculty_name}
+                            <p>Subject Name:-<strong>${material.subject_name}</strong></p>
+                            <p>Faculty Name:-:-<strong>${material.faculty_name}</strong></p>
+                             
                             <p>${material.description || 'No description available'}</p>
-                            <a href="/storage/${material.file}" target="_blank" class="btn btn-primary btn-sm">Download</a>
+                            <a href="/storage/${material.file}" target="_blank" class="btn btn-primary btn-sm">View File</a>
                         </li>`;
                         });
                         htmlContent += '</ul>';
