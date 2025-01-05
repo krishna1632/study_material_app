@@ -87,59 +87,65 @@
 
 
 
-        document.getElementById('subject_name').addEventListener('change', function() {
-            const subjectName = this.value;
-            const subjectType = document.getElementById('subject_type').value;
-            const semester = @json(auth()->user()->semester);
-            const department = 'ELECTIVE';
+        document.getElementById('subject_name').addEventListener('change', function () {
+    const selectedSubjectName = this.options[this.selectedIndex].text; // Get selected subject name
+    const subjectName = this.value; // Correct variable for subject ID
+    const subjectType = document.getElementById('subject_type').value;
+    const semester = @json(auth()->user()->semester);
+    const department = 'ELECTIVE';
 
-            const studyMaterialsContainer = document.getElementById('study-materials');
-            studyMaterialsContainer.innerHTML = ''; // Clear previous results
+    const studyMaterialsContainer = document.getElementById('study-materials');
+    studyMaterialsContainer.innerHTML = ''; // Clear previous results
 
-            // Show loading spinner
-            document.getElementById('loading-spinner').classList.remove('d-none');
+    // Show loading spinner
+    document.getElementById('loading-spinner').classList.remove('d-none');
 
-            // Using AJAX to fetch study materials
-            $.ajax({
-                url: '/filter-study',
-                method: 'POST',
-                data: {
-                    subject_type: subjectType,
-                    subject_name: 'Frontend Web Development',
-                    semester: semester,
-                    department: 'ELECTIVE',
-                    _token: '{{ csrf_token() }}', // Include CSRF token
-                },
-                success: function(studyMaterials) {
-                    document.getElementById('loading-spinner').classList.add('d-none');
-                    if (studyMaterials.length > 0) {
-                        let htmlContent = '<h3>Study Materials</h3>';
-                        htmlContent += '<ul class="list-group">';
-                        studyMaterials.forEach(material => {
-                            htmlContent += `
+    // Using AJAX to fetch study materials
+    $.ajax({
+        url: '/filter-study',
+        method: 'POST',
+        data: {
+            subject_type: subjectType,
+            subject_name: subjectName, // Fixed key
+            semester: semester,
+            department: department,
+            _token: '{{ csrf_token() }}', // Include CSRF token
+        },
+        success: function (studyMaterials) {
+            document.getElementById('loading-spinner').classList.add('d-none');
+            if (studyMaterials.data && studyMaterials.data.length > 0) {
+                let htmlContent = '<h3>Study Materials</h3>';
+                htmlContent += '<ul class="list-group">';
+                studyMaterials.data.forEach(material => {
+                    // Check if the subject name matches the selected subject
+                    if (material.subject_name === selectedSubjectName) {
+                        htmlContent += `
                         <li class="list-group-item">
-                            <p>Subject Name:-<strong>${material.subject_name}</strong></p>
-                            <p>Faculty Name:-:-<strong>${material.faculty_name}</strong></p>
-                             
+                            <p><strong>Subject Name:</strong> ${material.subject_name}</p>
+                            <p><strong>Faculty Name:</strong> ${material.faculty_name}</p>
                             <p>${material.description || 'No description available'}</p>
                             <a href="/storage/${material.file}" target="_blank" class="btn btn-primary btn-sm">View File</a>
                         </li>`;
-                        });
-                        htmlContent += '</ul>';
-                        studyMaterialsContainer.innerHTML = htmlContent;
-                    } else {
-                        studyMaterialsContainer.innerHTML =
-                            '<p class="text-danger">No study materials found for the selected subject.</p>';
                     }
-                },
-                error: function(error) {
-                    console.error(error);
-                    document.getElementById('loading-spinner').classList.add('d-none');
-                    studyMaterialsContainer.innerHTML =
-                        '<p class="text-danger">An error occurred while fetching study materials.</p>';
+                });
+                htmlContent += '</ul>';
+                studyMaterialsContainer.innerHTML = htmlContent;
+
+                if (htmlContent === '<h3>Study Materials</h3><ul class="list-group"></ul>') {
+                    studyMaterialsContainer.innerHTML = '<p class="text-danger">No study materials found for the selected subject.</p>';
                 }
-            });
-        });
+            } else {
+                studyMaterialsContainer.innerHTML = '<p class="text-danger">No study materials found for the selected subject.</p>';
+            }
+        },
+        error: function (error) {
+            console.error(error);
+            document.getElementById('loading-spinner').classList.add('d-none');
+            studyMaterialsContainer.innerHTML = '<p class="text-danger">An error occurred while fetching study materials.</p>';
+        }
+    });
+});
+
     </script>
 
 

@@ -33,6 +33,7 @@ class StudyMaterialController extends Controller
 
     public function elective()
     {
+        
         return view('study_materials.elective');
     }
 
@@ -117,33 +118,48 @@ class StudyMaterialController extends Controller
      * Fetch study materials for a specific subject.
      */
 
-    public function filterStudy(Request $request)
-    {
-        // Validate the incoming request data
-        $validated = $request->validate([
-            'subject_type' => 'required|string',
-            'department' => 'required|string',
-            'semester' => 'required|string',
-            'subject_name' => 'required|string',
-        ]);
+     public function filterStudy(Request $request)
+{
+    // Validate the incoming request data
+    $validated = $request->validate([
+        'subject_type' => 'required|string',
+        'department' => 'required|string',
+        'semester' => 'required|string',
+        'subject_name' => 'required|string',
+    ]);
 
-        // Fetch the filtered study materials with the required fields
-        $study = StudyMaterial::select('id', 'subject_type', 'department', 'semester', 'subject_name', 'faculty_name', 'file', 'description')
-            ->where('subject_type', $validated['subject_type'])
-            ->where('department', $validated['department'])
-            ->where('semester', $validated['semester'])
-            ->where('subject_name', $validated['subject_name'])
-            ->get();
+    // Trim subject_name to remove any extra spaces
+    $validated['subject_name'] = trim($validated['subject_name']);
 
-        // Check if no study material is found
-        if ($study->isEmpty()) {
-            return response()->json(['error' => 'No Study material found'], 404);
+    try {
+        $studyMaterials = StudyMaterial::where('subject_type', $validated['subject_type'])
+    ->where('department', $validated['department'])
+    ->where('semester', $validated['semester'])
+    
+    ->get();
+
+    
+
+        // Log the executed query
+    
+
+        // Check if any data is found
+        if ($studyMaterials->isEmpty()) {
+            \Log::info('No Study Materials Found:', ['filters' => $validated]);
+            return response()->json(['message' => 'No study materials found for the provided filters.'], 404);
         }
 
-        // Return the data as JSON
-        return response()->json($study);
-    }
+        // Return the filtered data as JSON
+        return response()->json(['data' => $studyMaterials], 200);
 
+    } catch (\Exception $e) {
+        // Log error details
+        \Log::error('Error in Filter Study:', ['error' => $e->getMessage()]);
+        return response()->json(['error' => 'An error occurred while fetching study materials.', 'details' => $e->getMessage()], 500);
+    }
+}
+
+     
 
     /**
      * Store a newly created resource in storage.
