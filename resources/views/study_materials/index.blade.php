@@ -8,19 +8,30 @@
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
         <li class="breadcrumb-item active">Study Materials</li>
     </ol>
-
+   
     <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-book me-1"></i>
-            Study Materials List
+   
+                
+           
+    <div class="card-header">
+    <i class="fas fa-book me-1"></i>
+    Study Materials List
 
-            <a href="{{ route('study_materials.create') }}" class="btn btn-primary btn-sm float-end">Add New Study
-                Material</a>
+    @can('create study material')
+        <a href="{{ route('study_materials.create') }}" class="btn btn-primary btn-sm float-end">
+            Add New Study Material
+        </a>
+    @endcan
+    @if (auth()->user()->hasRole('student'))
+    <a href="{{ route('study_materials.elective') }}" class="btn btn-primary btn-sm float-end me-2">
+        View Elective Study Material
+    </a>
 
-            <a href="{{ route('study_materials.elective') }}" class="btn btn-primary btn-sm float-end">View Elective Study
-                Material</a>
+@endif
 
-        </div>
+
+</div>
+
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
@@ -33,7 +44,9 @@
                         <th>Faculty Name</th>
                         <th>File</th>
                         <th>Description</th>
+                        @canany(['edit study material', 'delete study material'])
                         <th>Action</th>
+                        @endcanany
                     </tr>
                 </thead>
                 <tbody>
@@ -59,13 +72,13 @@
                                 {{-- <a href="{{ route('study_materials.show', $material->id) }}" class="btn btn-info btn-sm">
                                     View
                                 </a> --}}
-                                @can('edit study materials')
+                                @can('edit study material')
                                     <a href="{{ route('study_materials.edit', $material->id) }}"
                                         class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
                                 @endcan
-                                @can('delete study materials')
+                                @can('delete study material')
                                     <!-- Delete Form -->
                                     <form id="delete-form-{{ $material->id }}"
                                         action="{{ route('study_materials.destroy', $material->id) }}" method="POST"
@@ -81,6 +94,7 @@
                     @endforeach
                 </tbody>
             </table>
+           
         </div>
     </div>
 

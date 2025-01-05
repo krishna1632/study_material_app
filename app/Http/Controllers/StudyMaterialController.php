@@ -8,10 +8,24 @@ use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
 
-class StudyMaterialController extends Controller
+class StudyMaterialController extends Controller implements HasMiddleware
 {
+
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view study material', only: ['index']),
+            new Middleware('permission:edit study material', only: ['edit']),
+            new Middleware('permission:create study material', only: ['create']),
+            new Middleware('permission:delete study material', only: ['destroy']),
+           
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

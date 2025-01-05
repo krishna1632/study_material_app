@@ -10,10 +10,14 @@
     </ol>
 
     <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-book me-1"></i>
-            Filter Elective Study Materials
-        </div>
+    <div class="card-header">
+    <i class="fas fa-book me-1"></i>
+    Filter Elective Study Materials
+
+    <a href="{{ route('study_materials.index') }}" class="btn btn-secondary float-end">Cancel</a>
+</div>
+
+        
         <div class="card-body">
             <form id="filter-form">
                 <div class="mb-3">

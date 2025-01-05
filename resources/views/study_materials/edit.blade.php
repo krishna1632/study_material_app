@@ -106,4 +106,91 @@
             </form>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Trigger the subject filter based on selection changes
+            $('#subject_type, #department, #semester').change(function() {
+                var subjectType = $('#subject_type').val();
+                let department = $('#department').val();
+                var semester = $('#semester').val();
+
+                // Filter subjects based on the selected type
+                if (subjectType && department && semester) {
+                    $.ajax({
+                        url: "{{ route('filter.subjects') }}",
+                        method: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            subject_type: subjectType,
+                            department: department,
+                            semester: semester
+                        },
+                        success: function(data) {
+                            populateSubjects(data);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            alert('Error fetching subjects');
+                        }
+                    });
+                } else if (subjectType && semester) {
+                    // If only subject type and semester are selected
+                    $.ajax({
+                        url: "{{ route('filter.subjects') }}",
+                        method: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            subject_type: subjectType,
+                            semester: semester
+                        },
+                        success: function(data) {
+                            populateSubjects(data);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            alert('Error fetching subjects');
+                        }
+                    });
+                } else {
+                    // Reset subject dropdown if conditions are not met
+                    $('#subject_name').empty();
+                    $('#subject_name').append('<option value="" disabled selected>Select Subject</option>');
+                }
+            });
+
+            // Filter the department dropdown
+            $('#subject_type').change(function() {
+                var subjectType = $(this).val();
+                var departmentSelect = $('#department');
+
+                departmentSelect.empty(); // Clear existing options
+                departmentSelect.append('<option value="" disabled selected>Select Department</option>');
+
+                if (subjectType === 'CORE' || subjectType === 'DSE') {
+                    $.each(@json($departments), function(index, value) {
+                        if (value !== 'ELECTIVE') {
+                            departmentSelect.append('<option value="' + value + '">' + value +
+                                '</option>');
+                        }
+                    });
+                } else if (subjectType === 'VAC' || subjectType === 'SEC' || subjectType === 'GE' ||
+                    subjectType === 'AEC') {
+                    departmentSelect.append('<option value="ELECTIVE">ELECTIVE</option>');
+                }
+            });
+
+            // Populate subject dropdown
+            function populateSubjects(data) {
+                var subjectSelect = $('#subject_name');
+                subjectSelect.empty(); // Clear existing options
+                subjectSelect.append('<option value="" disabled selected>Select Subject</option>');
+
+                $.each(data, function(id, name) {
+                    subjectSelect.append('<option value="' + name + '">' + name + '</option>');
+                });
+            }
+        });
+    </script>
 @endsection
