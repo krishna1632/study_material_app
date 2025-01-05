@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Crypt;
 
 class RoleController extends Controller implements HasMiddleware
 {
@@ -80,63 +81,42 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
-    {
-        // Fetch the role by ID
-        $role = Role::findOrFail($id);
+    public function edit($encryptedId)
+{
+    $id = Crypt::decryptString($encryptedId);
+    $role = Role::findOrFail($id);
 
-        // Fetch the permissions directly from the role's relationship
-        $hasPermissions = $role->permissions->pluck('name');
+    $hasPermissions = $role->permissions->pluck('name');
+    $permissions = Permission::orderBy('name', 'ASC')->get();
 
-        // dd($hasPermissions);
+    return view('roles.edit', compact('role', 'permissions', 'hasPermissions'));
+}
 
-        // Fetch all available permissions to show in the edit form
-        $permissions = Permission::orderBy('name', 'ASC')->get();
-
-        // Pass the data to the edit view
-        return view('roles.edit', [
-
-            'role' => $role,
-            'permissions' => $permissions,
-            'hasPermissions' => $hasPermissions
-        ]);
-    }
 
     /**
      * Update the specified resource in storage.
      */
 
-    public function update(Request $request, $id)
-    {
-        // Fetch the role
-        $role = Role::findOrFail($id);
-
-        // Validate input
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:roles,name,' . $id . ',id', // Exclude current role name from unique check
-        ]);
-
-        if ($validator->passes()) {
-            // Update the role's name
-            $role->name = $request->name;
-            $role->save();
-
-            // Check if permissions are provided
-            if (!empty($request->permissions)) {
-                // Sync permissions (permissions array is provided)
-                $role->syncPermissions($request->permissions);
-            } else {
-                // If no permissions are selected, remove all permissions
-                $role->syncPermissions([]);
-            }
-
-            // Redirect back to roles index with success message
-            return redirect()->route('roles.index')->with('success', 'Role updated successfully');
-        } else {
-            // Redirect back to the form with validation errors
-            return redirect()->route('roles.edit', $id)->withInput()->withErrors($validator);
-        }
-    }
+     public function update(Request $request, $encryptedId)
+     {
+         $id = Crypt::decryptString($encryptedId);
+         $role = Role::findOrFail($id);
+     
+         $validator = Validator::make($request->all(), [
+             'name' => 'required|unique:roles,name,' . $id . ',id',
+         ]);
+     
+         if ($validator->passes()) {
+             $role->name = $request->name;
+             $role->save();
+     
+             $role->syncPermissions($request->permissions ?? []);
+             return redirect()->route('roles.index')->with('success', 'Role updated successfully');
+         } else {
+             return redirect()->route('roles.edit', $encryptedId)->withInput()->withErrors($validator);
+         }
+     }
+     
 
 
     /**

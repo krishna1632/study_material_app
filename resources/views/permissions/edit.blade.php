@@ -13,7 +13,8 @@
 
         <div class="card shadow-sm mt-4">
             <div class="card-body">
-                <form action="{{ route('permissions.update', $permission->id) }}" method="POST">
+            <form action="{{ route('permissions.update', Crypt::encrypt($permission->id)) }}" method="POST">
+
                     @csrf
                     
                     

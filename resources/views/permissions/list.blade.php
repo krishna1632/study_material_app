@@ -43,8 +43,8 @@
                                 <td>{{ \Carbon\Carbon::parse($permission->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
                                     @can('edit permissions')
-                                        <a href="{{ route('permissions.edit', $permission->id) }}"
-                                            class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="{{ route('permissions.edit', Crypt::encrypt($permission->id)) }}" class="btn btn-sm btn-warning">Edit</a>
+
                                     @endcan
                                     @can('delete permissions')
                                         <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST"

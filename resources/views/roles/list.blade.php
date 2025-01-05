@@ -47,7 +47,8 @@
                                 <td>{{ \Carbon\Carbon::parse($role->created_at)->format('d M, Y') }}</td>
                                 <td class="text-center">
                                     @can('edit roles')
-                                        <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="{{ route('roles.edit', Crypt::encryptString($role->id)) }}" class="btn btn-sm btn-warning">Edit</a>
+
                                     @endcan
                                     @can('delete roles')
                                         <form action="{{ route('roles.destroy', $role->id) }}" method="POST"

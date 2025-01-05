@@ -74,37 +74,42 @@ class PermissionController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
-
-
+        // Decrypt the encrypted ID
+        $id = Crypt::decrypt($encryptedId);
+    
+        // Find the permission by decrypted ID
         $permission = Permission::findOrFail($id);
+    
         return view('permissions.edit', [
-            'permission' => $permission
+            'permission' => $permission,
         ]);
-
     }
+    
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $permission = Permission::findOrFail($id);
+    public function update(Request $request, string $encryptedId)
+{
+    $id = Crypt::decrypt($encryptedId); // Decrypt the encrypted ID
+    $permission = Permission::findOrFail($id);
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:permissions,name,' . $id . '|min:3'
-        ]);
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|unique:permissions,name,' . $id . '|min:3',
+    ]);
 
-        if ($validator->passes()) {
-            $permission->name = $request->name;
-            $permission->save();
+    if ($validator->passes()) {
+        $permission->name = $request->name;
+        $permission->save();
 
-            return redirect()->route('permissions.index')->with('success', 'Permission updated successfully');
-        } else {
-            return redirect()->route('permissions.edit', $id)->withInput()->withErrors($validator);
-        }
+        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully');
+    } else {
+        return redirect()->route('permissions.edit', Crypt::encrypt($id))->withInput()->withErrors($validator);
     }
+}
+
 
 
     /**
