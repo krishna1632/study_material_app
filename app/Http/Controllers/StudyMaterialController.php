@@ -61,6 +61,8 @@ class StudyMaterialController extends Controller implements HasMiddleware
 
     public function elective()
     {
+       
+
         
         return view('study_materials.elective');
     }
@@ -110,7 +112,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
             ];
         } else {
             // If the user has other roles, show only their department
-            $departments = [$user->department];
+            $departments = [$user->department,'ELECTIVE'];
         }
 
         // Initial empty subject list

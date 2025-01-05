@@ -30,12 +30,16 @@
                         <option value="AEC">AEC</option>
                     </select>
                 </div>
+                
+
+               
                 <div class="mb-3">
                     <label for="subject_name" class="form-label">Subject Name</label>
                     <select id="subject_name" class="form-select" disabled>
                         <option value="" disabled selected>Select Subject Name</option>
                     </select>
                 </div>
+                
             </form>
         </div>
 
@@ -120,7 +124,9 @@
             if (studyMaterials.data && studyMaterials.data.length > 0) {
                 let htmlContent = '<h3>Study Materials</h3>';
                 htmlContent += '<ul class="list-group">';
-                studyMaterials.data.forEach(material => {
+                for (let i = 0; i < studyMaterials.data.length; i++) {
+                    const material = studyMaterials.data[i];
+                    
                     // Check if the subject name matches the selected subject
                     if (material.subject_name === selectedSubjectName) {
                         htmlContent += `
@@ -131,10 +137,11 @@
                             <a href="/storage/${material.file}" target="_blank" class="btn btn-primary btn-sm">View File</a>
                         </li>`;
                     }
-                });
+                }
                 htmlContent += '</ul>';
                 studyMaterialsContainer.innerHTML = htmlContent;
 
+                // If no materials are found, display a message
                 if (htmlContent === '<h3>Study Materials</h3><ul class="list-group"></ul>') {
                     studyMaterialsContainer.innerHTML = '<p class="text-danger">No study materials found for the selected subject.</p>';
                 }

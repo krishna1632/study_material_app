@@ -97,9 +97,11 @@
                     <a class="nav-link" href="{{ url('admin/upload_pyq') }}">
                         <i class="fas fa-upload"></i> PYQ
                     </a>
+                    @can('view study material')
                     <a class="nav-link" href="{{ route('study_materials.index') }}">
                         <i class="fas fa-book"></i> Study Materials
                     </a>
+                    @endcan
                     @can('view roadmaps')
                         <a class="nav-link" href="{{ route('roadmaps.index') }}">
                             <i class="fas fa-road"></i> RoadMaps
