@@ -33,12 +33,26 @@ class StudyMaterialController extends Controller implements HasMiddleware
     {
         $department = auth()->user()->department; // User ka department
         $semester = auth()->user()->semester; // User ka semester
+        $faculty_name = auth()->user()->name; // User ka semester
         $user = auth()->user(); // Currently logged-in user
 
         // Agar user ka role 'SuperAdmin' ya 'Admin' hai, to saare roadmaps dikhayenge
         if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin')) {
             $study_materials = StudyMaterial::all(); // Saare study_materials
-        } else {
+        }
+        
+        elseif($user->hasRole('Faculty')){
+            $study_materials = StudyMaterial::where(function($query) use ($department) {
+                $query->where('department', $department)
+                      ->orWhere('department', 'ELECTIVE');
+            })
+            ->where('faculty_name', $faculty_name)
+            ->get();
+            
+            
+        }
+        
+        else {
             // Agar role kuch aur ho, to department-wise filter karein
             $study_materials = StudyMaterial::where('department', $department)->where('semester', $semester)->get();
         }
