@@ -118,7 +118,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
         // Initial empty subject list
         $subjects = [];
 
-        return view('study_materials.create', compact('departments', 'subjects', 'faculties'));
+        return view('study_materials.create', compact('departments', 'subjects', 'faculties','roles'));
     }
 
 

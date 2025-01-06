@@ -1,64 +1,57 @@
 @extends('layouts.admin')
 
-@section('title', 'Study Materials')
+@section('title', 'Edit PYQ')
 
 @section('content')
-    <h1 class="mt-4">Add New Study Material</h1>
+    <h1 class="mt-4">Edit PYQ</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-        <li class="breadcrumb-item active">Add Study Material</li>
+        <li class="breadcrumb-item active">Edit Subject PYQ</li>
     </ol>
 
     <div class="card mb-4">
         <div class="card-header">
-            <i class="fas fa-plus-circle me-1"></i>
-            Add New Study Material
+            <i class="fas fa-edit me-1"></i>
+            Edit PYQ
         </div>
         <div class="card-body">
-            <form action="{{ route('study_materials.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('pyq.update', $pyq->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
-                <!-- Subject Type Field -->
+
+                <!-- Subject Type -->
                 <div class="mb-3">
-                    <label for="subject_type" class="form-label">Subject Type<font color="red">*</font></label>
-                    <select name="subject_type" id="subject_type" class="form-select" required>
-                        <option value="" disabled selected>Select Subject Type</option>
-
-                        <option value="CORE">CORE</option>
-                        <option value="SEC">SEC</option>
-                        <option value="VAC">VAC</option>
-                        <option value="AEC">AEC</option>
-                        <option value="GE">GE</option>
-                        <option value="DSE">DSE</option>
-
+                    <label for="subject_type" class="form-label">Subject Type</label>
+                    <select name="subject_type" id="subject_type" class="form-control" required>
+                        <option value="" disabled>Select Subject Type</option>
+                        <option value="CORE" {{ $pyq->subject_type == 'CORE' ? 'selected' : '' }}>CORE</option>
+                        <option value="SEC" {{ $pyq->subject_type == 'SEC' ? 'selected' : '' }}>SEC</option>
+                        <option value="VAC" {{ $pyq->subject_type == 'VAC' ? 'selected' : '' }}>VAC</option>
+                        <option value="GE" {{ $pyq->subject_type == 'GE' ? 'selected' : '' }}>GE</option>
+                        <option value="AEC" {{ $pyq->subject_type == 'AEC' ? 'selected' : '' }}>AEC</option>
+                        <option value="DSE" {{ $pyq->subject_type == 'DSE' ? 'selected' : '' }}>DSE</option>
                     </select>
                 </div>
 
-                <!-- Department Field -->
+                <!-- Department -->
                 <div class="mb-3">
-                    <label for="department" class="form-label">Department/Elective</label>
-                    <select name="department" id="department" class="form-control">
-                        <option value="" disabled selected>Select Department</option>
-                        @foreach ($departments as $dept)
-                            <option value="{{ $dept }}">{{ $dept }}</option>
+                    <label for="department" class="form-label">Department/ELECTIVE</label>
+                    <select name="department" id="department" class="form-control" required>
+                        <option value="" disabled>Select Department</option>
+                        @foreach ($departments as $department)
+                            <option value="{{ $department }}" {{ $pyq->department == $department ? 'selected' : '' }}>{{ $department }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- Semester Field -->
+                <!-- Semester -->
                 <div class="mb-3">
-                    <label for="semester" class="form-label">Semester<font color="red">*</font></label>
-                    <select name="semester" id="semester" class="form-select" required>
-                        <option value="" disabled selected>Select Semester</option>
-
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
+                    <label for="semester" class="form-label">Semester</label>
+                    <select name="semester" id="semester" class="form-control" required>
+                        <option value="" disabled>Select Semester</option>
+                        @for ($i = 1; $i <= 8; $i++)
+                            <option value="{{ $i }}" {{ $pyq->semester == $i ? 'selected' : '' }}>{{ $i }}</option>
+                        @endfor
                     </select>
                 </div>
 
@@ -66,9 +59,9 @@
                 <div class="mb-3">
                     <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
                     <select name="subject_name" id="subject_name" class="form-control" required>
-                        <option value="" disabled selected>Select Subject</option>
+                        <option value="" disabled>Select Subject</option>
                         @foreach ($subjects as $subject)
-                            <option value="{{ $subject }}">{{ $subject }}</option>
+                            <option value="{{ $subject->subject_name }}" {{ $pyq->subject_name == $subject ? 'selected' : '' }}>{{ $subject->subject_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -77,42 +70,55 @@
                 <div class="mb-3">
                     <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
                     <select name="faculty_name" id="faculty_name" class="form-control" required>
-                        <option value="" disabled selected>Select Faculty Name</option>
-                        
-                        <!-- Conditionally show the "Admin" option -->
+                        <option value="" disabled>Select Faculty Name</option>
                         @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
-                            <option value="Admin" class="admin-option">Admin</option>
+                            <option value="Admin" class="admin-option" {{ $pyq->faculty_name == 'Admin' ? 'selected' : '' }}>Admin</option>
                         @endif
-
                         @foreach ($faculties as $faculty)
-                            <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
+                            <option value="{{ $faculty->name }}" {{ $pyq->faculty_name == $faculty->name ? 'selected' : '' }}>{{ $faculty->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
-
-                <!-- File Upload Field -->
+                <!-- Year -->
                 <div class="mb-3">
-                    <label for="file" class="form-label">Upload File<font color="red">*</font></label>
-                    <input type="file" name="file" id="file" class="form-control" required>
+                    <label for="year" class="form-label">Year</label>
+                    <select name="year" id="year" class="form-control" required>
+                        <option value="" disabled>Select Year</option>
+                        @for ($i = 2015; $i <= 2025; $i++)
+                            <option value="{{ $i }}" {{ $pyq->year == $i ? 'selected' : '' }}>{{ $i }}</option>
+                        @endfor
+                    </select>
                 </div>
 
-                <!-- Description Field -->
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="description" id="description" rows="4" class="form-control"
-                        placeholder="Enter a brief description about the material" required></textarea>
-                </div>
+                
+                 <!-- File Upload Field -->
+                 <div class="mb-3">
+    <label for="file" class="form-label">Upload File (Optional)</label>
+    <input type="file" name="file" id="file" class="form-control">
+
+    <!-- Display the current file if it exists -->
+    @if($pyq->file)
+        <div>
+            <small>Current File: </small>
+            <a href="{{ asset('storage/' . $pyq->file) }}" target="_blank">View File</a>
+        </div>
+    @else
+        <small>No file uploaded.</small>
+    @endif
+</div>
+
 
                 <!-- Buttons -->
                 <div class="text-end">
-                    <a href="{{ route('study_materials.index') }}" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="{{ route('pyq.index') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Include SweetAlert Success Popup -->
     <!-- JavaScript Logic -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>

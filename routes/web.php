@@ -15,6 +15,7 @@ use App\Http\Controllers\ViewStudentController;
 use App\Http\Controllers\RoadmapsController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\StudyMaterialController;
+use App\Http\Controllers\PyqController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -151,8 +152,14 @@ Route::middleware('auth')->group(function () {
 
 
 
+    //PYQ
 
-
+    Route::get('/pyq', [PyqController::class, 'index'])->name('pyq.index');
+    Route::get('/pyq/create', [PyqController::class, 'create'])->name('pyq.create');
+    Route::post('/pyq', [PyqController::class, 'store'])->name('pyq.store');
+    Route::get('/pyq/{id}/edit', [PyqController::class, 'edit'])->name('pyq.edit');
+    Route::post('/pyq/{id}', [PyqController::class, 'update'])->name('pyq.update');
+    Route::delete('/pyqs/{id}', [PyqController::class, 'destroy'])->name('pyq.destroy');
 
 });
 
