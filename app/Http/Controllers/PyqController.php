@@ -66,62 +66,63 @@ class PyqController extends Controller
             ];
         } else {
             // If the user has other roles, show only their department
-            $departments = [$user->department,'ELECTIVE'];
+            $departments = [$user->department, 'ELECTIVE'];
         }
 
         // Initial empty subject list
         $subjects = [];
 
-        return view('pyq.create', compact('departments', 'subjects', 'faculties','roles'));
+        return view('pyq.create', compact('departments', 'subjects', 'faculties', 'roles'));
     }
 
 
-    
-    public function elective(){
-        return view ('pyq.elective');
+
+    public function elective()
+    {
+        return view('pyq.elective');
     }
 
-    
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-            // Validate incoming data
-            $validated = $request->validate([
-                'subject_type' => 'required|string',
-                'department' => 'required|string',
-                'semester' => 'required|integer',
-                'subject_name' => 'required|string',
-                'faculty_name' => 'required|string',
-                'year' => 'required|integer',
-                'file' => 'required|file|mimes:pdf,doc,docx|max:2048', // You can change file types or size as per your requirement
-            ]);
+    {
+        // Validate incoming data
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|integer',
+            'subject_name' => 'required|string',
+            'faculty_name' => 'required|string',
+            'year' => 'required|integer',
+            'file' => 'required|file|mimes:pdf,doc,docx|max:2048', // You can change file types or size as per your requirement
+        ]);
 
-            // Handle file upload
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $filePath = $file->storeAs('pyq_files', time() . '_' . $file->getClientOriginalName(), 'public');
-            } else {
-                return redirect()->back()->with('error', 'No file uploaded');
-            }
+        // Handle file upload
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filePath = $file->storeAs('pyq_files', time() . '_' . $file->getClientOriginalName(), 'public');
+        } else {
+            return redirect()->back()->with('error', 'No file uploaded');
+        }
 
-            // Create the new PYQ record in the database
-            $pyq = new Pyq();
-            $pyq->subject_type = $validated['subject_type'];
-            $pyq->department = $validated['department'];
-            $pyq->semester = $validated['semester'];
-            $pyq->subject_name = $validated['subject_name'];
-            $pyq->faculty_name = $validated['faculty_name'];
-            $pyq->year = $validated['year'];
-            $pyq->file = $filePath; // Save the file path
+        // Create the new PYQ record in the database
+        $pyq = new Pyq();
+        $pyq->subject_type = $validated['subject_type'];
+        $pyq->department = $validated['department'];
+        $pyq->semester = $validated['semester'];
+        $pyq->subject_name = $validated['subject_name'];
+        $pyq->faculty_name = $validated['faculty_name'];
+        $pyq->year = $validated['year'];
+        $pyq->file = $filePath; // Save the file path
 
-            // Save the PYQ record
-            $pyq->save();
+        // Save the PYQ record
+        $pyq->save();
 
-            // Redirect with success message
-            return redirect()->route('pyq.index')->with('success', 'PYQ added successfully');
-}
+        // Redirect with success message
+        return redirect()->route('pyq.index')->with('success', 'PYQ added successfully');
+    }
 
 
     /**
@@ -136,9 +137,9 @@ class PyqController extends Controller
      * Show the form for editing the specified resource.
      */
     /**
- * Show the form for editing the specified resource.
- */
-  /**
+     * Show the form for editing the specified resource.
+     */
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
@@ -165,10 +166,24 @@ class PyqController extends Controller
         if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
             // If Admin or SuperAdmin, show all departments
             $departments = [
-                'Applied Psychology', 'Computer Science', 'B.voc(Software Development)', 'Economics', 'English',
-                'Environmental Studies', 'Commerce', 'Punjabi', 'Hindi', 'History', 'Management Studies',
-                'Mathematics', 'Philosophy', 'Physical Education', 'Political Science', 'Statistics',
-                'B.voc(Banking Operations)', 'ELECTIVE',
+                'Applied Psychology',
+                'Computer Science',
+                'B.voc(Software Development)',
+                'Economics',
+                'English',
+                'Environmental Studies',
+                'Commerce',
+                'Punjabi',
+                'Hindi',
+                'History',
+                'Management Studies',
+                'Mathematics',
+                'Philosophy',
+                'Physical Education',
+                'Political Science',
+                'Statistics',
+                'B.voc(Banking Operations)',
+                'ELECTIVE',
             ];
         } else {
             // If the user has other roles, show only their department
@@ -183,28 +198,28 @@ class PyqController extends Controller
 
         // Pass the existing PYQ record, subjects, and other data to the edit view
         return view('pyq.edit', compact('pyq', 'departments', 'faculties', 'roles', 'subjects'));
-    }  
+    }
 
 
 
-    public function filterSubjects(Request $request)
+    public function filter_Subjects(Request $request)
     {
         $validated = $request->validate([
             'subject_type' => 'required|string',
             'department' => 'required|string',
             'semester' => 'required|integer',
         ]);
-    
+
         // Fetch the subjects based on the provided filters
         $subjects = Subject::where('subject_type', $validated['subject_type'])
             ->where('department', $validated['department'])
             ->where('semester', $validated['semester'])
             ->get();
-    
+
         if ($subjects->isEmpty()) {
             return response()->json([], 404); // Return an empty array with a 404 status if no subjects found
         }
-    
+
         // Map the subjects to return only the id and name
         $subjectData = $subjects->map(function ($subject) {
             return [
@@ -212,10 +227,10 @@ class PyqController extends Controller
                 'name' => $subject->subject_name,
             ];
         });
-    
+
         return response()->json($subjectData); // Return the subject data as JSON
     }
-    
+
 
 
     public function filterPyq(Request $request)
@@ -228,111 +243,108 @@ class PyqController extends Controller
             'subject_name' => 'required|string',
             'year' => 'required|integer', // Ensure year is validated
         ]);
-    
+
         // Trim subject_name to remove any extra spaces
         $validated['subject_name'] = trim($validated['subject_name']);
-    
+
         try {
             // Fetch PYQs based on the provided filters
             $pyqs = Pyq::where('subject_type', $validated['subject_type'])
                 ->where('department', $validated['department'])
                 ->where('semester', $validated['semester'])
-               
+
                 ->where('year', $validated['year']) // Add year filter
                 ->get();
-    
+
             // Log the executed query for debugging
-            \Log::info('PYQ Query Executed:', ['filters' => $validated]);
-    
+
             // Check if any data is found
             if ($pyqs->isEmpty()) {
-                \Log::info('No PYQs Found:', ['filters' => $validated]);
                 return response()->json(['message' => 'No PYQs found for the provided filters.'], 404);
             }
-    
+
             // Return the filtered data as JSON
             return response()->json(['data' => $pyqs], 200);
-    
+
         } catch (\Exception $e) {
             // Log error details
-            \Log::error('Error in Filter PYQ:', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'An error occurred while fetching PYQs.', 'details' => $e->getMessage()], 500);
         }
     }
-    
+
 
 
     /**
      * Update the specified resource in storage.
      */
-   /**
- * Update the specified resource in storage.
- */
-public function update(Request $request, string $id)
-{
-    // Validate incoming data
-    $validated = $request->validate([
-        'subject_type' => 'required|string',
-        'department' => 'required|string',
-        'semester' => 'required|integer',
-        'subject_name' => 'required|string',
-        'faculty_name' => 'required|string',
-        'year' => 'required|integer',
-        'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // File is optional during update
-    ]);
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        // Validate incoming data
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|integer',
+            'subject_name' => 'required|string',
+            'faculty_name' => 'required|string',
+            'year' => 'required|integer',
+            'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // File is optional during update
+        ]);
 
-    // Fetch the existing PYQ record
-    $pyq = Pyq::findOrFail($id);
+        // Fetch the existing PYQ record
+        $pyq = Pyq::findOrFail($id);
 
-    // Handle file upload (only if a new file is uploaded)
-    if ($request->hasFile('file')) {
-        // Delete the old file from the storage
-        if ($pyq->file) {
-            Storage::delete('public/' . $pyq->file);
+        // Handle file upload (only if a new file is uploaded)
+        if ($request->hasFile('file')) {
+            // Delete the old file from the storage
+            if ($pyq->file) {
+                Storage::delete('public/' . $pyq->file);
+            }
+
+            // Store the new file
+            $file = $request->file('file');
+            $filePath = $file->storeAs('pyq_files', time() . '_' . $file->getClientOriginalName(), 'public');
+        } else {
+            // If no new file is uploaded, keep the existing file path
+            $filePath = $pyq->file;
         }
 
-        // Store the new file
-        $file = $request->file('file');
-        $filePath = $file->storeAs('pyq_files', time() . '_' . $file->getClientOriginalName(), 'public');
-    } else {
-        // If no new file is uploaded, keep the existing file path
-        $filePath = $pyq->file;
+        // Update the PYQ record with new data
+        $pyq->subject_type = $validated['subject_type'];
+        $pyq->department = $validated['department'];
+        $pyq->semester = $validated['semester'];
+        $pyq->subject_name = $validated['subject_name'];
+        $pyq->faculty_name = $validated['faculty_name'];
+        $pyq->year = $validated['year'];
+        $pyq->file = $filePath; // Update the file path (or keep the old one if no new file is uploaded)
+
+        // Save the updated PYQ record
+        $pyq->save();
+
+        // Redirect with success message
+        return redirect()->route('pyq.index')->with('success', 'PYQ updated successfully');
     }
-
-    // Update the PYQ record with new data
-    $pyq->subject_type = $validated['subject_type'];
-    $pyq->department = $validated['department'];
-    $pyq->semester = $validated['semester'];
-    $pyq->subject_name = $validated['subject_name'];
-    $pyq->faculty_name = $validated['faculty_name'];
-    $pyq->year = $validated['year'];
-    $pyq->file = $filePath; // Update the file path (or keep the old one if no new file is uploaded)
-
-    // Save the updated PYQ record
-    $pyq->save();
-
-    // Redirect with success message
-    return redirect()->route('pyq.index')->with('success', 'PYQ updated successfully');
-}
 
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-{
-    // Fetch the PYQ record based on the ID
-    $pyq = Pyq::findOrFail($id);
+    {
+        // Fetch the PYQ record based on the ID
+        $pyq = Pyq::findOrFail($id);
 
-    // Delete the file from storage if it exists
-    if ($pyq->file) {
-        Storage::delete('public/' . $pyq->file); // Delete the file from the storage
+        // Delete the file from storage if it exists
+        if ($pyq->file) {
+            Storage::delete('public/' . $pyq->file); // Delete the file from the storage
+        }
+
+        // Delete the PYQ record from the database
+        $pyq->delete();
+
+        // Redirect with success message
+        return redirect()->route('pyq.index')->with('success', 'PYQ deleted successfully');
     }
-
-    // Delete the PYQ record from the database
-    $pyq->delete();
-
-    // Redirect with success message
-    return redirect()->route('pyq.index')->with('success', 'PYQ deleted successfully');
-}
 }
