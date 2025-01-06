@@ -35,6 +35,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
         $semester = auth()->user()->semester; // User ka semester
         $faculty_name = auth()->user()->name; // User ka semester
         $user = auth()->user(); // Currently logged-in user
+        $roles = $user->getRoleNames();
 
         // Agar user ka role 'SuperAdmin' ya 'Admin' hai, to saare roadmaps dikhayenge
         if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin')) {
@@ -56,7 +57,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
             // Agar role kuch aur ho, to department-wise filter karein
             $study_materials = StudyMaterial::where('department', $department)->where('semester', $semester)->get();
         }
-        return view('study_materials.index', compact('study_materials'));
+        return view('study_materials.index', compact('study_materials','roles'));
     }
 
     public function elective()

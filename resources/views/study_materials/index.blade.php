@@ -41,7 +41,9 @@
                         <th>Department</th>
                         <th>Semester</th>
                         <th>Subject Name</th>
+                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin')||$roles->contains('student'))
                         <th>Faculty Name</th>
+                        @endif
                         <th>File</th>
                         <th>Description</th>
                         @canany(['edit study material', 'delete study material'])
@@ -57,7 +59,10 @@
                             <td>{{ $material->department }}</td>
                             <td>{{ $material->semester }}</td>
                             <td>{{ $material->subject_name }}</td>
+
+                            @if ($roles->contains('Admin') || $roles->contains('SuperAdmin')||$roles->contains('student'))
                             <td>{{ $material->faculty_name }}</td>
+                            @endif
                             <td>
                                 @if ($material->file)
                                     <a href="{{ asset('storage/' . $material->file) }}" target="_blank">
