@@ -162,7 +162,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pyq/{id}', [PyqController::class, 'update'])->name('pyq.update');
     Route::delete('/pyq/{id}', [PyqController::class, 'destroy'])->name('pyq.destroy');
     Route::get('/pyq/elective', [PyqController::class, 'elective'])->name('pyq.elective');
-    Route::post('/filter-subjects', [PyqController::class, 'filterSubjects'])->name('filter.subjects');
+    
     Route::post('/filter-pyqs', [PyqController::class, 'filterPyq'])->name('filter.pyqs');
 
 });
