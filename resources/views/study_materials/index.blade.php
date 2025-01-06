@@ -27,7 +27,7 @@
         View Elective Study Material
     </a>
 
-@endif
+    @endif
 
 
 </div>

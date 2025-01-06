@@ -131,7 +131,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/syllabus/{id}', [SyllabusController::class, 'destroy'])->name('syllabus.destroy');
 
     Route::post('/filter-subjects', [SyllabusController::class, 'filterSubjects'])->name('filter.subjects');
-
+    
+    
     // Subjects
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
@@ -159,7 +160,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/pyq', [PyqController::class, 'store'])->name('pyq.store');
     Route::get('/pyq/{id}/edit', [PyqController::class, 'edit'])->name('pyq.edit');
     Route::post('/pyq/{id}', [PyqController::class, 'update'])->name('pyq.update');
-    Route::delete('/pyqs/{id}', [PyqController::class, 'destroy'])->name('pyq.destroy');
+    Route::delete('/pyq/{id}', [PyqController::class, 'destroy'])->name('pyq.destroy');
+    Route::get('/pyq/elective', [PyqController::class, 'elective'])->name('pyq.elective');
+    Route::post('/filter-subjects', [PyqController::class, 'filterSubjects'])->name('filter.subjects');
+    Route::post('/filter-pyqs', [PyqController::class, 'filterPyq'])->name('filter.pyqs');
 
 });
 

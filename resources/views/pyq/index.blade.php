@@ -14,6 +14,12 @@
             <i class="fas fa-map me-1"></i>
             PYQ List
             <a href="{{ route('pyq.create') }}" class="btn btn-primary btn-sm float-end">Add New PYQ</a>
+
+            <a href="{{ route('pyq.elective') }}" class="btn btn-primary btn-sm float-end me-2">
+                View Elective PYQ
+            </a>
+
+       
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">

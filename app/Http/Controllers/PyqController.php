@@ -76,27 +76,12 @@ class PyqController extends Controller
     }
 
 
-
-    public function filterSubjects(Request $request)
-    {
-        $validated = $request->validate([
-            'subject_type' => 'required|string',
-            'department' => 'required|string',
-            'semester' => 'required|integer',
-        ]);
-
-        // Fetch the subjects
-        $subjects = Subject::where('subject_type', $validated['subject_type'])
-            ->where('department', $validated['department'])
-            ->where('semester', $validated['semester'])
-            ->get();
-
-        if ($subjects->isEmpty()) {
-            return response()->json(['error' => 'No subjects found'], 404);
-        }
-
-        return response()->json($subjects->pluck('subject_name', 'id'));
+    
+    public function elective(){
+        return view ('pyq.elective');
     }
+
+    
     /**
      * Store a newly created resource in storage.
      */
@@ -202,8 +187,79 @@ class PyqController extends Controller
 
 
 
-   
+    public function filterSubjects(Request $request)
+    {
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|integer',
+        ]);
+    
+        // Fetch the subjects based on the provided filters
+        $subjects = Subject::where('subject_type', $validated['subject_type'])
+            ->where('department', $validated['department'])
+            ->where('semester', $validated['semester'])
+            ->get();
+    
+        if ($subjects->isEmpty()) {
+            return response()->json([], 404); // Return an empty array with a 404 status if no subjects found
+        }
+    
+        // Map the subjects to return only the id and name
+        $subjectData = $subjects->map(function ($subject) {
+            return [
+                'id' => $subject->id,
+                'name' => $subject->subject_name,
+            ];
+        });
+    
+        return response()->json($subjectData); // Return the subject data as JSON
+    }
+    
 
+
+    public function filterPyq(Request $request)
+    {
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|string',
+            'subject_name' => 'required|string',
+            'year' => 'required|integer', // Ensure year is validated
+        ]);
+    
+        // Trim subject_name to remove any extra spaces
+        $validated['subject_name'] = trim($validated['subject_name']);
+    
+        try {
+            // Fetch PYQs based on the provided filters
+            $pyqs = Pyq::where('subject_type', $validated['subject_type'])
+                ->where('department', $validated['department'])
+                ->where('semester', $validated['semester'])
+               
+                ->where('year', $validated['year']) // Add year filter
+                ->get();
+    
+            // Log the executed query for debugging
+            \Log::info('PYQ Query Executed:', ['filters' => $validated]);
+    
+            // Check if any data is found
+            if ($pyqs->isEmpty()) {
+                \Log::info('No PYQs Found:', ['filters' => $validated]);
+                return response()->json(['message' => 'No PYQs found for the provided filters.'], 404);
+            }
+    
+            // Return the filtered data as JSON
+            return response()->json(['data' => $pyqs], 200);
+    
+        } catch (\Exception $e) {
+            // Log error details
+            \Log::error('Error in Filter PYQ:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching PYQs.', 'details' => $e->getMessage()], 500);
+        }
+    }
+    
 
 
     /**
