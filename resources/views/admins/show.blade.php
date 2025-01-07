@@ -3,7 +3,7 @@
 @section('title', 'View Admin')
 
 @section('content')
-    <h1 class="mt-4">View Admins</h1>
+    <h1 class="mt-4">View Admins Details</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ url('/superadmin/dashboard') }}">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{{ route('faculties.index') }}">Admin</a></li>
@@ -18,21 +18,21 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>ID:</strong> {{ $admin->id }}</p>
-                    <p><strong>Name:</strong> {{ $admin->name }}</p>
-                    <p><strong>Email:</strong> {{ $admin->email }}</p>
-                    <p><strong>Phone:</strong> {{ $admin->phone }}</p>
-                    <p><strong>Department:</strong> {{ $admin->department }}</p>
+                    <p><strong class="text-primary">ID:</strong> {{ $admin->id }}</p>
+                    <p><strong class="text-primary">Name:</strong> {{ $admin->name }}</p>
+                    <p><strong class="text-primary">Email:</strong> {{ $admin->email }}</p>
+                    <p><strong class="text-primary">Phone:</strong> {{ $admin->phone }}</p>
+                    <p><strong class="text-primary">Department:</strong> {{ $admin->department }}</p>
                 </div>
                 <div class="col-md-6">
                     <p><strong>Roles:</strong>
                         @foreach ($admin->roles as $role)
-                            <span class="badge bg-info">{{ $role->name }}</span>
+                            <span class="badge bg-danger">{{ $role->name }}</span>
                         @endforeach
                     </p>
                 </div>
             </div>
-            <a href="{{ route('admins.index') }}" class="btn btn-secondary btn-sm">Back to Faculty List</a>
+            <a href="{{ route('admins.index') }}" class="btn btn-secondary btn-sm">Back to Admin List</a>
         </div>
     </div>
 @endsection

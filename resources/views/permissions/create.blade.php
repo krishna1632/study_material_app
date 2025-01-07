@@ -6,8 +6,8 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between">
             <h2 class="font-weight-bold">Create Permission</h2>
-            <a href="{{ route('permissions.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fas fa-arrow-left"></i> Back
+            <a href="{{ route('permissions.index') }}" class="btn btn-secondary ">
+                 Back
             </a>
         </div>
 
@@ -40,4 +40,16 @@
             </div>
         </div>
     </div>
+    @if ($errors->has('name'))
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '{{ $errors->first('name') }}',
+                });
+            });
+        </script>
+    @endif
 @endsection

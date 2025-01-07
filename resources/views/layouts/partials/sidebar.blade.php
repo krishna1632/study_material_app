@@ -23,22 +23,26 @@
                             <i class="fas fa-users"></i> Users
                         </a>
                     @endcan
-                    @can('view faculties')
-                        <a class="nav-link" href="{{ url('/faculties') }}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                            Faculties
-                        </a>
-                    @endcan
-                    @can('view admins')
-                        <a class="nav-link" href="{{ url('/admins') }}">
-                            <i class="fas fa-user"></i> Admin
-                        </a>
-                    @endcan
                     @can('view superadmins')
                         <a class="nav-link" href="{{ url('/supers') }}">
                             <i class="fas fa-user-tag"></i> SuperAdmin
                         </a>
                     @endcan
+
+                    @can('view admins')
+                        <a class="nav-link" href="{{ url('/admins') }}">
+                            <i class="fas fa-user"></i> Admin
+                        </a>
+                    @endcan
+                    
+                    @can('view faculties')
+                        <a class="nav-link" href="{{ url('/faculties') }}">
+                            <div class="fas fa-users"><i class="fas fa-users"></i></div>
+                            Faculties
+                        </a>
+                    @endcan
+                   
+                    
                     @can('view students')
                         <a class="nav-link" href="{{ url('/students') }}">
                             <i class="fas fa-users"></i> Students

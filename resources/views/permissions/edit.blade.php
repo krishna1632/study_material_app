@@ -6,8 +6,8 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between">
             <h2 class="font-weight-bold">Edit Permission</h2>
-            <a href="{{ route('permissions.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fas fa-arrow-left"></i> Back
+            <a href="{{ route('permissions.index') }}" class="btn btn-secondary ">
+                 Back
             </a>
         </div>
 

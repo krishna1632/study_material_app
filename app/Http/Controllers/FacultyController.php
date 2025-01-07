@@ -114,6 +114,11 @@ class FacultyController extends Controller implements HasMiddleware
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'phone' => 'required|string|max:15|unique:users,phone,' . $id,
             'department' => 'required|string|max:255',
+            'semester' => $request->has('role') && in_array('student', $request->role)
+                ? 'required|integer|min:1|max:8'
+                : 'nullable',
+            'role' => 'required|array',
+            'role.*' => 'string|exists:roles,name',
         ]);
 
         // Update the faculty details

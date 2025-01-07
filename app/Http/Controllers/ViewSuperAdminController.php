@@ -100,40 +100,48 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
     {
         // Decrypt the ID
         $decryptedId = Crypt::decryptString($id);
-
-        // Find the SuperAdmin user
+    
+        // Find the user by ID
         $super = User::findOrFail($decryptedId);
-
-        // Validate the request data
+    
+        // Validate the incoming data
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $decryptedId,
             'phone' => 'required|string|max:15',
             'department' => 'required|string|max:255',
             'roles' => 'nullable|array',
-            'roles.*' => 'exists:roles,name',
+            'role' => 'required|array',
+            'role.*' => 'string|exists:roles,name',
+            'semester' => $request->has('role') && in_array('student', $request->role)
+                ? 'required|integer|min:1|max:8'
+                : 'nullable',
         ]);
-
-        // Update SuperAdmin details
+    
+        // Update the user details
         $super->update([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'department' => $request->department,
         ]);
-
-        // Sync roles if provided
-        if ($request->has('role')) {
-            $roles = $request->input('role'); // Array of role names
-            $super->syncRoles($roles); // Sync roles for the superadmin
+    
+        // Sync roles
+        $roles = $request->role ?? [];
+        $super->syncRoles($roles);
+    
+        // Update semester if the student role is selected
+        if (in_array('student', $roles)) {
+            $super->semester = $request->semester; // Save the semester value
         } else {
-            // If no roles are selected, remove all roles
-            $super->syncRoles([]);
+            $super->semester = null; // Clear semester if not a student
         }
-
-        // Redirect with success message
-        return redirect()->route('superadminView.index')->with('success', 'SuperAdmin updated successfully!');
+        $super->save();
+    
+        // Redirect back with a success message
+        return redirect()->route('superadminView.index')->with('success', 'User updated successfully!');
     }
+    
 
     /**
      * Remove the specified resource from storage.

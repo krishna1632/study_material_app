@@ -27,7 +27,8 @@ class UserController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $users = User::oldest()->paginate(10);
+        $users = User::oldest()->get();
+
 
         // Encrypt user IDs before passing to the view
         $encryptedUsers = $users->map(function($user) {
@@ -60,7 +61,7 @@ class UserController extends Controller implements HasMiddleware
             'email' => 'required|email|unique:users,email',
             'phone' => 'required|string|unique:users,phone|max:15',
             'department' => 'required|string|max:255',
-            'semester' => 'required|integer|min:1|max:10',
+            'semester' => 'nullable|integer|min:1|max:10',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string|exists:roles,name',
         ]);

@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Admin')
+@section('title', 'Edit SuperAdmin')
 
 @section('content')
-    <h1 class="mt-4">Edit Admin</h1>
+    <h1 class="mt-4">Edit SuperAdmin</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ url('/superadmin/dashboard') }}">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{{ route('users.list') }}">User Management</a></li>
@@ -121,8 +121,9 @@
                             @foreach ($roles as $role)
                                 <div class="form-check">
                                     <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
-                                        value="{{ $role->name }}" class="form-check-input"
-                                        {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
+                                        value="{{ $role->name }}" class="form-check-input role-checkbox"
+                                        {{ $hasRoles->contains($role->id) ? 'checked' : '' }}
+                                        data-role-name="{{ $role->name }}">
                                     <label for="role-{{ $role->id }}"
                                         class="form-check-label">{{ $role->name }}</label>
                                 </div>
@@ -131,6 +132,23 @@
                             <p class="text-muted">No roles available.</p>
                         @endif
                     </div>
+                </div>
+
+                <!-- Semester Field -->
+                <div class="form-group mb-3" id="semester-field" style="display: none;">
+                    <label for="semester" class="form-label font-weight-bold">Semester</label>
+                    <select name="semester" id="semester" class="form-select">
+                        <option value="" disabled>Select Semester</option>
+                        @foreach (range(1, 8) as $semester)
+                            <option value="{{ $semester }}"
+                                {{ old('semester', $super->semester ?? '') == $semester ? 'selected' : '' }}>
+                                 {{ $semester }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('semester')
+                        <span class="text-danger small">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Submit Button -->
@@ -145,19 +163,27 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- SweetAlert Success Popup -->
-    @if (session('success'))
-        <script>
-            window.onload = function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: "{{ session('success') }}",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                });
+    <!-- Show/Hide Semester Field -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const semesterField = document.getElementById('semester-field');
+            const roleCheckboxes = document.querySelectorAll('.role-checkbox');
+
+            // Function to toggle semester field
+            function toggleSemesterField() {
+                let isStudentChecked = Array.from(roleCheckboxes).some(checkbox =>
+                    checkbox.dataset.roleName === 'student' && checkbox.checked
+                );
+                semesterField.style.display = isStudentChecked ? 'block' : 'none';
             }
-        </script>
-    @endif
+
+            // Add event listener to checkboxes
+            roleCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', toggleSemesterField);
+            });
+
+            // Initial toggle on page load
+            toggleSemesterField();
+        });
+    </script>
 @endsection

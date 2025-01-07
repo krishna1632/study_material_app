@@ -131,6 +131,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/syllabus/{id}', [SyllabusController::class, 'destroy'])->name('syllabus.destroy');
 
     Route::post('/filter-subjects', [SyllabusController::class, 'filterSubjects'])->name('filter.subjects');
+   
     
     
     // Subjects
@@ -162,7 +163,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pyq/{id}', [PyqController::class, 'update'])->name('pyq.update');
     Route::delete('/pyq/{id}', [PyqController::class, 'destroy'])->name('pyq.destroy');
     Route::get('/pyq/elective', [PyqController::class, 'elective'])->name('pyq.elective');
-    
+    Route::post('/filter-subjects1', [SyllabusController::class, 'filter_Subjects'])->name('filter.subjects');
     Route::post('/filter-pyqs', [PyqController::class, 'filterPyq'])->name('filter.pyqs');
 
 });

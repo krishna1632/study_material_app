@@ -18,17 +18,17 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>ID:</strong> {{ $student->id }}</p>
-                    <p><strong>Name:</strong> {{ $student->name }}</p>
-                    <p><strong>Email:</strong> {{ $student->email }}</p>
-                    <p><strong>Phone:</strong> {{ $student->phone }}</p>
-                    <p><strong>Department:</strong> {{ $student->department }}</p>
-                    <p><strong>Created At:</strong> {{ \Carbon\Carbon::parse($student->created_at)->format('d M, Y') }}</p>
+                    <p><strong class="text-primary">ID:-</strong> {{ $student->id }}</p>
+                    <p><strong class="text-primary">Name:-</strong> {{ $student->name }}</p>
+                    <p><strong class="text-primary">Email:-</strong> {{ $student->email }}</p>
+                    <p><strong class="text-primary">Phone:-</strong> {{ $student->phone }}</p>
+                    <p><strong class="text-primary">Department:-</strong> {{ $student->department }}</p>
+                    <p><strong class="text-primary">Created At:-</strong> {{ \Carbon\Carbon::parse($student->created_at)->format('d M, Y') }}</p>
                 </div>
                 <div class="col-md-6">
                     <p><strong>Roles:</strong>
                         @foreach ($student->roles as $role)
-                            <span class="badge bg-info">{{ $role->name }}</span>
+                            <span class="badge bg-danger">{{ $role->name }}</span>
                         @endforeach
                     </p>
                 </div>

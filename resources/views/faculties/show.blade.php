@@ -3,7 +3,7 @@
 @section('title', 'View Faculty')
 
 @section('content')
-    <h1 class="mt-4">View Faculty</h1>
+    <h1 class="mt-4">View Faculty Details</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ url('/superadmin/dashboard') }}">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{{ route('faculties.index') }}">Faculty</a></li>
@@ -18,16 +18,16 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>ID:</strong> {{ $faculty->id }}</p>
-                    <p><strong>Name:</strong> {{ $faculty->name }}</p>
-                    <p><strong>Email:</strong> {{ $faculty->email }}</p>
-                    <p><strong>Phone:</strong> {{ $faculty->phone }}</p>
-                    <p><strong>Department:</strong> {{ $faculty->department }}</p>
+                    <p><strong class="text-primary">ID:-</strong> {{ $faculty->id }}</p>
+                    <p><strong class="text-primary">Name:-</strong> {{ $faculty->name }}</p>
+                    <p><strong class="text-primary">Email:-</strong> {{ $faculty->email }}</p>
+                    <p><strong class="text-primary">Phone:-</strong> {{ $faculty->phone }}</p>
+                    <p><strong class="text-primary">Department:-</strong> {{ $faculty->department }}</p>
                 </div>
                 <div class="col-md-6">
-                    <p><strong>Roles:</strong>
+                    <p><strong class="text-primary">Roles:</strong>
                         @foreach ($faculty->roles as $role)
-                            <span class="badge bg-info">{{ $role->name }}</span>
+                            <span class="badge bg-danger">{{ $role->name }}</span>
                         @endforeach
                     </p>
                 </div>

@@ -14,7 +14,7 @@
             <i class="fas fa-table me-1"></i>
             Roles List
 
-            <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm float-end">Add User</a>
+            <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm float-end">Add Role</a>
         </div>
 
         <div class="card-body">

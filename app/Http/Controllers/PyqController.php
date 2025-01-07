@@ -187,7 +187,7 @@ class PyqController extends Controller
 
 
 
-    public function filterSubjects(Request $request)
+    public function filter_Subjects(Request $request)
     {
         $validated = $request->validate([
             'subject_type' => 'required|string',

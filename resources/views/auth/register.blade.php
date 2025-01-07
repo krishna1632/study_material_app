@@ -130,11 +130,12 @@
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('users.list') }}" class="text-sm text-gray-600 hover:text-gray-900">
-                        Back index page
-                    </a>
+                <a href="{{ route('users.list') }}" class="btn btn-secondary">
+                     Cancel
+                </a>
                     <button type="submit" class="btn btn-primary">Register</button>
                 </div>
+             
             </form>
         </div>
     </div>

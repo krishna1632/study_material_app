@@ -113,16 +113,17 @@
                 </div>
 
 
+           
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">
                     <label for="roles" class="form-label font-weight-bold">Roles</label>
                     <div class="d-flex flex-wrap gap-3 mt-2">
                         @if ($roles->isNotEmpty())
                             @foreach ($roles as $role)
-                                @if ($role->name !== 'SuperAdmin') <!-- Exclude SuperAdmin role -->
+                                @if ($role->name !== 'SuperAdmin')
                                     <div class="form-check">
                                         <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
-                                            value="{{ $role->name }}" class="form-check-input"
+                                            value="{{ $role->name }}" class="form-check-input role-checkbox"
                                             {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
                                         <label for="role-{{ $role->id }}" class="form-check-label">{{ $role->name }}</label>
                                     </div>
@@ -132,6 +133,20 @@
                             <p class="text-muted">No roles available.</p>
                         @endif
                     </div>
+                </div>
+
+                <!-- Semester Field -->
+                <div class="mb-3" id="semester-field" style="{{ $hasRoles->contains('student') ? '' : 'display: none;' }}">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select name="semester" id="semester" class="form-select">
+                        <option value="" disabled>Select Semester</option>
+                        @for ($i = 1; $i <= 8; $i++)
+                            <option value="{{ $i }}" {{ old('semester', $faculty->semester) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                        @endfor
+                    </select>
+                    @error('semester')
+                        <div class="text-danger mt-2">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Submit Button -->
@@ -144,21 +159,27 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const roleCheckboxes = document.querySelectorAll('input.role-checkbox');
+            const semesterField = document.getElementById('semester-field');
 
-    <!-- SweetAlert Success Popup -->
-    @if (session('success'))
-        <script>
-            window.onload = function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: "{{ session('success') }}",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                });
+            function toggleSemesterField() {
+                // Check if "Student" role is selected
+                const isStudentSelected = Array.from(roleCheckboxes).some(checkbox =>
+                    checkbox.checked && checkbox.value === 'student'
+                );
+                // Show or hide the Semester field based on the selection
+                semesterField.style.display = isStudentSelected ? 'block' : 'none';
             }
-        </script>
-    @endif
+
+            // Attach event listeners to all role checkboxes
+            roleCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', toggleSemesterField);
+            });
+
+            // Initialize the visibility on page load
+            toggleSemesterField();
+        });
+    </script>
 @endsection

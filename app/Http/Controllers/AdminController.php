@@ -58,6 +58,7 @@ class AdminController extends Controller implements HasMiddleware
             'phone' => 'required|string|max:15',
             'department' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
+            
         ]);
 
         // Store the admin as a user
@@ -113,39 +114,54 @@ class AdminController extends Controller implements HasMiddleware
      */
 
 
-public function update(Request $request, string $encryptedId)
-{
-    // Decrypt the ID before fetching the user
-    $id = Crypt::decryptString($encryptedId);
-
-    $admin = User::findOrFail($id);
-
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255|unique:users,email,' . $id,
-        'phone' => 'required|string|max:15',
-        'department' => 'required|string|max:255',
-    ]);
-
-    // Update admin details
-    $admin->update([
-        'name' => $request->name,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'department' => $request->department,
-    ]);
-
-    // Update roles
-    if ($request->has('role')) {
-        $roles = $request->input('role'); // Array of role names
-        $admin->syncRoles($roles); // Sync roles for the admin
-    } else {
-        // If no roles are selected, remove all roles
-        $admin->syncRoles([]);
-    }
-
-    return redirect()->route('admins.index')->with('success', 'Admin updated successfully!');
-}
+     public function update(Request $request, string $encryptedId)
+     {
+         // Decrypt the ID before fetching the user
+         $id = Crypt::decryptString($encryptedId);
+     
+         $admin = User::findOrFail($id);
+     
+         // Validate the request
+         $request->validate([
+             'name' => 'required|string|max:255',
+             'email' => 'required|email|max:255|unique:users,email,' . $id,
+             'phone' => 'required|string|max:15',
+             'department' => 'required|string|max:255',
+             'semester' => $request->has('role') && in_array('student', $request->role) 
+                 ? 'required|integer|min:1|max:8' 
+                 : 'nullable',
+         ]);
+     
+         // Update admin details
+         $admin->update([
+             'name' => $request->name,
+             'email' => $request->email,
+             'phone' => $request->phone,
+             'department' => $request->department,
+         ]);
+     
+         // Update roles
+         if ($request->has('role')) {
+             $roles = $request->input('role'); // Array of role names
+             $admin->syncRoles($roles); // Sync roles for the admin
+         } else {
+             // If no roles are selected, remove all roles
+             $admin->syncRoles([]);
+         }
+     
+         // Update semester if applicable
+         if ($request->has('semester')) {
+             $admin->semester = $request->semester;
+             $admin->save();
+         } else {
+             // Clear semester if the role is not 'student'
+             $admin->semester = null;
+             $admin->save();
+         }
+     
+         return redirect()->route('admins.index')->with('success', 'Admin updated successfully!');
+     }
+     
 
     /**
      * Remove the specified resource from storage.

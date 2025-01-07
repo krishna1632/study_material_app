@@ -61,40 +61,41 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-       document.getElementById('subject_type').addEventListener('change', function () {
-    const subjectType = this.value;
-    const semester = @json(auth()->user()->semester);
+       document.getElementById('subject_type').addEventListener('change', function() {
+            const subjectType = this.value;
+            const semester = @json(auth()->user()->semester);
 
-    const subjectNameDropdown = document.getElementById('subject_name');
-    subjectNameDropdown.innerHTML = '<option value="" disabled selected>Fetching subjects...</option>';
-    subjectNameDropdown.disabled = true;
+            const subjectNameDropdown = document.getElementById('subject_name');
+            subjectNameDropdown.innerHTML = '<option value="" disabled selected>Fetching subjects...</option>';
+            subjectNameDropdown.disabled = true;
 
-    $.ajax({
-        url: '/filter-subjects', // Ensure this route points to your filterSubjects method
-        method: 'POST',
-        data: {
-            subject_type: subjectType,
-            semester: semester,
-            department: 'ELECTIVE',
-            _token: '{{ csrf_token() }}', // Include the CSRF token for POST requests
-        },
-        success: function (subjects) {
-            subjectNameDropdown.innerHTML = '<option value="" disabled selected>Select Subject Name</option>';
-            if (subjects.length > 0) {
-                subjects.forEach(subject => {
-                    subjectNameDropdown.innerHTML += `<option value="${subject.id}">${subject.name}</option>`;
-                });
-                subjectNameDropdown.disabled = false;
-            } else {
-                subjectNameDropdown.innerHTML = '<option value="" disabled>No subjects available</option>';
-            }
-        },
-        error: function (error) {
-            console.error(error);
-            subjectNameDropdown.innerHTML = '<option value="" disabled>Error fetching subjects</option>';
-        }
-    });
-});
+            // Using AJAX to fetch subjects
+            $.ajax({
+                url: '/filter-subjects',
+                method: 'POST',
+                data: {
+                    subject_type: subjectType,
+                    semester: semester,
+                    department: 'ELECTIVE',
+                    _token: '{{ csrf_token() }}', // Include CSRF token
+                },
+                success: function(subjects) {
+                    subjectNameDropdown.innerHTML =
+                        '<option value="" disabled selected>Select Subject Name</option>';
+                    for (const [id, name] of Object.entries(subjects)) {
+                        subjectNameDropdown.innerHTML += `<option value="${id}">${name}</option>`;
+                    }
+                    subjectNameDropdown.disabled = false;
+                },
+                error: function(error) {
+                    console.error(error);
+                    subjectNameDropdown.innerHTML =
+                        '<option value="" disabled>No subjects found</option>';
+                }
+            });
+        });
+
+
 document.getElementById('subject_name').addEventListener('change', function () {
     const selectedSubjectName = this.options[this.selectedIndex].text; // Get selected subject name
     const subjectName = this.value; // Correct variable for subject ID
