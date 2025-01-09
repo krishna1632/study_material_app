@@ -16,7 +16,7 @@
             Edit Subject
         </div>
         <div class="card-body">
-            <form action="{{ route('subjects.update', $subject->id) }}" method="POST">
+            <form action="{{ route('subjects.update', Crypt::encryptString($subject->id)) }}" method="POST">
                 @csrf
                 @method('POST') <!-- Corrected method -->
 
@@ -72,6 +72,20 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('duplicate_error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Duplicate Entry',
+                text: "{{ session('duplicate_error') }}",
+                showConfirmButton: true,
+            });
+        });
+    </script>
+    
+@endif
     <script>
         function toggleDepartmentOptions() {
             const subjectType = document.getElementById('subject_type').value;

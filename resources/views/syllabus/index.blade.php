@@ -23,7 +23,9 @@
                 <thead>
                     <tr>
                         <th>Subject Type</th>
-                        <th>Department</th>
+                        @if (!auth()->user()->hasRole('student'))
+                          <th>Department</th>
+                        @endif
                         <th>Semester</th>
                         <th>Subject Name</th>
                         <th>File</th>
@@ -34,7 +36,10 @@
                     @foreach ($syllabus as $material)
                         <tr>
                             <td>{{ $material->subject_type }}</td>
+                            @if (!auth()->user()->hasRole('student'))
                             <td>{{ $material->department }}</td>
+                            @endif
+                            
                             <td>{{ $material->semester }}</td>
                             <td>{{ $material->subject_name }}</td>
                             <td>
@@ -47,24 +52,24 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('syllabus.show',$material->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('syllabus.show',Crypt::encryptString($material->id)) }}" class="btn btn-info btn-sm">
                                     View
                                 </a>
                                 @can('edit syllabus')
-                                <a href="{{ route('syllabus.edit',$material->id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('syllabus.edit',Crypt::encryptString($material->id)) }}" class="btn btn-warning btn-sm">
                                     Edit
                                 </a>
                                 @endcan
-                                @can('delete sylabus')
-                                <form id="delete-form-{{ $material->id }}" action="{{ route('syllabus.destroy',$material->id) }}" method="POST" style="">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm"
-                                    onclick="confirmDelete({{ $material->id }})">
-                                    Delete
+                                @can('delete syllabus')
+                                    <form id="delete-form-{{ $material->id }}" action="{{ route('syllabus.destroy', $material->id) }}" method="POST" style="display: none;">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $material->id }})">
+                                        Delete
                                     </button>
-                                </form>
                                 @endcan
+
                             </td>
                         </tr>
                     @endforeach
@@ -94,20 +99,22 @@
 
     <!-- SweetAlert Confirmation for Delete -->
     <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`delete-form-${id}`).submit();
-                }
-            });
-        }
-    </script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Trigger form submission
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
+    }
+</script>
+
 @endsection

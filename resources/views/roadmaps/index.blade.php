@@ -45,11 +45,11 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('roadmaps.show', $roadmap->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('roadmaps.show', Crypt::encryptString($roadmap->id)) }}" class="btn btn-info btn-sm">
                                     View
                                 </a>
                                 @can('edit roadmaps')
-                                    <a href="{{ route('roadmaps.edit', $roadmap->id) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ route('roadmaps.edit', Crypt::encryptString($roadmap->id)) }}" class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
                                 @endcan

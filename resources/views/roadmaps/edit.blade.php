@@ -16,7 +16,7 @@
             Edit Roadmap Details
         </div>
         <div class="card-body">
-            <form action="{{ route('roadmaps.update', $roadmap->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('roadmaps.update', Crypt::encryptString($roadmap->id)) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST') <!-- Correct HTTP Method for Update -->
 

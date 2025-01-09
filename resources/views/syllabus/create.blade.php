@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-
+@section('title', 'Syllabus')
 @section('content')
 <div class="page-wrapper" style="margin-top:3rem;">
     <div class="page-content">
@@ -22,7 +22,7 @@
 
                         <!-- Department -->
                         <div class="col-md-6">
-                            <label for="department">Department/Elective</label>
+                            <label for="department">Department/Elective<font color="red">*</font></label>
                             <select name="department" id="department" class="form-control">
                                 <option value="" disabled selected>Select Department</option>
                                 @foreach ($departments as $dept)
@@ -84,7 +84,7 @@ $(document).ready(function() {
         // Logic to filter subjects based on the selected type
         if (subjectType && department && semester) {
             $.ajax({
-                url: "{{ route('filter.subjects') }}",
+                url: "/filter-subjects",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
@@ -105,7 +105,7 @@ $(document).ready(function() {
         // Agar SEC, VAC, GEC, ya AEC ho aur sirf semester ho
         else if (subjectType &&  semester) {
             $.ajax({
-                url: "{{ route('filter.subjects') }}",
+                url: "/filter-subjects",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",

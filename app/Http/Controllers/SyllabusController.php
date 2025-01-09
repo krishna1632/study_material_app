@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Crypt;
 
 class SyllabusController extends Controller implements HasMiddleware
 {
@@ -77,7 +78,7 @@ class SyllabusController extends Controller implements HasMiddleware
             'B.voc(Banking Operations)','ELECTIVE'
         ]
         : [$user->department];
-    $semesters = [1, 2, 3, 4, 5, 6]; // Example semesters
+    $semesters = [1, 2, 3, 4, 5, 6,7,8]; // Example semesters
     
     // Initial empty subject list
     $subjects = [];
@@ -158,8 +159,9 @@ public function filterSubjects(Request $request)
     /**
      * Show the specified syllabus.
      */
-    public function show($id)
+    public function show($encryptedID)
     {
+        $id = Crypt::decryptString($encryptedID);
         $syllabus = Syllabus::find($id);
 
         if (!$syllabus) {
@@ -172,8 +174,9 @@ public function filterSubjects(Request $request)
     /**
      * Show the form for editing the specified syllabus.
      */
-    public function edit($id)
+    public function edit($encryptedID)
     {
+        $id = Crypt::decryptString($encryptedID);
         $syllabus = Syllabus::find($id);
 
         if (!$syllabus) {
@@ -209,7 +212,7 @@ public function filterSubjects(Request $request)
         }
 
         $subjectTypes = ['CORE', 'SEC', 'GE', 'VAC', 'DSE', 'AEC'];
-        $semesters = ['1', '2', '3', '4', '5', '6'];
+        $semesters = ['1', '2', '3', '4', '5', '6','7','8'];
 
         // Fetch subjects based on the current syllabus data
         $subjects = Subject::where('subject_type', $syllabus->subject_type)
@@ -224,8 +227,10 @@ public function filterSubjects(Request $request)
     /**
      * Update the specified syllabus in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $encryptedID)
+
     {
+        $id = Crypt::decryptString($encryptedID);
         $syllabus = Syllabus::find($id);
 
         if (!$syllabus) {

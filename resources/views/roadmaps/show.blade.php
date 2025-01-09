@@ -44,7 +44,7 @@
 
     <div class="text-end">
         <a href="{{ route('roadmaps.index') }}" class="btn btn-secondary">Back</a>
-        <a href="{{ route('roadmaps.edit', $roadmap->id) }}" class="btn btn-warning">Edit</a>
+        <!-- <a href="{{ route('roadmaps.edit', $roadmap->id) }}" class="btn btn-warning">Edit</a> -->
 
     </div>
 @endsection

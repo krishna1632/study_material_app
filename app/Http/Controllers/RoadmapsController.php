@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Crypt;
 
 class RoadmapsController extends Controller implements HasMiddleware
 {
@@ -122,23 +123,25 @@ class RoadmapsController extends Controller implements HasMiddleware
     /**
      * Show the specified roadmap.
      */
-    public function show(Roadmaps $roadmap, $id)
+    public function show(Roadmaps $roadmap, $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
         $roadmap = Roadmaps::find($id);
         // dd($roadmap);
         return view('roadmaps.show', compact('roadmap'));
     }
 
 
-    public function edit(Roadmaps $roadmap, $id)
+    public function edit(Roadmaps $roadmap, $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
         $roadmap = Roadmaps::find($id);
         return view('roadmaps.edit', compact('roadmap'));
     }
 
-    public function update(Request $request, Roadmaps $roadmap, $id)
+    public function update(Request $request, Roadmaps $roadmap, $encryptedId)
     {
-
+        $id = Crypt::decryptString($encryptedId);
         $roadmap = Roadmaps::find($id);
         // Validate the request
         $validated = $request->validate([

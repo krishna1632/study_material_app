@@ -1,13 +1,14 @@
 @extends('layouts.admin')
-
+@section('title', 'Syllabus')
 @section('content')
 <div class="page-wrapper" style="margin-top:3rem;">
     <div class="page-content">
         <div class="card p-2">
             <div class="card-body">
                 <h3 class="h2 mb-4">Edit Syllabus</h3>
-                <form action="{{ route('syllabus.update', $syllabus->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('syllabus.update', Crypt::encryptString($syllabus->id)) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    
                     @method('POST')
                     <div class="row">
                         <!-- Subject Type -->
@@ -23,7 +24,7 @@
 
                         <!-- Department -->
                         <div class="col-md-6">
-                            <label for="department">Department/Elective</label>
+                            <label for="department">Department/Elective<font color="red">*</font></label>
                             <select name="department" id="department" class="form-control">
                                 <option value="" disabled>Select Department</option>
                                 @foreach ($departments as $dept)
@@ -58,7 +59,12 @@
                         <div class="col-md-6 mt-3">
                             <label for="file">File<font color="red">*</font></label>
                             <input type="file" name="file" id="file" class="form-control">
-                            <small>Current File: <a href="{{ asset('uploads/syllabus/' . $syllabus->file) }}" target="_blank">{{ $syllabus->file }}</a></small>
+                            <p>
+                                <small>Current File: </small>
+                                    <a href="{{ asset('uploads/syllabus/' . $syllabus->file) }}" target="_blank" class="btn btn-outline-primary">
+                                        <i class="fas fa-file-alt me-2"></i>View File
+                                    </a>
+                                </p>
                         </div>
 
                         <!-- Submit -->
@@ -86,7 +92,7 @@ $(document).ready(function() {
         // Logic to filter subjects based on the selected type
         if (subjectType && department && semester) {
             $.ajax({
-                url: "{{ route('filter.subjects') }}",
+                url: "/filter-subjects",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
@@ -107,7 +113,7 @@ $(document).ready(function() {
         // Agar SEC, VAC, GEC, ya AEC ho aur sirf semester ho
         else if (subjectType &&  semester) {
             $.ajax({
-                url: "{{ route('filter.subjects') }}",
+                url: "/filter-subjects",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",

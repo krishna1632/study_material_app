@@ -24,7 +24,10 @@
                         <th>Department/Elective</th>
                         <th>Semester</th>
                         <th>Subject Name</th>
+                        <!-- @canany(['edit subjects','delete subjects']) -->
                         <th>Action</th>
+                        <!-- @endcanany -->
+                        <!-- <th></th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -37,7 +40,7 @@
                             <td>
                                 
                                 @can('edit subjects')
-                                    <a href="{{ route('subjects.edit', $subject->id) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ route('subjects.edit', Crypt::encryptString($subject->id)) }}" class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
                                 @endcan
