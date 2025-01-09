@@ -126,7 +126,7 @@
                 // Filter subjects based on the selected type
                 if (subjectType && department && semester) {
                     $.ajax({
-                        url: "{{ route('filter.subjects') }}",
+                        url: "/filter-subjects",
                         method: 'POST',
                         data: {
                             _token: "{{ csrf_token() }}",

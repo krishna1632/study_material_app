@@ -49,6 +49,9 @@
                         @canany(['edit study material', 'delete study material'])
                         <th>Action</th>
                         @endcanany
+                        @if($roles->contains('student'))
+                        <th></th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -74,11 +77,11 @@
                             </td>
                             <td>{{ $material->description }}</td>
                             <td>
-                                {{-- <a href="{{ route('study_materials.show', $material->id) }}" class="btn btn-info btn-sm">
+                                {{-- <a href="{{ route('study_materials.show', Crypt::encryptString($material->id)) }}" class="btn btn-info btn-sm">
                                     View
                                 </a> --}}
                                 @can('edit study material')
-                                    <a href="{{ route('study_materials.edit', $material->id) }}"
+                                    <a href="{{ route('study_materials.edit', Crypt::encryptString($material->id)) }}"
                                         class="btn btn-warning btn-sm">
                                         Edit
                                     </a>

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Crypt;
 
 
 class StudyMaterialController extends Controller implements HasMiddleware
@@ -186,7 +187,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
     } catch (\Exception $e) {
         // Log error details
         \Log::error('Error in Filter Study:', ['error' => $e->getMessage()]);
-        return response()->json(['error' => 'An error occurred while fetching study materials.', 'details' => $e->getMessage()], 500);
+        return response()->json(['error' => 'No study materials found for the provided filters.', 'details' => $e->getMessage()], 500);
     }
 }
 
@@ -233,8 +234,9 @@ class StudyMaterialController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
         $studyMaterial = StudyMaterial::findOrFail($id); // Find study material or throw 404
         return view('study_materials.show', compact('studyMaterial'));
     }
@@ -242,8 +244,9 @@ class StudyMaterialController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
         $studyMaterial = StudyMaterial::findOrFail($id); // Find study material or throw 404
         $user = auth()->user();
         $roles = $user->getRoleNames();
@@ -292,8 +295,9 @@ class StudyMaterialController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
         $studyMaterial = StudyMaterial::findOrFail($id);
 
         // Validate the input

@@ -13,12 +13,15 @@
         <div class="card-header">
             <i class="fas fa-map me-1"></i>
             PYQ List
-            <a href="{{ route('pyq.create') }}" class="btn btn-primary btn-sm float-end">Add New PYQ</a>
 
+            @can('create pyq')
+            <a href="{{ route('pyq.create') }}" class="btn btn-primary btn-sm float-end">Add New PYQ</a>
+            @endcan
+            @if (auth()->user()->hasRole('student'))
             <a href="{{ route('pyq.elective') }}" class="btn btn-primary btn-sm float-end me-2">
                 View Elective PYQ
             </a>
-
+            @endif
        
         </div>
         <div class="card-body">
@@ -59,15 +62,21 @@
                             </td>
 
                             <td>
-                                <!-- Edit Button (If required) -->
-                                <a href="{{ route('pyq.edit', $pyq->id) }}" class="btn btn-warning btn-sm">Edit</a>
 
+                            @can('edit pyq')
+                                <!-- Edit Button (If required) -->
+                                <a href="{{ route('pyq.edit',  Crypt::encryptString($pyq->id)) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                            @endcan
+
+
+                                @can('delete pyq')
                                     <form id="delete-form-{{ $pyq->id }}" action="{{ route('pyq.destroy', $pyq->id) }}" method="POST" style="display:inline;">
                                              @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $pyq->id }})">Delete</button>
                                      </form>
-
+                                @endcan
                             </td>
                         </tr>
                     @endforeach

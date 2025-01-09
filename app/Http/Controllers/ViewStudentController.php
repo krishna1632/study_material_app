@@ -97,8 +97,11 @@ class ViewStudentController extends Controller
         $student->phone = $request->input('phone');
         $student->department = $request->input('department');
         $student->semester = $request->semester;
-        $student->save();
+       
 
+         // Sync roles
+         $roles = $request->role ?? [];
+         $student->syncRoles($roles);
         // Preserve existing roles and add/update roles
         if ($request->has('roles')) {
             $student->syncRoles($request->input('roles'));
@@ -106,7 +109,7 @@ class ViewStudentController extends Controller
             // If no roles are selected, keep the existing roles
             $student->syncRoles($student->roles->pluck('name')->toArray());
         }
-
+        $student->save();
         return redirect()->route('students.index')->with('success', 'Student updated successfully!');
     }
 

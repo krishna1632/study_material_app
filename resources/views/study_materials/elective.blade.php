@@ -152,7 +152,7 @@
         error: function (error) {
             console.error(error);
             document.getElementById('loading-spinner').classList.add('d-none');
-            studyMaterialsContainer.innerHTML = '<p class="text-danger">An error occurred while fetching study materials.</p>';
+            studyMaterialsContainer.innerHTML = '<p class="text-danger">No study materials found for the provided filters.</p>';
         }
     });
 });

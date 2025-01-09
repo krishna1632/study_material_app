@@ -7,17 +7,60 @@ use App\Models\Subject;
 use App\Models\Pyq;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Crypt;
 
 
-class PyqController extends Controller
+class PyqController extends Controller implements HasMiddleware
 {
+
+
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view pyq', only: ['index']),
+            new Middleware('permission:edit pyq', only: ['edit']),
+            new Middleware('permission:create pyq', only: ['create']),
+            new Middleware('permission:delete pyq', only: ['destroy']),
+           
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+
+        $department = auth()->user()->department; // User ka department
+        $semester = auth()->user()->semester; // User ka semester
+        $faculty_name = auth()->user()->name; // User ka semester
+        $user = auth()->user(); // Currently logged-in user
+        $roles = $user->getRoleNames();
+
+         // Agar user ka role 'SuperAdmin' ya 'Admin' hai, to saare roadmaps dikhayenge
+         if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin')) {
+            $pyqs = Pyq::all(); // Saare pyqs
+        }
+        
+        elseif($user->hasRole('Faculty')){
+            $pyqs = Pyq::where(function($query) use ($department) {
+                $query->where('department', $department)
+                      ->orWhere('department', 'ELECTIVE');
+            })
+            ->where('faculty_name', $faculty_name)
+            ->get();
+            
+            
+        }
+        
+        else {
+            // Agar role kuch aur ho, to department-wise filter karein
+            $pyqs = Pyq::where('department', $department)->where('semester', $semester)->get();
+        }
         // Fetch all PYQs from the database
-        $pyqs = Pyq::all(); // You can use pagination if necessary
+        // $pyqs = Pyq::all(); // You can use pagination if necessary
         return view('pyq.index', compact('pyqs'));
     }
 
@@ -141,8 +184,10 @@ class PyqController extends Controller
   /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
+
+        $id = Crypt::decryptString($encryptedId);
         // Fetch the PYQ record based on the ID
         $pyq = Pyq::findOrFail($id);
 
@@ -268,8 +313,9 @@ class PyqController extends Controller
    /**
  * Update the specified resource in storage.
  */
-public function update(Request $request, string $id)
+public function update(Request $request, string $encryptedId)
 {
+    $id = Crypt::decryptString($encryptedId);
     // Validate incoming data
     $validated = $request->validate([
         'subject_type' => 'required|string',

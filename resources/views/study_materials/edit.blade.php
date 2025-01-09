@@ -16,7 +16,7 @@
             Edit Study Material
         </div>
         <div class="card-body">
-            <form action="{{ route('study_materials.update', $studyMaterial->id) }}" method="POST"
+            <form action="{{ route('study_materials.update', Crypt::encryptString($studyMaterial->id)) }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 @method('POST')

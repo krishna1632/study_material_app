@@ -15,7 +15,7 @@
             Edit PYQ
         </div>
         <div class="card-body">
-            <form action="{{ route('pyq.update', $pyq->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('pyq.update', Crypt::encryptString($pyq->id)) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
 

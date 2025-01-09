@@ -98,9 +98,11 @@
                             <i class="fas fa-book"></i> Subjects
                         </a>
                     @endcan
+                    @can('view pyq')
                     <a class="nav-link" href="{{ route('pyq.index') }}">
                         <i class="fas fa-upload"></i> PYQ
                     </a>
+                    @endcan
                     @can('view study material')
                     <a class="nav-link" href="{{ route('study_materials.index') }}">
                         <i class="fas fa-book"></i> Study Materials
