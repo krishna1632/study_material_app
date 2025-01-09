@@ -83,7 +83,7 @@
                     subjectNameDropdown.innerHTML =
                         '<option value="" disabled selected>Select Subject Name</option>';
                     for (const [id, name] of Object.entries(subjects)) {
-                        subjectNameDropdown.innerHTML += <option value="${id}">${name}</option>;
+                        subjectNameDropdown.innerHTML += `<option value="${id}">${name}</option>`;
                     }
                     subjectNameDropdown.disabled = false;
                 },
@@ -95,6 +95,9 @@
             });
         });
 
+
+
+       
 
 document.getElementById('subject_name').addEventListener('change', function () {
     const selectedSubjectName = this.options[this.selectedIndex].text; // Get selected subject name

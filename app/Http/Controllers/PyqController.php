@@ -322,29 +322,18 @@ class PyqController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-<<<<<<< HEAD
+
    /**
  * Update the specified resource in storage.
  */
-public function update(Request $request, string $encryptedId)
-{
-    $id = Crypt::decryptString($encryptedId);
-    // Validate incoming data
-    $validated = $request->validate([
-        'subject_type' => 'required|string',
-        'department' => 'required|string',
-        'semester' => 'required|integer',
-        'subject_name' => 'required|string',
-        'faculty_name' => 'required|string',
-        'year' => 'required|integer',
-        'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // File is optional during update
-    ]);
-=======
+
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
         // Validate incoming data
         $validated = $request->validate([
             'subject_type' => 'required|string',
@@ -355,7 +344,7 @@ public function update(Request $request, string $encryptedId)
             'year' => 'required|integer',
             'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // File is optional during update
         ]);
->>>>>>> 0693c583c2f11b1d12a7d937e4fcc31abcd28514
+
 
         // Fetch the existing PYQ record
         $pyq = Pyq::findOrFail($id);
