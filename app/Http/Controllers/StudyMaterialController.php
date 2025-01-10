@@ -24,7 +24,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
             new Middleware('permission:edit study material', only: ['edit']),
             new Middleware('permission:create study material', only: ['create']),
             new Middleware('permission:delete study material', only: ['destroy']),
-           
+
         ];
     }
     /**
@@ -38,34 +38,30 @@ class StudyMaterialController extends Controller implements HasMiddleware
         $user = auth()->user(); // Currently logged-in user
         $roles = $user->getRoleNames();
 
-        // Agar user ka role 'SuperAdmin' ya 'Admin' hai, to saare roadmaps dikhayenge
+        // Agar user ka role 'SuperAdmin' ya 'Admin' hai, to saare study_materials dikhayenge
         if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin')) {
             $study_materials = StudyMaterial::all(); // Saare study_materials
-        }
-        
-        elseif($user->hasRole('Faculty')){
-            $study_materials = StudyMaterial::where(function($query) use ($department) {
+        } elseif ($user->hasRole('Faculty')) {
+            $study_materials = StudyMaterial::where(function ($query) use ($department) {
                 $query->where('department', $department)
-                      ->orWhere('department', 'ELECTIVE');
+                    ->orWhere('department', 'ELECTIVE');
             })
-            ->where('faculty_name', $faculty_name)
-            ->get();
-            
-            
-        }
-        
-        else {
+                ->where('faculty_name', $faculty_name)
+                ->get();
+
+
+        } else {
             // Agar role kuch aur ho, to department-wise filter karein
             $study_materials = StudyMaterial::where('department', $department)->where('semester', $semester)->get();
         }
-        return view('study_materials.index', compact('study_materials','roles'));
+        return view('study_materials.index', compact('study_materials', 'roles'));
     }
 
     public function elective()
     {
-       
 
-        
+
+
         return view('study_materials.elective');
     }
 
@@ -114,13 +110,13 @@ class StudyMaterialController extends Controller implements HasMiddleware
             ];
         } else {
             // If the user has other roles, show only their department
-            $departments = [$user->department,'ELECTIVE'];
+            $departments = [$user->department, 'ELECTIVE'];
         }
 
         // Initial empty subject list
         $subjects = [];
 
-        return view('study_materials.create', compact('departments', 'subjects', 'faculties','roles'));
+        return view('study_materials.create', compact('departments', 'subjects', 'faculties', 'roles'));
     }
 
 
@@ -150,48 +146,46 @@ class StudyMaterialController extends Controller implements HasMiddleware
      * Fetch study materials for a specific subject.
      */
 
-     public function filterStudy(Request $request)
-{
-    // Validate the incoming request data
-    $validated = $request->validate([
-        'subject_type' => 'required|string',
-        'department' => 'required|string',
-        'semester' => 'required|string',
-        'subject_name' => 'required|string',
-    ]);
+    public function filterStudy(Request $request)
+    {
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|string',
+            'subject_name' => 'required|string',
+        ]);
 
-    // Trim subject_name to remove any extra spaces
-    $validated['subject_name'] = trim($validated['subject_name']);
+        // Trim subject_name to remove any extra spaces
+        $validated['subject_name'] = trim($validated['subject_name']);
 
-    try {
-        $studyMaterials = StudyMaterial::where('subject_type', $validated['subject_type'])
-    ->where('department', $validated['department'])
-    ->where('semester', $validated['semester'])
-    
-    ->get();
+        try {
+            $studyMaterials = StudyMaterial::where('subject_type', $validated['subject_type'])
+                ->where('department', $validated['department'])
+                ->where('semester', $validated['semester'])
 
-    
+                ->get();
 
-        // Log the executed query
-    
 
-        // Check if any data is found
-        if ($studyMaterials->isEmpty()) {
-            \Log::info('No Study Materials Found:', ['filters' => $validated]);
-            return response()->json(['message' => 'No study materials found for the provided filters.'], 404);
+
+            // Log the executed query
+
+
+            // Check if any data is found
+            if ($studyMaterials->isEmpty()) {
+                return response()->json(['message' => 'No study materials found for the provided filters.'], 404);
+            }
+
+            // Return the filtered data as JSON
+            return response()->json(['data' => $studyMaterials], 200);
+
+        } catch (\Exception $e) {
+            // Log error details
+            return response()->json(['error' => 'No study materials found for the provided filters.', 'details' => $e->getMessage()], 500);
         }
-
-        // Return the filtered data as JSON
-        return response()->json(['data' => $studyMaterials], 200);
-
-    } catch (\Exception $e) {
-        // Log error details
-        \Log::error('Error in Filter Study:', ['error' => $e->getMessage()]);
-        return response()->json(['error' => 'No study materials found for the provided filters.', 'details' => $e->getMessage()], 500);
     }
-}
 
-     
+
 
     /**
      * Store a newly created resource in storage.

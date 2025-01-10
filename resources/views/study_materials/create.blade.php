@@ -75,20 +75,20 @@
 
                 <!-- Faculty Name Field -->
                 <div class="mb-3">
-                <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
-                <select name="faculty_name" id="faculty_name" class="form-control" required>
-                    <option value="" disabled selected>Select Faculty Name</option>
-                    
-                    <!-- Conditionally show the "Admin" option -->
-                    @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
-                        <option value="Admin" class="admin-option">Admin</option>
-                    @endif
+                    <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
+                    <select name="faculty_name" id="faculty_name" class="form-control" required>
+                        <option value="" disabled selected>Select Faculty Name</option>
 
-                    @foreach ($faculties as $faculty)
-                        <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
-                    @endforeach
-                </select>
-</div>
+                        <!-- Conditionally show the "Admin" option -->
+                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
+                            <option value="Admin" class="admin-option">Admin</option>
+                        @endif
+
+                        @foreach ($faculties as $faculty)
+                            <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
 
                 <!-- File Upload Field -->

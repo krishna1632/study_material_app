@@ -15,7 +15,7 @@
             Add New PYQ
         </div>
         <div class="card-body">
-            <form action="{{route('pyq.store')}}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('pyq.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
 
@@ -68,21 +68,21 @@
                 </div>
 
                 <!-- Faculty Name Field -->
-<div class="mb-3">
-    <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
-    <select name="faculty_name" id="faculty_name" class="form-control" required>
-        <option value="" disabled selected>Select Faculty Name</option>
-        
-        <!-- Conditionally show the "Admin" option -->
-        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
-            <option value="Admin" class="admin-option">Admin</option>
-        @endif
+                <div class="mb-3">
+                    <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
+                    <select name="faculty_name" id="faculty_name" class="form-control" required>
+                        <option value="" disabled selected>Select Faculty Name</option>
 
-        @foreach ($faculties as $faculty)
-            <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
-        @endforeach
-    </select>
-</div>
+                        <!-- Conditionally show the "Admin" option -->
+                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
+                            <option value="Admin" class="admin-option">Admin</option>
+                        @endif
+
+                        @foreach ($faculties as $faculty)
+                            <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
 
                 <!-- Year -->
@@ -115,8 +115,6 @@
     <!-- JavaScript Logic -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        
-
         $(document).ready(function() {
             // Trigger the subject filter based on selection changes
             $('#subject_type, #department, #semester').change(function() {
@@ -201,5 +199,5 @@
             }
         });
     </script>
-   
+
 @endsection

@@ -34,15 +34,15 @@
                             <i class="fas fa-user"></i> Admin
                         </a>
                     @endcan
-                    
+
                     @can('view faculties')
                         <a class="nav-link" href="{{ url('/faculties') }}">
                             <div class="fas fa-users"><i class="fas fa-users"></i></div>
                             Faculties
                         </a>
                     @endcan
-                   
-                    
+
+
                     @can('view students')
                         <a class="nav-link" href="{{ url('/students') }}">
                             <i class="fas fa-users"></i> Students
@@ -99,14 +99,14 @@
                         </a>
                     @endcan
                     @can('view pyq')
-                    <a class="nav-link" href="{{ route('pyq.index') }}">
-                        <i class="fas fa-upload"></i> PYQ
-                    </a>
+                        <a class="nav-link" href="{{ route('pyq.index') }}">
+                            <i class="fas fa-upload"></i> PYQ
+                        </a>
                     @endcan
                     @can('view study material')
-                    <a class="nav-link" href="{{ route('study_materials.index') }}">
-                        <i class="fas fa-book"></i> Study Materials
-                    </a>
+                        <a class="nav-link" href="{{ route('study_materials.index') }}">
+                            <i class="fas fa-book"></i> Study Materials
+                        </a>
                     @endcan
                     @can('view roadmaps')
                         <a class="nav-link" href="{{ route('roadmaps.index') }}">
@@ -136,7 +136,7 @@
             <div class="collapse" id="collapseQuizMast" aria-labelledby="headingQuizMast"
                 data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link" href="{{ url('admin/quiz/create') }}">Create Quiz</a>
+                    <a class="nav-link" href="{{ route('quizzes.index') }}">Create Quiz</a>
                     <a class="nav-link" href="{{ url('admin/quiz/reports') }}">Attempt Test</a>
                     <a class="nav-link" href="{{ url('admin/quiz/reports') }}">Quiz Reports</a>
                 </nav>

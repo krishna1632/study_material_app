@@ -16,6 +16,8 @@ use App\Http\Controllers\RoadmapsController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\StudyMaterialController;
 use App\Http\Controllers\PyqController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\QuestionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -42,11 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
     Route::get('/permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
     Route::post('/permissions/{id}', [PermissionController::class, 'update'])->name('permissions.update');
-    
     Route::delete('/permissions/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
-
-
-
 
     // Roles
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
@@ -56,10 +54,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/roles/{id}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
-
-
-
-
     // User
     Route::get('/users', [UserController::class, 'index'])->name('users.list');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -68,17 +62,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-
     // Faculty Routes
     Route::get('/faculties', [FacultyController::class, 'index'])->name('faculties.index');
     Route::get('/faculties/{id}/edit', [FacultyController::class, 'edit'])->name('faculties.edit');
     Route::post('/faculties/{id}', [FacultyController::class, 'update'])->name('faculties.update');
     Route::delete('/faculties/{id}', [FacultyController::class, 'destroy'])->name('faculties.destroy');
-
     Route::get('/faculties/{id}', [FacultyController::class, 'show'])->name('faculties.show');
-
-
-
 
     // Admin Routes
     Route::get('/admins', [AdminController::class, 'index'])->name('admins.index');
@@ -86,7 +75,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/admins/{id}/edit', [AdminController::class, 'edit'])->name('admins.edit');
     Route::post('/admins/{id}', [AdminController::class, 'update'])->name('admins.update');
     Route::delete('/admins/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
-
 
     //Super Admin Routes
     Route::get('/supers', [ViewSuperAdminController::class, 'index'])->name('superadminView.index');
@@ -105,23 +93,16 @@ Route::middleware('auth')->group(function () {
     // Others
     Route::post('/others/{id}', [OtherController::class, 'update'])->name('others.update');
 
-
-
     // Roadmaps
-
     Route::get('/roadmaps', [RoadmapsController::class, 'index'])->name('roadmaps.index');
     Route::get('/roadmaps/create', [RoadmapsController::class, 'create'])->name('roadmaps.create');
     Route::post('/roadmaps', [RoadmapsController::class, 'store'])->name('roadmaps.store');
-
     Route::get('/roadmaps/{id}', [RoadmapsController::class, 'show'])->name('roadmaps.show');
-
-
     Route::get('/roadmaps/{id}/edit', [RoadmapsController::class, 'edit'])->name('roadmaps.edit');
     Route::post('/roadmaps/{id}', [RoadmapsController::class, 'update'])->name('roadmaps.update');
     Route::delete('/roadmaps/{id}', [RoadmapsController::class, 'destroy'])->name('roadmaps.destroy');
 
     // Syllabus
-
     Route::get('/syllabus', [SyllabusController::class, 'index'])->name('syllabus.index');
     Route::get('/syllabus/create', [SyllabusController::class, 'create'])->name('syllabus.create');
     Route::post('/syllabus', [SyllabusController::class, 'store'])->name('syllabus.store');
@@ -129,11 +110,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/syllabus/{id}/edit', [SyllabusController::class, 'edit'])->name('syllabus.edit');
     Route::post('/syllabus/{id}', [SyllabusController::class, 'update'])->name('syllabus.update');
     Route::delete('/syllabus/{id}', [SyllabusController::class, 'destroy'])->name('syllabus.destroy');
-
     Route::post('/filter-subjects', [SyllabusController::class, 'filterSubjects'])->name('filter.subjects');
-   
-    
-    
+
     // Subjects
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
@@ -152,10 +130,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/study_materials/elective', [StudyMaterialController::class, 'elective'])->name('study_materials.elective');
     Route::post('/filter-study', [StudyMaterialController::class, 'filterStudy']);
 
-
-
     //PYQ
-
     Route::get('/pyq', [PyqController::class, 'index'])->name('pyq.index');
     Route::get('/pyq/create', [PyqController::class, 'create'])->name('pyq.create');
     Route::post('/pyq', [PyqController::class, 'store'])->name('pyq.store');
@@ -166,6 +141,24 @@ Route::middleware('auth')->group(function () {
     Route::post('/filter-subjects1', [SyllabusController::class, 'filter_Subjects'])->name('filter.subjects');
     Route::post('/filter-pyqs', [PyqController::class, 'filterPyq'])->name('filter.pyqs');
 
+    // Quizzes Routes
+    Route::get('/quizzes', [QuizController::class, 'index'])->name('quizzes.index');
+    Route::get('/quizzes/create', [QuizController::class, 'create'])->name('quizzes.create');
+    Route::post('/quizzes', [QuizController::class, 'store'])->name('quizzes.store');
+    Route::get('quizzes/{id}', [QuizController::class, 'show'])->name('quizzes.show');
+    Route::get('/quizzes/{quiz}/edit', [QuizController::class, 'edit'])->name('quizzes.edit');
+    Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
+    Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
+    // Route::post('/filter-subjects', [QuizController::class, 'filterSubjects'])->name('filter.subjects');
+
+    // Questions Routes
+    Route::get('/quizzes/{quiz}/questions', [QuestionController::class, 'index'])->name('questions.index');
+    Route::get('/quizzes/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
+    Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
+    Route::get('quizzes/{quizId}/questions/{id}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
+    Route::put('quizzes/{quizId}/questions/{id}', [QuestionController::class, 'update'])->name('questions.update');
+    Route::delete('questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+    Route::post('/quizzes/{quizId}/submit-questions', [QuestionController::class, 'submitQuestions'])->name('questions.submit');
 });
 
 require __DIR__ . '/auth.php';
