@@ -149,7 +149,7 @@
                     semester
                 }); // Debug
 
-                fetch("{{ route('filter.subjects') }}", {
+                fetch("/filter-subjects", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
