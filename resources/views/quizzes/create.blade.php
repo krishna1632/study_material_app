@@ -16,56 +16,54 @@
             Add New Quiz
         </div>
         <div class="card-body">
-            <form id="quizForm" action="{{ route('quizzes.store') }}" method="POST">
+            <form id="quizForm" action="{{ route('quizzes.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <!-- Subject Type Field -->
+                @method('POST')
+
+                <!-- Subject Type -->
                 <div class="mb-3">
-                    <label for="subject_type" class="form-label">Subject Type<font color="red">*</font></label>
-                    <select name="subject_type" id="subject_type" class="form-select" required>
+                    <label for="subject_type" class="form-label">Subject Type</label>
+                    <select name="subject_type" id="subject_type" class="form-control" required>
                         <option value="" disabled selected>Select Subject Type</option>
                         <option value="CORE">CORE</option>
                         <option value="SEC">SEC</option>
                         <option value="VAC">VAC</option>
-                        <option value="AEC">AEC</option>
                         <option value="GE">GE</option>
+                        <option value="AEC">AEC</option>
                         <option value="DSE">DSE</option>
                     </select>
                 </div>
 
-                <!-- Department Field -->
+                <!-- Department -->
                 <div class="mb-3">
-                    <label for="department" class="form-label">Department/Elective<font color="red">*</font></label>
-                    <select name="department" id="department" class="form-select" required>
+                    <label for="department" class="form-label">Department/ELECTIVE</label>
+                    <select name="department" id="department" class="form-control" required>
                         <option value="" disabled selected>Select Department</option>
-                        @foreach ($departments as $dept)
-                            <option value="{{ $dept }}">{{ $dept }}</option>
+                        <option value="" disabled selected>Select Department</option>
+                        @foreach ($departments as $department)
+                            <option value="{{ $department }}">{{ $department }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- Semester Field -->
-                <div class="mb-3">
-                    <label for="semester" class="form-label">Semester<font color="red">*</font></label>
-                    <select name="semester" id="semester" class="form-select" required>
+                 <!-- Semester -->
+                 <div class="mb-3">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select name="semester" id="semester" class="form-control" required>
                         <option value="" disabled selected>Select Semester</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
+                        @for ($i = 1; $i <= 8; $i++)
+                            <option value="{{ $i }}"> {{ $i }}</option>
+                        @endfor
                     </select>
                 </div>
 
                 <!-- Subject Name Field -->
                 <div class="mb-3">
                     <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
-                    <select name="subject_name" id="subject_name" class="form-select" required>
+                    <select name="subject_name" id="subject_name" class="form-control" required>
                         <option value="" disabled selected>Select Subject</option>
                         @foreach ($subjects as $subject)
-                            <option value="{{ $subject }}">{{ $subject }}</option>
+                            <option value="{{ $subject->subject_name }}">{{ $subject->subject_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -111,129 +109,91 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const subjectTypeField = document.getElementById('subject_type');
-            const departmentField = document.getElementById('department');
-            const semesterField = document.getElementById('semester');
-            const subjectField = document.getElementById('subject_name');
+        $(document).ready(function() {
+            // Trigger the subject filter based on selection changes
+            $('#subject_type, #department, #semester').change(function() {
+                var subjectType = $('#subject_type').val();
+                let department = $('#department').val();
+                var semester = $('#semester').val();
 
-            // Filter department dropdown based on subject type
-            subjectTypeField.addEventListener('change', function() {
-                const subjectType = this.value;
-                departmentField.innerHTML = '<option value="" disabled selected>Select Department</option>';
-
-                if (subjectType === 'CORE' || subjectType === 'DSE') {
-                    @json($departments).forEach(department => {
-                        if (department !== 'ELECTIVE') {
-                            departmentField.innerHTML +=
-                                `<option value="${department}">${department}</option>`;
-                        }
-                    });
-                } else if (['SEC', 'VAC', 'GE', 'AEC'].includes(subjectType)) {
-                    departmentField.innerHTML += `<option value="ELECTIVE">ELECTIVE</option>`;
-                }
-            });
-
-            // Filter subject name dropdown based on selected filters
-            function filterSubjects() {
-                const subjectType = subjectTypeField.value;
-                const department = departmentField.value;
-                const semester = semesterField.value;
-
-                subjectField.innerHTML = '<option value="" disabled selected>Select Subject</option>';
-
+                // Filter subjects based on the selected type
                 if (subjectType && department && semester) {
-                    // AJAX request to fetch filtered subjects
                     $.ajax({
-                        url: "/filter-subjects", // Backend route
-                        type: "POST",
+                        url: "/filter-subjects",
+                        method: 'POST',
                         data: {
                             _token: "{{ csrf_token() }}",
                             subject_type: subjectType,
                             department: department,
-                            semester: semester,
+                            semester: semester
                         },
-                        success: function(response) {
-                            if (response.success && response.data.length > 0) {
-                                response.data.forEach(subject => {
-                                    subjectField.innerHTML +=
-                                        `<option value="${subject.subject_name}">${subject.subject_name}</option>`;
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: 'No Subjects Found',
-                                    text: response.message ||
-                                        'No subjects are available for the selected criteria.'
-                                });
-                            }
+                        success: function(data) {
+                            populateSubjects(data);
                         },
-                        error: function(xhr, status, error) {
-                            console.error("AJAX Error:", error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Something went wrong while fetching subjects.'
-                            });
+                        error: function(error) {
+                            console.log(error);
+                            alert('Error fetching subjects');
                         }
                     });
+                } else if (subjectType && semester) {
+                    // If only subject type and semester are selected
+                    $.ajax({
+                        url: "/filter-subjects",
+                        method: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            subject_type: subjectType,
+                            semester: semester
+                        },
+                        success: function(data) {
+                            populateSubjects(data);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            alert('Error fetching subjects');
+                        }
+                    });
+                } else {
+                    // Reset subject dropdown if conditions are not met
+                    $('#subject_name').empty();
+                    $('#subject_name').append('<option value="" disabled selected>Select Subject</option>');
                 }
-            }
+            });
 
-            // Add event listeners for filtering
-            subjectTypeField.addEventListener('change', filterSubjects);
-            departmentField.addEventListener('change', filterSubjects);
-            semesterField.addEventListener('change', filterSubjects);
-        });
+            // Filter the department dropdown
+            $('#subject_type').change(function() {
+                var subjectType = $(this).val();
+                var departmentSelect = $('#department');
 
+                departmentSelect.empty(); // Clear existing options
+                departmentSelect.append('<option value="" disabled selected>Select Department</option>');
 
-        document.getElementById('quizForm').addEventListener('submit', function(event) {
-            const currentDate = new Date().toISOString().split('T')[0];
-            const currentTime = new Date().toTimeString().split(' ')[0];
+                if (subjectType === 'CORE' || subjectType === 'DSE') {
+                    $.each(@json($departments), function(index, value) {
+                        if (value !== 'ELECTIVE') {
+                            departmentSelect.append('<option value="' + value + '">' + value +
+                                '</option>');
+                        }
+                    });
+                } else if (subjectType === 'VAC' || subjectType === 'SEC' || subjectType === 'GE' ||
+                    subjectType === 'AEC') {
+                    departmentSelect.append('<option value="ELECTIVE">ELECTIVE</option>');
+                }
+            });
 
-            const dateInput = document.getElementById('date').value;
-            const startTimeInput = document.getElementById('start_time').value;
-            const endTimeInput = document.getElementById('end_time').value;
+            // Populate subject dropdown
+            function populateSubjects(data) {
+                var subjectSelect = $('#subject_name');
+                subjectSelect.empty(); // Clear existing options
+                subjectSelect.append('<option value="" disabled selected>Select Subject</option>');
 
-            if (dateInput < currentDate) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Date',
-                    text: 'Date cannot be earlier than today!'
-                });
-                return;
-            }
-
-            if (dateInput === currentDate && startTimeInput < currentTime) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Start Time',
-                    text: 'Start time cannot be earlier than the current time!'
-                });
-                return;
-            }
-
-            if (dateInput === currentDate && endTimeInput < currentTime) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid End Time',
-                    text: 'End time cannot be earlier than the current time!'
-                });
-                return;
-            }
-
-            if (startTimeInput >= endTimeInput) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Time Range',
-                    text: 'End time must be after the start time!'
+                $.each(data, function(id, name) {
+                    subjectSelect.append('<option value="' + name + '">' + name + '</option>');
                 });
             }
         });
     </script>
+
 @endsection
