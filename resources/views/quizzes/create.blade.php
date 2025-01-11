@@ -112,82 +112,81 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Filter department dropdown based on subject type
-        document.getElementById('subject_type').addEventListener('change', function() {
-            const subjectType = this.value;
+        document.addEventListener('DOMContentLoaded', function() {
+            const subjectTypeField = document.getElementById('subject_type');
             const departmentField = document.getElementById('department');
-            departmentField.innerHTML = '<option value="" disabled selected>Select Department</option>';
-
-            if (subjectType === 'CORE' || subjectType === 'DSE') {
-                @json($departments).forEach(department => {
-                    if (department !== 'ELECTIVE') {
-                        departmentField.innerHTML += `<option value="${department}">${department}</option>`;
-                    }
-                });
-            } else if (['SEC', 'VAC', 'GE', 'AEC'].includes(subjectType)) {
-                departmentField.innerHTML += `<option value="ELECTIVE">ELECTIVE</option>`;
-            }
-        });
-
-        // Filter subjects based on subject type, department, and semester
-        document.getElementById('subject_type').addEventListener('change', filterSubjects);
-        document.getElementById('department').addEventListener('change', filterSubjects);
-        document.getElementById('semester').addEventListener('change', filterSubjects);
-
-        function filterSubjects() {
-            const subjectType = document.getElementById('subject_type').value;
-            const department = document.getElementById('department').value;
-            const semester = document.getElementById('semester').value;
+            const semesterField = document.getElementById('semester');
             const subjectField = document.getElementById('subject_name');
 
-            subjectField.innerHTML = '<option value="" disabled selected>Select Subject</option>';
+            // Filter department dropdown based on subject type
+            subjectTypeField.addEventListener('change', function() {
+                const subjectType = this.value;
+                departmentField.innerHTML = '<option value="" disabled selected>Select Department</option>';
 
-            if (subjectType && department && semester) {
-                console.log("Sending data to server:", {
-                    subjectType,
-                    department,
-                    semester
-                }); // Debug
+                if (subjectType === 'CORE' || subjectType === 'DSE') {
+                    @json($departments).forEach(department => {
+                        if (department !== 'ELECTIVE') {
+                            departmentField.innerHTML +=
+                                `<option value="${department}">${department}</option>`;
+                        }
+                    });
+                } else if (['SEC', 'VAC', 'GE', 'AEC'].includes(subjectType)) {
+                    departmentField.innerHTML += `<option value="ELECTIVE">ELECTIVE</option>`;
+                }
+            });
 
-                fetch("/filter-subjects", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({
+            // Filter subject name dropdown based on selected filters
+            function filterSubjects() {
+                const subjectType = subjectTypeField.value;
+                const department = departmentField.value;
+                const semester = semesterField.value;
+
+                subjectField.innerHTML = '<option value="" disabled selected>Select Subject</option>';
+
+                if (subjectType && department && semester) {
+                    // AJAX request to fetch filtered subjects
+                    $.ajax({
+                        url: "/filter-subjects", // Backend route
+                        type: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
                             subject_type: subjectType,
                             department: department,
-                            semester: semester
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log("Response from server:", data); // Debug
-
-                        if (data.success) {
-                            data.data.forEach(subject => {
-                                subjectField.innerHTML +=
-                                    `<option value="${subject.subject_name}">${subject.subject_name}</option>`;
-                            });
-                        } else {
+                            semester: semester,
+                        },
+                        success: function(response) {
+                            if (response.success && response.data.length > 0) {
+                                response.data.forEach(subject => {
+                                    subjectField.innerHTML +=
+                                        `<option value="${subject.subject_name}">${subject.subject_name}</option>`;
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'No Subjects Found',
+                                    text: response.message ||
+                                        'No subjects are available for the selected criteria.'
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("AJAX Error:", error);
                             Swal.fire({
-                                icon: 'info',
-                                title: 'No Subjects Found',
-                                text: data.message || 'No subjects are available for the selected criteria.'
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong while fetching subjects.'
                             });
                         }
-                    })
-                    .catch(error => {
-                        console.error("Error in fetching subjects:", error); // Debug
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Something went wrong while fetching subjects.'
-                        });
                     });
+                }
             }
-        }
+
+            // Add event listeners for filtering
+            subjectTypeField.addEventListener('change', filterSubjects);
+            departmentField.addEventListener('change', filterSubjects);
+            semesterField.addEventListener('change', filterSubjects);
+        });
+
 
         document.getElementById('quizForm').addEventListener('submit', function(event) {
             const currentDate = new Date().toISOString().split('T')[0];
