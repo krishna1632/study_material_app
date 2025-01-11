@@ -26,11 +26,11 @@ class QuizController extends Controller
         $faculty_name = $user->name;
         $roles = $user->getRoleNames();
 
-        // SuperAdmin और Admin के लिए सभी quizzes दिखाएं
+        
         if ($roles->contains('SuperAdmin') || $roles->contains('Admin')) {
             $quizzes = Quiz::all();
         } elseif ($roles->contains('Faculty')) {
-            // Faculty के लिए उनके द्वारा बनाए गए या Elective quizzes दिखाएं
+            
             $quizzes = Quiz::where(function ($query) use ($department) {
                 $query->where('department', $department)
                     ->orWhere('department', 'ELECTIVE');
@@ -38,7 +38,7 @@ class QuizController extends Controller
                 ->where('faculty_name', $faculty_name)
                 ->get();
         } else {
-            // Students और अन्य roles के लिए उनके department और semester के quizzes दिखाएं
+            
             $quizzes = Quiz::where('department', $department)
                 ->where('semester', $semester)
                 ->get();
@@ -102,7 +102,8 @@ class QuizController extends Controller
         // return view('quizzes.create');
     }
 
-    public function filterSubjects(Request $request)
+   
+    public function filter_Subjects(Request $request)
     {
         $validated = $request->validate([
             'subject_type' => 'required|string',
@@ -110,17 +111,25 @@ class QuizController extends Controller
             'semester' => 'required|integer',
         ]);
 
-        // Fetch subjects based on filters
+        // Fetch the subjects based on the provided filters
         $subjects = Subject::where('subject_type', $validated['subject_type'])
             ->where('department', $validated['department'])
             ->where('semester', $validated['semester'])
             ->get();
 
         if ($subjects->isEmpty()) {
-            return response()->json(['success' => false, 'message' => 'No subjects found']);
+            return response()->json([], 404); // Return an empty array with a 404 status if no subjects found
         }
 
-        return response()->json(['success' => true, 'data' => $subjects]);
+        // Map the subjects to return only the id and name
+        $subjectData = $subjects->map(function ($subject) {
+            return [
+                'id' => $subject->id,
+                'name' => $subject->subject_name,
+            ];
+        });
+
+        return response()->json($subjectData); // Return the subject data as JSON
     }
 
     /**
