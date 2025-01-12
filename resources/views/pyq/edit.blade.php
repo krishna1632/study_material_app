@@ -15,7 +15,8 @@
             Edit PYQ
         </div>
         <div class="card-body">
-            <form action="{{ route('pyq.update', Crypt::encryptString($pyq->id)) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('pyq.update', Crypt::encryptString($pyq->id)) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
                 @method('POST')
 
@@ -39,7 +40,8 @@
                     <select name="department" id="department" class="form-control" required>
                         <option value="" disabled>Select Department</option>
                         @foreach ($departments as $department)
-                            <option value="{{ $department }}" {{ $pyq->department == $department ? 'selected' : '' }}>{{ $department }}</option>
+                            <option value="{{ $department }}" {{ $pyq->department == $department ? 'selected' : '' }}>
+                                {{ $department }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -50,7 +52,8 @@
                     <select name="semester" id="semester" class="form-control" required>
                         <option value="" disabled>Select Semester</option>
                         @for ($i = 1; $i <= 8; $i++)
-                            <option value="{{ $i }}" {{ $pyq->semester == $i ? 'selected' : '' }}>{{ $i }}</option>
+                            <option value="{{ $i }}" {{ $pyq->semester == $i ? 'selected' : '' }}>
+                                {{ $i }}</option>
                         @endfor
                     </select>
                 </div>
@@ -61,7 +64,9 @@
                     <select name="subject_name" id="subject_name" class="form-control" required>
                         <option value="" disabled>Select Subject</option>
                         @foreach ($subjects as $subject)
-                            <option value="{{ $subject->subject_name }}" {{ $pyq->subject_name == $subject ? 'selected' : '' }}>{{ $subject->subject_name }}</option>
+                            <option value="{{ $subject->subject_name }}"
+                                {{ $pyq->subject_name == $subject ? 'selected' : '' }}>{{ $subject->subject_name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -72,10 +77,12 @@
                     <select name="faculty_name" id="faculty_name" class="form-control" required>
                         <option value="" disabled>Select Faculty Name</option>
                         @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
-                            <option value="Admin" class="admin-option" {{ $pyq->faculty_name == 'Admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="Admin" class="admin-option"
+                                {{ $pyq->faculty_name == 'Admin' ? 'selected' : '' }}>Admin</option>
                         @endif
                         @foreach ($faculties as $faculty)
-                            <option value="{{ $faculty->name }}" {{ $pyq->faculty_name == $faculty->name ? 'selected' : '' }}>{{ $faculty->name }}</option>
+                            <option value="{{ $faculty->name }}"
+                                {{ $pyq->faculty_name == $faculty->name ? 'selected' : '' }}>{{ $faculty->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -86,27 +93,28 @@
                     <select name="year" id="year" class="form-control" required>
                         <option value="" disabled>Select Year</option>
                         @for ($i = 2015; $i <= 2025; $i++)
-                            <option value="{{ $i }}" {{ $pyq->year == $i ? 'selected' : '' }}>{{ $i }}</option>
+                            <option value="{{ $i }}" {{ $pyq->year == $i ? 'selected' : '' }}>
+                                {{ $i }}</option>
                         @endfor
                     </select>
                 </div>
 
-                
-                 <!-- File Upload Field -->
-                 <div class="mb-3">
-    <label for="file" class="form-label">Upload File (Optional)</label>
-    <input type="file" name="file" id="file" class="form-control">
 
-    <!-- Display the current file if it exists -->
-    @if($pyq->file)
-        <div>
-            <small>Current File: </small>
-            <a href="{{ asset('storage/' . $pyq->file) }}" target="_blank">View File</a>
-        </div>
-    @else
-        <small>No file uploaded.</small>
-    @endif
-</div>
+                <!-- File Upload Field -->
+                <div class="mb-3">
+                    <label for="file" class="form-label">Upload File (Optional)</label>
+                    <input type="file" name="file" id="file" class="form-control">
+
+                    <!-- Display the current file if it exists -->
+                    @if ($pyq->file)
+                        <div>
+                            <small>Current File: </small>
+                            <a href="{{ asset('storage/' . $pyq->file) }}" target="_blank">View File</a>
+                        </div>
+                    @else
+                        <small>No file uploaded.</small>
+                    @endif
+                </div>
 
 
                 <!-- Buttons -->

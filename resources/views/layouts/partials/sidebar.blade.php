@@ -137,7 +137,7 @@
                 data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
                     <a class="nav-link" href="{{ route('quizzes.index') }}">Create Quiz</a>
-                    <a class="nav-link" href="{{ url('admin/quiz/reports') }}">Attempt Test</a>
+                    <a class="nav-link" href="{{ route('attempts.index') }}">Attempt Test</a>
                     <a class="nav-link" href="{{ url('admin/quiz/reports') }}">Quiz Reports</a>
                 </nav>
             </div>

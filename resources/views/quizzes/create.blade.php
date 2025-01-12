@@ -46,8 +46,8 @@
                     </select>
                 </div>
 
-                 <!-- Semester -->
-                 <div class="mb-3">
+                <!-- Semester -->
+                <div class="mb-3">
                     <label for="semester" class="form-label">Semester</label>
                     <select name="semester" id="semester" class="form-control" required>
                         <option value="" disabled selected>Select Semester</option>
@@ -191,6 +191,54 @@
 
                 $.each(data, function(id, name) {
                     subjectSelect.append('<option value="' + name + '">' + name + '</option>');
+                });
+            }
+        });
+
+        document.getElementById('quizForm').addEventListener('submit', function(event) {
+            const currentDate = new Date().toISOString().split('T')[0];
+            const currentTime = new Date().toTimeString().split(' ')[0];
+
+            const dateInput = document.getElementById('date').value;
+            const startTimeInput = document.getElementById('start_time').value;
+            const endTimeInput = document.getElementById('end_time').value;
+
+            if (dateInput < currentDate) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Date',
+                    text: 'Date cannot be earlier than today!'
+                });
+                return;
+            }
+
+            if (dateInput === currentDate && startTimeInput < currentTime) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Start Time',
+                    text: 'Start time cannot be earlier than the current time!'
+                });
+                return;
+            }
+
+            if (dateInput === currentDate && endTimeInput < currentTime) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid End Time',
+                    text: 'End time cannot be earlier than the current time!'
+                });
+                return;
+            }
+
+            if (startTimeInput >= endTimeInput) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Time Range',
+                    text: 'End time must be after the start time!'
                 });
             }
         });

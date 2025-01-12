@@ -18,6 +18,7 @@ use App\Http\Controllers\StudyMaterialController;
 use App\Http\Controllers\PyqController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\AttemptController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -149,7 +150,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/quizzes/{quiz}/edit', [QuizController::class, 'edit'])->name('quizzes.edit');
     Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
     Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
-    // Route::post('/filter-subjects', [QuizController::class, 'filterSubjects'])->name('filter.subjects');
+    Route::get('quizzes/{quiz}/instructions', [QuizController::class, 'showInstructions'])->name('quizzes.instructions');
+    Route::put('quizzes/{quiz}/update-instructions', [QuizController::class, 'updateInstructions'])->name('quizzes.update.instructions');
+    Route::post('/quizzes/start-test', [QuizController::class, 'startTest'])->name('quizzes.startTest');
+
+
 
     // Questions Routes
     Route::get('/quizzes/{quiz}/questions', [QuestionController::class, 'index'])->name('questions.index');
@@ -159,6 +164,11 @@ Route::middleware('auth')->group(function () {
     Route::put('quizzes/{quizId}/questions/{id}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
     Route::post('/quizzes/{quizId}/submit-questions', [QuestionController::class, 'submitQuestions'])->name('questions.submit');
+
+    // Attempt Quiz Routes
+    Route::get('/attempts/{quiz_id}', [AttemptController::class, 'index'])->name('attempts.index');
+
+
 });
 
 require __DIR__ . '/auth.php';

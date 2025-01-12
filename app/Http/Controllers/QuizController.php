@@ -16,21 +16,17 @@ class QuizController extends Controller
      */
     public function index()
     {
-        // $quizzes = Quiz::with('questions')->get();
-        // return view('quizzes.index', compact('quizzes'));
-
-
         $user = auth()->user(); // Currently logged-in user
         $department = $user->department;
         $semester = $user->semester;
         $faculty_name = $user->name;
         $roles = $user->getRoleNames();
 
-        
+
         if ($roles->contains('SuperAdmin') || $roles->contains('Admin')) {
             $quizzes = Quiz::all();
         } elseif ($roles->contains('Faculty')) {
-            
+
             $quizzes = Quiz::where(function ($query) use ($department) {
                 $query->where('department', $department)
                     ->orWhere('department', 'ELECTIVE');
@@ -38,7 +34,7 @@ class QuizController extends Controller
                 ->where('faculty_name', $faculty_name)
                 ->get();
         } else {
-            
+
             $quizzes = Quiz::where('department', $department)
                 ->where('semester', $semester)
                 ->get();
@@ -102,7 +98,7 @@ class QuizController extends Controller
         // return view('quizzes.create');
     }
 
-   
+
     public function filter_Subjects(Request $request)
     {
         $validated = $request->validate([
@@ -166,6 +162,7 @@ class QuizController extends Controller
                     }
                 },
             ],
+            'instructions' => 'nullable|string|max:1000',
         ]);
 
         $quiz = Quiz::create($request->all());
@@ -191,8 +188,59 @@ class QuizController extends Controller
     public function edit(string $id)
     {
         $quiz = Quiz::findOrFail($id);  // Fetch quiz by ID
-        return view('quizzes.edit', compact('quiz'));  // Return the edit view with quiz details
+        // Fetch faculties based on roles
+        $user = auth()->user(); // Currently logged-in user
+        $roles = $user->getRoleNames(); // Fetch assigned roles for the user
+
+        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+            // If Admin or SuperAdmin, fetch all users with the "Faculty" role
+            $faculties = User::role('Faculty')->get(); // Assuming you use Spatie Roles
+        } elseif ($roles->contains('Faculty')) {
+            // If the user is a faculty, show only their own data
+            $faculties = collect([$user]); // Wrap in a collection for consistency
+        } else {
+            // If the user doesn't have access, return an empty collection
+            $faculties = collect();
+        }
+
+        // Determine departments based on roles
+        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+            // If Admin or SuperAdmin, show all departments
+            $departments = [
+                'Applied Psychology',
+                'Computer Science',
+                'B.voc(Software Development)',
+                'Economics',
+                'English',
+                'Environmental Studies',
+                'Commerce',
+                'Punjabi',
+                'Hindi',
+                'History',
+                'Management Studies',
+                'Mathematics',
+                'Philosophy',
+                'Physical Education',
+                'Political Science',
+                'Statistics',
+                'B.voc(Banking Operations)',
+                'ELECTIVE',
+            ];
+        } else {
+            // If the user has other roles, show only their department
+            $departments = [$user->department, 'ELECTIVE'];
+        }
+
+        // Fetch subjects based on department, subject type, and semester
+        $subjects = Subject::where('department', $quiz->department)
+            ->where('subject_type', $quiz->subject_type)
+            ->where('semester', $quiz->semester)
+            ->get();
+
+        // Pass the existing quiz record, subjects, and other data to the edit view
+        return view('quizzes.edit', compact('quiz', 'departments', 'faculties', 'roles', 'subjects'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -248,5 +296,50 @@ class QuizController extends Controller
         $quiz->delete();  // Delete the quiz
 
         return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
+    }
+
+    // Show Instructions Page (form to write instructions)
+    public function showInstructions($id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        return view('quizzes.instructions', compact('quiz'));
+    }
+
+    // Update Instructions
+    public function updateInstructions(Request $request, $id)
+    {
+        $quiz = Quiz::findOrFail($id);
+
+        // Validate the instructions input
+        $request->validate([
+            'instructions' => 'required|string|max:1000',
+            'subject_name' => 'required|string|max:255',
+            'teacher_name' => 'required|string|max:255',
+        ]);
+
+        // Update the quiz with new instructions
+        $quiz->update([
+            'instructions' => $request->instructions,
+            'subject_name' => $request->subject_name,
+            'teacher_name' => $request->teacher_name,
+        ]);
+
+        return redirect()->route('quizzes.show', $quiz->id)->with('success', 'Instructions updated successfully.');
+
+    }
+
+    public function startTest(Request $request)
+    {
+        $quizId = $request->input('quiz_id');
+        $quiz = Quiz::findOrFail($quizId);
+
+        // Update the quiz status to 1 (indicating test has started)
+        $quiz->status = 1;
+        $quiz->save();
+
+        $user = auth()->user();
+        if ($user->hasRole('Faculty') || $user->hasRole('SuperAdmin') || $user->hasRole('Admin')) {
+            return redirect()->route('quizzes.index')->with('success', 'Test has started successfully.');
+        }
     }
 }
