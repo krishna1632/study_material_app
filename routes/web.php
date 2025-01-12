@@ -166,7 +166,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/quizzes/{quizId}/submit-questions', [QuestionController::class, 'submitQuestions'])->name('questions.submit');
 
     // Attempt Quiz Routes
-    Route::get('/attempts/{quiz_id}', [AttemptController::class, 'index'])->name('attempts.index');
+    Route::get('attempts/', [AttemptController::class, 'index'])->name('attempts.index');
+
 
 
 });

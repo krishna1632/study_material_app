@@ -14,7 +14,7 @@ class AttemptController extends Controller
      */
     public function index(Request $request, $quiz_id)
     {
-        dd($quiz_id);  // Check if quiz_id is received correctly
+        // dd($quiz_id);  // Check if quiz_id is received correctly
         $user = auth()->user(); // Logged-in user
 
         if ($user->hasRole('student')) {
@@ -25,7 +25,7 @@ class AttemptController extends Controller
                 return redirect()->route('quizzes.index')->with('error', 'The quiz is not active yet.');
             }
 
-            // return view('attempts.index', compact('quiz'));
+            return view('attempts.index', compact('quiz'));
         }
     }
 
