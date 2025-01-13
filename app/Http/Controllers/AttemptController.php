@@ -12,20 +12,16 @@ class AttemptController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, $quiz_id)
+    public function index(Request $request)
     {
-        // dd($quiz_id);  // Check if quiz_id is received correctly
         $user = auth()->user(); // Logged-in user
 
         if ($user->hasRole('student')) {
-            $quiz = Quiz::with('questions')->findOrFail($quiz_id);
+            // Fetch only quizzes where status = 1
+            $quizzes = Quiz::where('status', 1)->get();
 
-            // Only proceed if the quiz is active (status = 1)
-            if ($quiz->status !== 1) {
-                return redirect()->route('quizzes.index')->with('error', 'The quiz is not active yet.');
-            }
-
-            return view('attempts.index', compact('quiz'));
+            // Pass quizzes to the view
+            return view('attempts.index', compact('quizzes'));
         }
     }
 

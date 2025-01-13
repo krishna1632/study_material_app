@@ -22,7 +22,8 @@
                 <!-- Check if questions are finalized -->
                 @if ($quiz->questions && $quiz->questions->where('is_submitted', 1)->count() > 0)
                     <!-- If questions are finalized, show Start Test button -->
-                    <form id="startTestForm" action="#" method="POST" style="display:inline;">
+                    <form id="startTestForm" action="{{ route('quizzes.startTest') }}" method="POST"
+                        style="display:inline;">
                         @csrf
                         <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
                         <button type="submit" class="btn btn-danger btn-sm me-2">Start Test</button>

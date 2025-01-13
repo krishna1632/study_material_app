@@ -16,42 +16,44 @@
         </div>
         <div class="card-body">
             <table class="table table-bordered">
-                {{-- <tr> --}}
-                    <th>ID</th>
-                    <td>{{ $quiz->id }}</td>
-                </tr>
-                <tr>
-                    <th>Subject Type</th>
-                    <td>{{ $quiz->subject_type }}</td>
-                </tr>
-                <tr>
-                    <th>Department</th>
-                    <td>{{ $quiz->department }}</td>
-                </tr>
-                <tr>
-                    <th>Semester</th>
-                    <td>{{ $quiz->semester }}</td>
-                </tr>
-                <tr>
-                    <th>Subject Name</th>
-                    <td>{{ $quiz->subject_name }}</td>
-                </tr>
-                <tr>
-                    <th>Faculty Name</th>
-                    <td>{{ $quiz->faculty_name }}</td>
-                </tr>
-                <tr>
-                    <th>Date</th>
-                    <td>{{ $quiz->date }}</td>
-                </tr>
-                <tr>
-                    <th>Start Time</th>
-                    <td>{{ \Carbon\Carbon::parse($quiz->start_time)->format('h:i A') }}</td>
-                </tr>
-                <tr>
-                    <th>End Time</th>
-                    <td>{{ \Carbon\Carbon::parse($quiz->end_time)->format('h:i A') }}</td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Subject Type</th>
+                        <th>Department</th>
+                        <th>Semester</th>
+                        <th>Subject Name</th>
+                        <th>Faculty Name</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($quizzes->isEmpty())
+                        <tr>
+                            <td colspan="10" class="text-center">No active quizzes available.</td>
+                        </tr>
+                    @else
+                        @foreach ($quizzes as $index => $quiz)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $quiz->subject_type }}</td>
+                                <td>{{ $quiz->department }}</td>
+                                <td>{{ $quiz->semester }}</td>
+                                <td>{{ $quiz->subject_name }}</td>
+                                <td>{{ $quiz->faculty_name }}</td>
+                                <td>{{ $quiz->date }}</td>
+                                <td>{{ $quiz->start_time }}</td>
+                                <td>{{ $quiz->end_time }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-primary btn-sm">Start Quiz</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
             </table>
         </div>
     </div>
