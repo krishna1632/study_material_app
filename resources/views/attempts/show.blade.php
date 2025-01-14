@@ -114,11 +114,12 @@
 
     <!-- Back to Dashboard or Start Test Button -->
     <div class="d-flex justify-content-end">
-        <a href="#" class="btn btn-secondary btn-sm me-3">Back to Dashboard</a>
+        <a href="{{ route('attempts.index') }}" class="btn btn-secondary btn-sm me-3">Back to Dashboard</a>
         <form action="#" method="POST">
             @csrf
             <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
             <button type="submit" class="btn btn-success btn-sm">Start Test</button>
         </form>
     </div>
+    <br>
 @endsection
