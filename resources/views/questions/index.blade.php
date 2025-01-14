@@ -67,10 +67,33 @@
                     <input type="checkbox" id="confirmFinalize">
                     <label for="confirmFinalize">I confirm that all questions are correct and finalized.</label>
                 </div>
-                <div>
+                <div class="d-flex justify-content-between align-items-center">
                     <form method="POST" action="{{ route('questions.submit', $quiz->id) }}">
                         @csrf
                         <button id="finalSubmit" class="btn btn-success mt-2" disabled>Final Submit</button>
+                    </form>
+                    <button id="toggleInstructionForm" class="btn btn-info mt-2">Add Instructions</button>
+                </div>
+
+
+                <!-- Add Instructions Form -->
+                <div id="instructionForm" class="mt-4" style="display: none;">
+                    <form method="POST" action="{{ route('quizzes.storeInstructions', $quiz->id) }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="total_no_of_question" class="form-label">Total Number of Questions</label>
+                            <input type="number" class="form-control" id="total_no_of_question" name="total_no_of_question"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attempt_no" class="form-label">Attempt Number</label>
+                            <input type="number" class="form-control" id="attempt_no" name="attempt_no" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="weightage" class="form-label">Weightage</label>
+                            <input type="text" class="form-control" id="weightage" name="weightage" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Instructions</button>
                     </form>
                 </div>
             @endif
@@ -81,6 +104,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- SweetAlert Confirmation for Delete -->
+
+    <!-- Toggle Instructions Form -->
+    <script>
+        document.getElementById('toggleInstructionForm').addEventListener('click', function() {
+            const instructionForm = document.getElementById('instructionForm');
+            instructionForm.style.display = instructionForm.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
     <script>
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', function() {
@@ -95,7 +126,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         document.getElementById('deleteForm_' + questionId)
-                    .submit(); // Submit the delete form
+                            .submit(); // Submit the delete form
                     }
                 });
             });

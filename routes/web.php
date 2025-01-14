@@ -153,8 +153,7 @@ Route::middleware('auth')->group(function () {
     Route::get('quizzes/{quiz}/instructions', [QuizController::class, 'showInstructions'])->name('quizzes.instructions');
     Route::put('quizzes/{quiz}/update-instructions', [QuizController::class, 'updateInstructions'])->name('quizzes.update.instructions');
     Route::post('/quizzes/start-test', [QuizController::class, 'startTest'])->name('quizzes.startTest');
-
-
+    Route::post('/quizzes/{id}/store-instructions', [QuizController::class, 'storeInstructions'])->name('quizzes.storeInstructions');
 
     // Questions Routes
     Route::get('/quizzes/{quiz}/questions', [QuestionController::class, 'index'])->name('questions.index');
@@ -167,8 +166,8 @@ Route::middleware('auth')->group(function () {
 
     // Attempt Quiz Routes
     Route::get('attempts/', [AttemptController::class, 'index'])->name('attempts.index');
-
-
+    Route::get('/attempts/create/{id}', [AttemptController::class, 'create'])->name('attempts.create');
+    Route::post('/attempts/show', [AttemptController::class, 'store'])->name('attempts.store');
 
 });
 

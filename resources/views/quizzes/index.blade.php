@@ -51,7 +51,8 @@
                                     <a href="{{ route('questions.index', $quiz->id) }}" class="btn btn-primary btn-sm">Add
                                         Question</a>
                                 @endif
-                                <a href="{{ route('quizzes.show', $quiz->id) }}" class="btn btn-info btn-sm">View</a>
+                                <a href="{{ route('quizzes.show', $quiz->id) }}" class="btn btn-info btn-sm">Preview and
+                                    Start</a>
                                 <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                 <form action="{{ route('quizzes.destroy', $quiz->id) }}" method="POST"
                                     style="display:inline;">

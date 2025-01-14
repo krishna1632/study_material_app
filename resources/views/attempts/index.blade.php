@@ -48,7 +48,8 @@
                                 <td>{{ $quiz->start_time }}</td>
                                 <td>{{ $quiz->end_time }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-primary btn-sm">Start Quiz</a>
+                                    <a href="{{ route('attempts.create', $quiz->id) }}" class="btn btn-primary btn-sm">Start
+                                        Quiz</a>
                                 </td>
                             </tr>
                         @endforeach

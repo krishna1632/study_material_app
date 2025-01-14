@@ -162,7 +162,7 @@ class QuizController extends Controller
                     }
                 },
             ],
-            'instructions' => 'nullable|string|max:1000',
+
         ]);
 
         $quiz = Quiz::create($request->all());
@@ -242,6 +242,28 @@ class QuizController extends Controller
     }
 
 
+    public function storeInstructions(Request $request, $id)
+    {
+        // Validate the incoming data
+        $request->validate([
+            'total_no_of_question' => 'required|integer|min:1',
+            'attempt_no' => 'required|integer|min:1',
+            'weightage' => 'required|string|max:255',
+        ]);
+
+        // Find the quiz by ID
+        $quiz = Quiz::findOrFail($id);
+
+        // Update the quiz with the instructions
+        $quiz->update([
+            'total_no_of_question' => $request->total_no_of_question,
+            'attempt_no' => $request->attempt_no,
+            'weightage' => $request->weightage,
+        ]);
+
+        return redirect()->route('questions.index', $id)->with('success', 'Instructions Added successfully.');
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -292,40 +314,18 @@ class QuizController extends Controller
      */
     public function destroy(string $id)
     {
-        $quiz = Quiz::findOrFail($id);  // Fetch quiz by ID
-        $quiz->delete();  // Delete the quiz
+        // Fetch the quiz by ID
+        $quiz = Quiz::findOrFail($id);
 
+        // Optionally, you can delete related data (like questions) if necessary
+        // For example, if you have a relationship between Quiz and Question, you could delete them as well:
+        $quiz->questions()->delete();  // Deletes all questions related to this quiz
+
+        // Now, delete the quiz itself
+        $quiz->delete();
+
+        // Redirect with success message
         return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
-    }
-
-    // Show Instructions Page (form to write instructions)
-    public function showInstructions($id)
-    {
-        $quiz = Quiz::findOrFail($id);
-        return view('quizzes.instructions', compact('quiz'));
-    }
-
-    // Update Instructions
-    public function updateInstructions(Request $request, $id)
-    {
-        $quiz = Quiz::findOrFail($id);
-
-        // Validate the instructions input
-        $request->validate([
-            'instructions' => 'required|string|max:1000',
-            'subject_name' => 'required|string|max:255',
-            'teacher_name' => 'required|string|max:255',
-        ]);
-
-        // Update the quiz with new instructions
-        $quiz->update([
-            'instructions' => $request->instructions,
-            'subject_name' => $request->subject_name,
-            'teacher_name' => $request->teacher_name,
-        ]);
-
-        return redirect()->route('quizzes.show', $quiz->id)->with('success', 'Instructions updated successfully.');
-
     }
 
     public function startTest(Request $request)
