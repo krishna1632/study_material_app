@@ -34,14 +34,12 @@ class AttemptController extends Controller
     public function create(Request $request, $id)
     {
         $quiz = Quiz::findOrFail($id); // Quiz details fetch karna
-        $question = Question::findOrFail($id);
         // Logged-in user details
         $user = auth()->user();
 
         // Pass quiz and user details to the view
         return view('attempts.create', [
             'quiz' => $quiz,
-            'question' => $question,
             'user' => $user,
         ]);
     }
@@ -55,95 +53,112 @@ class AttemptController extends Controller
         $validated = $request->validate([
             'quiz_id' => 'required|exists:quizzes,id',
             'roll_no' => 'required|string|max:255',
-            'question_id' => 'required|exists:questions,id',
         ]);
 
-        // Instead of saving to the database, prepare student details
+        // Save the required fields in the Attempt table
+        $attempt = Attempt::create([
+            'student_name' => auth()->user()->name, // Logged-in user ka naam
+            'roll_no' => $validated['roll_no'], // Roll number
+            'semester' => auth()->user()->semester, // User ka semester
+            'department' => auth()->user()->department, // User ka department
+            'subject_type' => $request->input('subject_type'), // Subject Type
+            'subject_name' => $request->input('subject_name'), // Subject Name
+            'quiz_id' => $validated['quiz_id'], // Quiz ID
+            'status' => 0, // Test status (in progress)
+        ]);
+
+        // Fetch quiz details
+        $quiz = Quiz::findOrFail($validated['quiz_id']);
+
+        // Manually entered roll number from the validated data
+        $rollNo = $validated['roll_no'];
+
+        // Fetch attempt details using manually entered roll number from the attempt table
+        $attempt = Attempt::where('roll_no', $rollNo)
+            ->where('quiz_id', $validated['quiz_id']) // Ensure the quiz_id matches
+            ->first(); // Fetch first matching attempt
+
+        // Prepare student details to pass to the view
         $studentDetails = [
             'name' => auth()->user()->name,
-            'roll_no' => $validated['roll_no'],
-            'semester' => auth()->user()->semester,
+            'roll_no' => $rollNo, // Use the roll number passed from the route
             'department' => auth()->user()->department,
-            'subject_type' => $request->subject_type,
-            'subject_name' => $request->subject_name,
+            'semester' => auth()->user()->semester,
         ];
 
-        // Fetch quiz and question details
-        $quiz = Quiz::findOrFail($validated['quiz_id']);
-        $question = Question::findOrFail($validated['question_id']);
+        // After saving, return the view directly with the passed data
+        return view('attempts.show', compact('quiz', 'studentDetails', 'attempt'))
+            ->with('success', 'Details saved successfully!');
+    }
 
-        // Redirect to the show page with quiz and student details
-        return view('attempts.show', compact('quiz', 'question', 'studentDetails'));
+    /**
+     * Display the specified resource.
+     */
+    public function show(Request $request, $id)
+    {
+        // 
     }
 
     // Add a new method to fetch quiz questions
     public function startTest(Request $request, $quizId)
     {
-        $quiz = Quiz::findOrFail($quizId);
-        $questions = Question::where('quiz_id', $quizId)->paginate(1); // Fetch questions for the specific quiz
+        $quiz = Quiz::find($quizId);
+        $questions = Question::where('quiz_id', $quizId)->paginate(1);
 
-        // If there are previous answers, get them from the session
-        $previousAnswers = $request->session()->get('selected_answers', []);
+        // Get answers from session or initialize empty array
+        $previousAnswers = session()->get('answers', []);
 
-        // Pass quiz, questions, and previous answers to the view
-        return view('attempts.start_test', compact('quiz', 'questions', 'previousAnswers'));
+        // If new answers are submitted, merge them with session
+        if ($request->has('answers')) {
+            $submittedAnswers = $request->input('answers');
+            $previousAnswers = array_merge($previousAnswers, $submittedAnswers);
+            session()->put('answers', $previousAnswers);
+        }
+
+        // Get the current question ID from the request
+        $currentQuestionId = $request->input('question_id') ?? $questions->first()->id;
+
+        return view('attempts.start_test', compact('quiz', 'questions', 'previousAnswers', 'currentQuestionId'));
+    }
+
+    public function storeAnswers(Request $request)
+    {
+        // Validate and store answers in session
+        $request->validate([
+            'answers' => 'required|array',
+        ]);
+
+        // Save the answers in session
+        session()->put('answers', $request->input('answers'));
+
+        return response()->json(['success' => true]);
     }
 
     public function submitTest(Request $request, $quizId)
     {
-        $validated = $request->validate([
-            'answers' => 'required|array',
-            'answers.*' => 'required|string', // Ensure every answer is a string
-            'roll_no' => 'required|string|max:255',
+        // Validate that answers are provided
+        $request->validate([
+            'answers' => 'required|array', // Ensure 'answers' is an array
         ]);
 
-
-        // Fetch the quiz and related questions
-        $quiz = Quiz::findOrFail($quizId);
-        $questions = Question::where('quiz_id', $quizId)->get();
-
-        // Save the student's answers and calculate the result
-        $correctAnswers = 0;
-        foreach ($questions as $question) {
-            // Check if the provided answer matches the correct option
-            $selectedAnswer = $validated['answers'][$question->id] ?? null;
-
-            // Check if the selected answer is correct
-            if ($selectedAnswer && $selectedAnswer == $question->correct_option) {
-                $correctAnswers++;
-            }
-
-            // Store the answer in the database (in a separate table or a related column if needed)
-            // Example: Store answers in a `question_attempts` table or update attempt record if necessary.
+        // Iterate through the selected answers and save
+        foreach ($request->input('answers') as $questionId => $answer) {
+            // Save the 'answers' and 'question_id' for each quiz and question
             Attempt::create([
-                'name' => auth()->user()->name,
-                'roll_no' => $validated['roll_no'],
-                'semester' => auth()->user()->semester,
-                'department' => auth()->user()->department,
-                'subject_type' => $request->subject_type,
-                'subject_name' => $request->subject_name,
-                'quiz_id' => $quizId,
-                'question_id' => $question->id,
-                'answer' => $selectedAnswer, // Save the selected answer
-                'status' => 1, // Mark as completed
+                'quiz_id' => $quizId,             // Match the quiz_id
+                'question_id' => $questionId,     // Save the question_id
+                'answers' => $answer,             // Save the selected answer
             ]);
         }
 
-        // Update the attempt status to 'completed'
-        $attempt = Attempt::where('quiz_id', $quizId)
-            ->where('roll_no', $validated['roll_no'])
-            ->where('status', 0) // Find the attempt that's not completed yet
-            ->first();
-
-        if ($attempt) {
-            $attempt->status = 1; // Mark the attempt as completed
-            $attempt->correct_answers = $correctAnswers; // Store the number of correct answers
-            $attempt->save();
-        }
-
-        // Redirect to a results page or show a success message
-        return redirect()->route('attempts.results', ['quizId' => $quizId])->with('success', 'Test submitted successfully!');
+        return redirect()->route('attempts.index', $quizId)
+            ->with('success', 'Test submitted successfully!');
     }
+
+
+
+
+
 
     public function results(Request $request, $quizId)
     {
@@ -160,15 +175,6 @@ class AttemptController extends Controller
         }
 
         return view('attempts.results', compact('quiz', 'attempt'));
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        // 
     }
 
     /**

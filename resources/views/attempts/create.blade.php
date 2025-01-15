@@ -21,7 +21,6 @@
 
                 <!-- Hidden Quiz ID -->
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
-                <input type="hidden" name="question_id" value="{{ $question->id }}">
 
                 <div class="mb-3">
                     <label for="student_name" class="form-label">Name</label>

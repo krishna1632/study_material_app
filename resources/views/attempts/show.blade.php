@@ -115,7 +115,8 @@
     <!-- Back to Dashboard or Start Test Button -->
     <div class="d-flex justify-content-end">
         <a href="{{ route('attempts.index') }}" class="btn btn-secondary btn-sm me-3">Back to Dashboard</a>
-        <a href="{{ route('start.test', $quiz->id) }}" class="btn btn-success btn-sm">Start Test</a>
+        <a href="{{ route('start.test', ['quizId' => $quiz->id, 'questionId' => $quiz->questions->first()->id]) }}"
+            class="btn btn-success btn-sm">Start Test</a>
     </div>
     <br>
 @endsection

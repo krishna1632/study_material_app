@@ -18,9 +18,9 @@
                 <!-- Form to submit answers -->
                 <form action="{{ route('attempts.submitTest', $quiz->id) }}" method="POST">
                     @csrf
+
                     @foreach ($questions as $question)
                         @php
-                            // Calculate the question number (page number * questions per page) + current question index
                             $questionNumber =
                                 ($questions->currentPage() - 1) * $questions->perPage() + $loop->iteration;
                         @endphp
@@ -44,13 +44,15 @@
                             @if ($questions->onFirstPage())
                                 <span></span>
                             @else
-                                <a href="{{ $questions->previousPageUrl() }}" class="btn btn-secondary">Previous</a>
+                                <a href="{{ $questions->previousPageUrl() }}&question_id={{ $questions->previousPageUrl() }}"
+                                    class="btn btn-secondary" onclick="storeAnswers()">Previous</a>
                             @endif
                         </div>
 
                         <div>
                             @if ($questions->hasMorePages())
-                                <a href="{{ $questions->nextPageUrl() }}" class="btn btn-primary">Next</a>
+                                <a href="{{ $questions->nextPageUrl() }}&question_id={{ $questions->nextPageUrl() }}"
+                                    class="btn btn-primary" onclick="storeAnswers()">Next</a>
                             @else
                                 <button type="submit" class="btn btn-success">Submit Test</button>
                             @endif
@@ -60,4 +62,32 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        function storeAnswers() {
+            let answers = {};
+            // Loop through all radio buttons and store the selected answers
+            document.querySelectorAll('input[type="radio"]:checked').forEach((input) => {
+                let questionId = input.name.match(/\d+/)[0]; // Extract question id
+                answers[questionId] = input.value;
+            });
+
+            // Save the answers to session using AJAX
+            fetch('{{ route('attempts.storeAnswers') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        answers: answers
+                    })
+                }).then(response => response.json())
+                .then(data => {
+                    console.log(data); // Handle the response if needed
+                });
+        }
+    </script>
 @endsection
