@@ -20,6 +20,7 @@ class Attempt extends Model
         'subject_name',
         'quiz_id',
         'question_id',
+        'answers',
         'status',
     ];
 

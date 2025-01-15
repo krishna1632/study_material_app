@@ -1,0 +1,63 @@
+@extends('layouts.admin')
+
+@section('title', 'Start Quiz')
+
+@section('content')
+    <h1 class="mt-4">Start Quiz: {{ $quiz->subject_name }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="#">Attempt Quiz</a></li>
+        <li class="breadcrumb-item active">Start Test</li>
+    </ol>
+
+    <div class="card shadow-lg border-0">
+        <div class="card shadow-lg border-0 p-4">
+            <div class="card-body">
+                <h3 class="fw-bold text-primary">{{ $quiz->subject_name }} - Question</h3>
+
+                <!-- Form to submit answers -->
+                <form action="{{ route('attempts.submitTest', $quiz->id) }}" method="POST">
+                    @csrf
+                    @foreach ($questions as $question)
+                        @php
+                            // Calculate the question number (page number * questions per page) + current question index
+                            $questionNumber =
+                                ($questions->currentPage() - 1) * $questions->perPage() + $loop->iteration;
+                        @endphp
+
+                        <div class="mb-4">
+                            <p><strong>Question #{{ $questionNumber }}: {{ $question->question_text }}</strong></p>
+
+                            @foreach (json_decode($question->options) as $option)
+                                <div>
+                                    <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option }}"
+                                        @if (isset($previousAnswers[$question->id]) && $previousAnswers[$question->id] == $option) checked @endif required>
+                                    <label>{{ $option }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endforeach
+
+                    <!-- Pagination controls -->
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            @if ($questions->onFirstPage())
+                                <span></span>
+                            @else
+                                <a href="{{ $questions->previousPageUrl() }}" class="btn btn-secondary">Previous</a>
+                            @endif
+                        </div>
+
+                        <div>
+                            @if ($questions->hasMorePages())
+                                <a href="{{ $questions->nextPageUrl() }}" class="btn btn-primary">Next</a>
+                            @else
+                                <button type="submit" class="btn btn-success">Submit Test</button>
+                            @endif
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection

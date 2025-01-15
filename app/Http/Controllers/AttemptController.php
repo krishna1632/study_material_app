@@ -58,35 +58,108 @@ class AttemptController extends Controller
             'question_id' => 'required|exists:questions,id',
         ]);
 
-        // Create a new attempt record
-        $attempt = Attempt::create([
-            'student_name' => auth()->user()->name,
+        // Instead of saving to the database, prepare student details
+        $studentDetails = [
+            'name' => auth()->user()->name,
             'roll_no' => $validated['roll_no'],
             'semester' => auth()->user()->semester,
             'department' => auth()->user()->department,
             'subject_type' => $request->subject_type,
             'subject_name' => $request->subject_name,
-            'quiz_id' => $validated['quiz_id'], // Save quiz_id
-            'question_id' => $validated['question_id'], // Save question_id
-            'status' => 0, // Default status
-        ]);
+        ];
 
-        // Fetch the quiz details
+        // Fetch quiz and question details
         $quiz = Quiz::findOrFail($validated['quiz_id']);
         $question = Question::findOrFail($validated['question_id']);
 
-        // Prepare student details for the next page
-        $studentDetails = [
-            'name' => $attempt->student_name,
-            'roll_no' => $attempt->roll_no,
-            'department' => $attempt->department,
-            'semester' => $attempt->semester,
-            'subject_type' => $attempt->subject_type,
-            'subject_name' => $attempt->subject_name,
-        ];
-
-        // Redirect to a new view with quiz and student details
+        // Redirect to the show page with quiz and student details
         return view('attempts.show', compact('quiz', 'question', 'studentDetails'));
+    }
+
+    // Add a new method to fetch quiz questions
+    public function startTest(Request $request, $quizId)
+    {
+        $quiz = Quiz::findOrFail($quizId);
+        $questions = Question::where('quiz_id', $quizId)->paginate(1); // Fetch questions for the specific quiz
+
+        // If there are previous answers, get them from the session
+        $previousAnswers = $request->session()->get('selected_answers', []);
+
+        // Pass quiz, questions, and previous answers to the view
+        return view('attempts.start_test', compact('quiz', 'questions', 'previousAnswers'));
+    }
+
+    public function submitTest(Request $request, $quizId)
+    {
+        $validated = $request->validate([
+            'answers' => 'required|array',
+            'answers.*' => 'required|string', // Ensure every answer is a string
+            'roll_no' => 'required|string|max:255',
+        ]);
+
+
+        // Fetch the quiz and related questions
+        $quiz = Quiz::findOrFail($quizId);
+        $questions = Question::where('quiz_id', $quizId)->get();
+
+        // Save the student's answers and calculate the result
+        $correctAnswers = 0;
+        foreach ($questions as $question) {
+            // Check if the provided answer matches the correct option
+            $selectedAnswer = $validated['answers'][$question->id] ?? null;
+
+            // Check if the selected answer is correct
+            if ($selectedAnswer && $selectedAnswer == $question->correct_option) {
+                $correctAnswers++;
+            }
+
+            // Store the answer in the database (in a separate table or a related column if needed)
+            // Example: Store answers in a `question_attempts` table or update attempt record if necessary.
+            Attempt::create([
+                'name' => auth()->user()->name,
+                'roll_no' => $validated['roll_no'],
+                'semester' => auth()->user()->semester,
+                'department' => auth()->user()->department,
+                'subject_type' => $request->subject_type,
+                'subject_name' => $request->subject_name,
+                'quiz_id' => $quizId,
+                'question_id' => $question->id,
+                'answer' => $selectedAnswer, // Save the selected answer
+                'status' => 1, // Mark as completed
+            ]);
+        }
+
+        // Update the attempt status to 'completed'
+        $attempt = Attempt::where('quiz_id', $quizId)
+            ->where('roll_no', $validated['roll_no'])
+            ->where('status', 0) // Find the attempt that's not completed yet
+            ->first();
+
+        if ($attempt) {
+            $attempt->status = 1; // Mark the attempt as completed
+            $attempt->correct_answers = $correctAnswers; // Store the number of correct answers
+            $attempt->save();
+        }
+
+        // Redirect to a results page or show a success message
+        return redirect()->route('attempts.results', ['quizId' => $quizId])->with('success', 'Test submitted successfully!');
+    }
+
+    public function results(Request $request, $quizId)
+    {
+        $quiz = Quiz::findOrFail($quizId);
+        $user = auth()->user();
+
+        // Fetch the attempt for this user and quiz
+        $attempt = Attempt::where('quiz_id', $quizId)
+            ->where('roll_no', $user->roll_no)
+            ->first();
+
+        if (!$attempt) {
+            return redirect()->route('attempts.index')->with('error', 'Test attempt not found.');
+        }
+
+        return view('attempts.results', compact('quiz', 'attempt'));
     }
 
 
@@ -95,7 +168,7 @@ class AttemptController extends Controller
      */
     public function show(string $id)
     {
-        return view("attempts.show");
+        // 
     }
 
     /**
