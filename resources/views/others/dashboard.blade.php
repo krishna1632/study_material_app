@@ -8,7 +8,7 @@
     </h1>
     <ol class="breadcrumb mb-4"></ol>
     <div class="row">
-        <!-- Profile Picture and Static Info (Left Card) -->
+        <!-- Profile Picture and Static Info (Left Card) profile photo key lieay -->
         <div class="container col-md-4">
             <div class="card text-center">
                 <div class="card-body">
