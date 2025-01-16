@@ -12,9 +12,9 @@
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-question-circle me-1"></i>
-            @can('create quizzes')
+            
                 <a href="{{ route('quizzes.create') }}" class="btn btn-primary btn-sm float-end">Create Quiz</a>
-            @endcan
+            
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
