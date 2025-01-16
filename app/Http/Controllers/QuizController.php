@@ -90,7 +90,6 @@ class QuizController extends Controller
             // If the user has other roles, show only their department
             $departments = [$user->department, 'ELECTIVE'];
         }
-
         // Initial empty subject list
         $subjects = [];
 
@@ -313,20 +312,24 @@ class QuizController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    {
-        // Fetch the quiz by ID
-        $quiz = Quiz::findOrFail($id);
+{
+   
 
-        // Optionally, you can delete related data (like questions) if necessary
-        // For example, if you have a relationship between Quiz and Question, you could delete them as well:
-        $quiz->questions()->delete();  // Deletes all questions related to this quiz
+    // Fetch the quiz by ID
+    $quiz = Quiz::findOrFail($id);
+    $quiz->attempts()->delete();
+    // Optionally, delete related questions
+    $quiz->questions()->delete(); // Delete related questions
 
-        // Now, delete the quiz itself
-        $quiz->delete();
+    // Now, delete the quiz itself
+    $quiz->delete();
 
-        // Redirect with success message
-        return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
-    }
+ 
+
+    // Redirect with success message
+    return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
+}
+
 
     public function startTest(Request $request)
     {

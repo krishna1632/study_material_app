@@ -150,6 +150,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/quizzes/{quiz}/edit', [QuizController::class, 'edit'])->name('quizzes.edit');
     Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
     Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
+
+    
     Route::get('quizzes/{quiz}/instructions', [QuizController::class, 'showInstructions'])->name('quizzes.instructions');
     Route::put('quizzes/{quiz}/update-instructions', [QuizController::class, 'updateInstructions'])->name('quizzes.update.instructions');
     Route::post('/quizzes/start-test', [QuizController::class, 'startTest'])->name('quizzes.startTest');

@@ -91,7 +91,7 @@
                     <div class="p-4 bg-light rounded shadow-sm">
                         <h5 class="fw-bold text-dark mb-4"><u>📋 Instructions for Candidates</u></h5>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><b>1.</b> If you switch the browser tab during the test, the test
+                            <li class="list-group-item "><b>1.</b> If you switch the browser tab during the test, the test
                                 will be automatically submitted, and you will not be allowed to retake it.</li>
                             <li class="list-group-item"><b>2.</b> Total number of questions:
                                 <b>{{ $quiz->total_no_of_question }}</b></li>

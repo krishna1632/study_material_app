@@ -65,7 +65,7 @@
                 <!-- Checkbox and Final Submit Button -->
                 <div class="mt-4">
                     <input type="checkbox" id="confirmFinalize">
-                    <label for="confirmFinalize">I confirm that all questions are correct and finalized.</label>
+                    <label for="confirmFinalize">I confirm that all questions are correct and finalized &  add instructions.</label>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <form method="POST" action="{{ route('questions.submit', $quiz->id) }}">

@@ -38,26 +38,13 @@
                         </div>
                     @endforeach
 
-                    <!-- Pagination controls -->
-                    <div class="d-flex justify-content-between">
+                  
                         <div>
-                            @if ($questions->onFirstPage())
-                                <span></span>
-                            @else
-                                <a href="{{ $questions->previousPageUrl() }}&question_id={{ $questions->previousPageUrl() }}"
-                                    class="btn btn-secondary" onclick="storeAnswers()">Previous</a>
-                            @endif
-                        </div>
-
-                        <div>
-                            @if ($questions->hasMorePages())
-                                <a href="{{ $questions->nextPageUrl() }}&question_id={{ $questions->nextPageUrl() }}"
-                                    class="btn btn-primary" onclick="storeAnswers()">Next</a>
-                            @else
+                            
                                 <button type="submit" class="btn btn-success">Submit Test</button>
-                            @endif
+                           
                         </div>
-                    </div>
+                    
                 </form>
             </div>
         </div>

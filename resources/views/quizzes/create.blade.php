@@ -38,7 +38,7 @@
                 <div class="mb-3">
                     <label for="department" class="form-label">Department/ELECTIVE</label>
                     <select name="department" id="department" class="form-control" required>
-                        <option value="" disabled selected>Select Department</option>
+                        
                         <option value="" disabled selected>Select Department</option>
                         @foreach ($departments as $department)
                             <option value="{{ $department }}">{{ $department }}</option>
@@ -73,9 +73,11 @@
                     <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
                     <select name="faculty_name" id="faculty_name" class="form-select" required>
                         <option value="" disabled selected>Select Faculty Name</option>
+                        <!-- Conditionally show the "Admin" option -->
                         @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
                             <option value="Admin" class="admin-option">Admin</option>
                         @endif
+
                         @foreach ($faculties as $faculty)
                             <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
                         @endforeach

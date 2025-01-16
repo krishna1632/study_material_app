@@ -75,20 +75,23 @@
     <!-- SweetAlert Confirmation for Delete -->
     <script>
         function confirmDelete(quizId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.querySelector(`form[action='/quizzes/${quizId}']`).submit();
-                }
-            });
+    console.log('Deleting quiz with ID: ' + quizId); // Check if the function is called
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.querySelector(`form[action='${window.location.origin}/quizzes/${quizId}']`).submit();
+
         }
+    });
+}
+
     </script>
 
     <!-- SweetAlert Success Popup -->

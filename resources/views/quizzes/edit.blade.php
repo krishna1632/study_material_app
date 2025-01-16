@@ -114,6 +114,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             // Trigger the subject filter based on selection changes
@@ -125,7 +126,7 @@
                 // Filter subjects based on the selected type
                 if (subjectType && department && semester) {
                     $.ajax({
-                        url: "{{ route('filter.subjects') }}",
+                        url: "/filter-subjects",
                         method: 'POST',
                         data: {
                             _token: "{{ csrf_token() }}",
@@ -144,7 +145,7 @@
                 } else if (subjectType && semester) {
                     // If only subject type and semester are selected
                     $.ajax({
-                        url: "{{ route('filter.subjects') }}",
+                        url: "/filter-subjects",
                         method: 'POST',
                         data: {
                             _token: "{{ csrf_token() }}",
@@ -175,7 +176,6 @@
                 departmentSelect.append('<option value="" disabled selected>Select Department</option>');
 
                 if (subjectType === 'CORE' || subjectType === 'DSE') {
-                    // For CORE or DSE, show all departments except ELECTIVE
                     $.each(@json($departments), function(index, value) {
                         if (value !== 'ELECTIVE') {
                             departmentSelect.append('<option value="' + value + '">' + value +
@@ -184,7 +184,6 @@
                     });
                 } else if (subjectType === 'VAC' || subjectType === 'SEC' || subjectType === 'GE' ||
                     subjectType === 'AEC') {
-                    // For VAC, SEC, GE, or AEC, show only ELECTIVE
                     departmentSelect.append('<option value="ELECTIVE">ELECTIVE</option>');
                 }
             });
@@ -200,7 +199,53 @@
                 });
             }
         });
+
+        document.getElementById('quizForm').addEventListener('submit', function(event) {
+            const currentDate = new Date().toISOString().split('T')[0];
+            const currentTime = new Date().toTimeString().split(' ')[0];
+
+            const dateInput = document.getElementById('date').value;
+            const startTimeInput = document.getElementById('start_time').value;
+            const endTimeInput = document.getElementById('end_time').value;
+
+            if (dateInput < currentDate) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Date',
+                    text: 'Date cannot be earlier than today!'
+                });
+                return;
+            }
+
+            if (dateInput === currentDate && startTimeInput < currentTime) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Start Time',
+                    text: 'Start time cannot be earlier than the current time!'
+                });
+                return;
+            }
+
+            if (dateInput === currentDate && endTimeInput < currentTime) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid End Time',
+                    text: 'End time cannot be earlier than the current time!'
+                });
+                return;
+            }
+
+            if (startTimeInput >= endTimeInput) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Time Range',
+                    text: 'End time must be after the start time!'
+                });
+            }
+        });
     </script>
-
-
 @endsection
