@@ -8,9 +8,19 @@ use App\Models\Question;
 use App\Models\User;
 use App\Models\Subject;
 use Carbon\Carbon;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class QuizController extends Controller
+class QuizController extends Controller implements HasMiddleware
 {
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view create test', only: ['index']),
+           
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

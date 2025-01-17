@@ -65,7 +65,7 @@
                 <!-- Checkbox and Final Submit Button -->
                 <div class="mt-4">
                     <input type="checkbox" id="confirmFinalize">
-                    <label for="confirmFinalize">I confirm that all questions are correct and finalized &  add instructions.</label>
+                    <label for="confirmFinalize"> I confirm that all questions are correct, finalized, and the instructions have been added.</label>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <form method="POST" action="{{ route('questions.submit', $quiz->id) }}">
@@ -86,11 +86,11 @@
                                 required>
                         </div>
                         <div class="mb-3">
-                            <label for="attempt_no" class="form-label">Attempt Number</label>
+                            <label for="attempt_no" class="form-label">How many questions attempt</label>
                             <input type="number" class="form-control" id="attempt_no" name="attempt_no" required>
                         </div>
                         <div class="mb-3">
-                            <label for="weightage" class="form-label">Weightage</label>
+                            <label for="weightage" class="form-label">per question Weightage</label>
                             <input type="text" class="form-control" id="weightage" name="weightage" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit Instructions</button>

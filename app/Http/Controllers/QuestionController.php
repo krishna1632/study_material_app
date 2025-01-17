@@ -108,13 +108,21 @@ class QuestionController extends Controller
      */
     public function destroy($id)
     {
+        // Find the question or fail
         $question = Question::findOrFail($id);
-        $quizId = $question->quiz_id; // Save quiz ID to redirect later
+    
+        // Get the quiz ID from the question
+        $quizId = $question->quiz_id;
+    
+        // Delete the question
         $question->delete();
-
-        return redirect()->route('questions.index', $quizId)
+    
+        // Redirect to the questions.index route with the correct parameter name
+        return redirect()->route('questions.index', ['quiz' => $quizId])
             ->with('success', 'Question deleted successfully!');
     }
+    
+    
 
     public function submitQuestions($quizId)
     {

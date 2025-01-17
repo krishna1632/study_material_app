@@ -136,9 +136,12 @@
             <div class="collapse" id="collapseQuizMast" aria-labelledby="headingQuizMast"
                 data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link" href="{{ route('quizzes.index') }}">Create Quiz</a>
-                    <a class="nav-link" href="{{ route('attempts.index') }}">Attempt Test</a>
-                    <a class="nav-link" href="{{ url('admin/quiz/reports') }}">Quiz Reports</a>
+
+                @can('view create test')
+                    <a class="nav-link" href="{{ route('quizzes.index') }}">  <i class="fas fa-pen"></i> Create Test</a>
+                @endcan
+                    <a class="nav-link" href="{{ route('attempts.index') }}"><i class="fas fa-edit"></i> Attempt Test</a>
+                    <a class="nav-link" href="{{ url('admin/quiz/reports') }}"> <i class="fas fa-chart-bar"></i> Student Test Reports</a>
                 </nav>
             </div>
 
