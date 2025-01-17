@@ -16,7 +16,10 @@
             Student Details
         </div>
         <div class="card-body">
-            <form action="{{ route('attempts.store') }}" method="POST">
+                @error('already_submitted')
+                   <div class="text-danger">{{ $message }}</div>
+                @enderror
+            <form id="quizForm" action="{{ route('attempts.store') }}" method="POST">
                 @csrf
 
                 <!-- Hidden Quiz ID -->
@@ -57,8 +60,68 @@
                     <input type="text" class="form-control" id="roll_number" name="roll_no" required>
                 </div>
 
-                <button type="submit" class="btn btn-success">Submit</button>
+
+               
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-success" id="submitButton">Submit</button>
             </form>
+         
         </div>
     </div>
 @endsection
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Wait for the DOM to load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Add event listener to the submit button
+        document.getElementById('submitButton').addEventListener('click', function(e) {
+            e.preventDefault();  // Prevent form submission
+
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Please check your Roll No. before submitting.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, submit it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user clicks "Yes, submit it!", submit the form
+                    document.getElementById('quizForm').submit();
+                }
+            });
+        });
+    });
+
+    // Success Flash Message
+    @if (session('success'))
+        Swal.fire({
+            title: 'Success!',
+            text: "{{ session('success') }}",
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @endif
+
+    // Error Flash Message
+    @if (session('error'))
+        Swal.fire({
+            title: 'Error!',
+            text: "{{ session('error') }}",
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @endif
+
+    // Already Submitted Quiz Message
+   
+</script>
+
+
+

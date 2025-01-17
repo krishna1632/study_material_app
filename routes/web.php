@@ -169,10 +169,17 @@ Route::middleware('auth')->group(function () {
     // Attempt Quiz Routes
     Route::get('attempts/', [AttemptController::class, 'index'])->name('attempts.index');
     Route::get('/attempts/create/{id}', [AttemptController::class, 'create'])->name('attempts.create');
-    Route::post('/attempts/show', [AttemptController::class, 'store'])->name('attempts.store');
+    Route::post('/attempts', [AttemptController::class, 'store'])->name('attempts.store');
+    Route::get('/attempts/{id}', [AttemptController::class, 'show'])->name('attempts.show');
+    
     Route::get('/start-test/{quizId}/question/{questionId}', [AttemptController::class, 'startTest'])->name('start.test');
     Route::post('/attempts/store-answers', [AttemptController::class, 'storeAnswers'])->name('attempts.storeAnswers');
-    Route::post('/quiz/{quizId}/submit', [AttemptController::class, 'submitTest'])->name('attempts.submitTest');
+   
+
+
+
+
+
 });
 
 require __DIR__ . '/auth.php';

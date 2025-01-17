@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use Illuminate\Http\Request;
-use App\Models\Attempt;
 use Illuminate\Support\Facades\Auth;
+use App\Models\AttemptDetails;
 use App\Models\Quiz;
 
 class AttemptController extends Controller
@@ -31,10 +31,12 @@ class AttemptController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request, $id)
+    public function create($id)
     {
-        $quiz = Quiz::findOrFail($id); // Quiz details fetch karna
-        // Logged-in user details
+        // Fetch quiz details
+        $quiz = Quiz::findOrFail($id);
+
+        // Get the logged-in user details
         $user = auth()->user();
 
         // Pass quiz and user details to the view
@@ -49,55 +51,55 @@ class AttemptController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate incoming request data
-        $validated = $request->validate([
+        $request->validate([
             'quiz_id' => 'required|exists:quizzes,id',
-            'roll_no' => 'required|string|max:255',
+            'roll_no' => 'required|string|max:50',
         ]);
 
-        // Save the required fields in the Attempt table
-        $attempt = Attempt::create([
-            'student_name' => auth()->user()->name, // Logged-in user ka naam
-            'roll_no' => $validated['roll_no'], // Roll number
-            'semester' => auth()->user()->semester, // User ka semester
-            'department' => auth()->user()->department, // User ka department
-            'subject_type' => $request->input('subject_type'), // Subject Type
-            'subject_name' => $request->input('subject_name'), // Subject Name
-            'quiz_id' => $validated['quiz_id'], // Quiz ID
-            'status' => 0, // Test status (in progress)
-        ]);
+        try {
+            $attempt = AttemptDetails::create([
+                'student_id' => auth()->id(),
+                'quiz_id' => $request->quiz_id,
+                'roll_no' => $request->roll_no,
+                'status' => 0,
+            ]);
 
-        // Fetch quiz details
-        $quiz = Quiz::findOrFail($validated['quiz_id']);
+            return redirect()->route('attempts.show', ['id' => $attempt->id])
+                ->with('success', 'Quiz attempt saved successfully.');
+        } catch (\Illuminate\Database\QueryException $exception) {
+            // Check if it's a unique constraint violation
+            if ($exception->getCode() === '23000') { // MySQL code for integrity constraint violation
+                return redirect()->back()
+                    ->withErrors(['already_submitted' => 'You have already attempted this quiz with the provided roll number.']);
+            }
 
-        // Manually entered roll number from the validated data
-        $rollNo = $validated['roll_no'];
-
-        // Fetch attempt details using manually entered roll number from the attempt table
-        $attempt = Attempt::where('roll_no', $rollNo)
-            ->where('quiz_id', $validated['quiz_id']) // Ensure the quiz_id matches
-            ->first(); // Fetch first matching attempt
-
-        // Prepare student details to pass to the view
-        $studentDetails = [
-            'name' => auth()->user()->name,
-            'roll_no' => $rollNo, // Use the roll number passed from the route
-            'department' => auth()->user()->department,
-            'semester' => auth()->user()->semester,
-        ];
-
-        // After saving, return the view directly with the passed data
-        return view('attempts.show', compact('quiz', 'studentDetails', 'attempt'))
-            ->with('success', 'Details saved successfully!');
+            throw $exception;
+        }
+    
     }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, $id)
-    {
-        // 
-    }
+    public function show($id)
+{
+    // Fetch the attempt details
+    $attempt = AttemptDetails::with(['quiz', 'student'])->findOrFail($id);
+
+    // Pass data to the view
+    return view('attempts.show', [
+        'attempt' => $attempt,
+        'quiz' => $attempt->quiz,
+        'studentDetails' => [
+            'name' => $attempt->student->name,
+            'roll_no' => $attempt->roll_no,
+            'department' => $attempt->student->department,
+            'semester' => $attempt->student->semester,
+        ],
+    ]);
+}
+
 
     // Add a new method to fetch quiz questions
     public function startTest(Request $request, $quizId)
