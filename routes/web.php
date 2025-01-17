@@ -174,6 +174,8 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/start-test/{quizId}/question/{questionId}', [AttemptController::class, 'startTest'])->name('start.test');
     Route::post('/attempts/store-answers', [AttemptController::class, 'storeAnswers'])->name('attempts.storeAnswers');
+    Route::post('attempts/{quizId}/submit', [AttemptController::class, 'submitTest'])->name('attempts.submitTest');
+    Route::get('attempts/{quizId}/results', [AttemptController::class, 'results'])->name('attempts.results');
    
 
 

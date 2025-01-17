@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AttemptDetails;
 use App\Models\Quiz;
+use App\Models\AttemptQuizDetails;
+
 
 class AttemptController extends Controller
 {
@@ -105,7 +107,7 @@ class AttemptController extends Controller
     public function startTest(Request $request, $quizId)
     {
         $quiz = Quiz::find($quizId);
-        $questions = Question::where('quiz_id', $quizId)->paginate(1);
+        $questions = Question::where('quiz_id', $quizId)->get();
 
         // Get answers from session or initialize empty array
         $previousAnswers = session()->get('answers', []);
@@ -123,61 +125,72 @@ class AttemptController extends Controller
         return view('attempts.start_test', compact('quiz', 'questions', 'previousAnswers', 'currentQuestionId'));
     }
 
-    public function storeAnswers(Request $request)
-    {
-        // Validate and store answers in session
-        $request->validate([
-            'answers' => 'required|array',
-        ]);
-
-        // Save the answers in session
-        session()->put('answers', $request->input('answers'));
-
-        return response()->json(['success' => true]);
-    }
+   
 
     public function submitTest(Request $request, $quizId)
-    {
-        // Validate that answers are provided
-        $request->validate([
-            'answers' => 'required|array', // Ensure 'answers' is an array
+{
+    // Get the quiz and the logged-in user
+    $quiz = Quiz::findOrFail($quizId);
+    $user = auth()->user();
+
+    // Fetch the attempt for this user and quiz
+    $attempt = AttemptDetails::where('quiz_id', $quizId)
+                             ->where('student_id', $user->id)
+                             ->first();
+
+    if (!$attempt) {
+        return redirect()->route('attempts.index')->with('error', 'Quiz attempt not found.');
+    }
+
+    // Fetch the submitted answers
+    $submittedAnswers = $request->input('answers');
+
+    // If no answers are submitted, return an error
+    if (empty($submittedAnswers)) {
+        return redirect()->back()->withErrors(['answers' => 'You must answer all the questions.']);
+    }
+
+    // Store answers in attempts_quiz_details table
+    foreach ($submittedAnswers as $questionId => $selectedOption) {
+        AttemptQuizDetails::create([
+            'attempt_id' => $attempt->id,
+            'question_id' => $questionId,
+            'selected_option' => $selectedOption,
         ]);
-
-        // Iterate through the selected answers and save
-        foreach ($request->input('answers') as $questionId => $answer) {
-            // Save the 'answers' and 'question_id' for each quiz and question
-            Attempt::create([
-                'quiz_id' => $quizId,             // Match the quiz_id
-                'question_id' => $questionId,     // Save the question_id
-                'answers' => $answer,             // Save the selected answer
-            ]);
-        }
-
-        return redirect()->route('attempts.index', $quizId)
-            ->with('success', 'Test submitted successfully!');
     }
 
+    // Update the attempt status to indicate that the quiz has been submitted
+    $attempt->status = 1; // 1 means submitted
+    $attempt->save();
+
+    // Redirect the user to the results page or any other page
+    return redirect()->route('attempts.results', ['quizId' => $quizId])
+                     ->with('success', 'Quiz submitted successfully.');
+}
 
 
 
 
 
-    public function results(Request $request, $quizId)
-    {
-        $quiz = Quiz::findOrFail($quizId);
-        $user = auth()->user();
 
-        // Fetch the attempt for this user and quiz
-        $attempt = Attempt::where('quiz_id', $quizId)
-            ->where('roll_no', $user->roll_no)
-            ->first();
 
-        if (!$attempt) {
-            return redirect()->route('attempts.index')->with('error', 'Test attempt not found.');
-        }
+public function results(Request $request, $quizId)
+{
+    $quiz = Quiz::findOrFail($quizId);
+    $user = auth()->user();
 
-        return view('attempts.results', compact('quiz', 'attempt'));
+    // Fetch the attempt for this user and quiz (using AttemptDetails model)
+    $attempt = AttemptDetails::where('quiz_id', $quizId)
+                             ->where('student_id', $user->id)
+                             ->first();
+
+    if (!$attempt) {
+        return redirect()->route('attempts.index')->with('error', 'Test attempt not found.');
     }
+
+    return view('attempts.results', compact('quiz', 'attempt'));
+}
+
 
     /**
      * Show the form for editing the specified resource.
