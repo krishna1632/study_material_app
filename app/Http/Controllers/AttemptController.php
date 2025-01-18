@@ -26,6 +26,8 @@ class AttemptController extends Controller
             ->where('semester', $semester)
             ->get();
 
+        $currentDateTime = now();
+
         // Pass quizzes to the view
         return view('attempts.index', compact('quizzes'));
     }
@@ -77,7 +79,7 @@ class AttemptController extends Controller
 
             throw $exception;
         }
-    
+
     }
 
 
@@ -85,22 +87,22 @@ class AttemptController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-{
-    // Fetch the attempt details
-    $attempt = AttemptDetails::with(['quiz', 'student'])->findOrFail($id);
+    {
+        // Fetch the attempt details
+        $attempt = AttemptDetails::with(['quiz', 'student'])->findOrFail($id);
 
-    // Pass data to the view
-    return view('attempts.show', [
-        'attempt' => $attempt,
-        'quiz' => $attempt->quiz,
-        'studentDetails' => [
-            'name' => $attempt->student->name,
-            'roll_no' => $attempt->roll_no,
-            'department' => $attempt->student->department,
-            'semester' => $attempt->student->semester,
-        ],
-    ]);
-}
+        // Pass data to the view
+        return view('attempts.show', [
+            'attempt' => $attempt,
+            'quiz' => $attempt->quiz,
+            'studentDetails' => [
+                'name' => $attempt->student->name,
+                'roll_no' => $attempt->roll_no,
+                'department' => $attempt->student->department,
+                'semester' => $attempt->student->semester,
+            ],
+        ]);
+    }
 
 
     // Add a new method to fetch quiz questions
@@ -125,100 +127,123 @@ class AttemptController extends Controller
         return view('attempts.start_test', compact('quiz', 'questions', 'previousAnswers', 'currentQuestionId'));
     }
 
-   
 
     public function submitTest(Request $request, $quizId)
-{
-    // Get the quiz and the logged-in user
-    $quiz = Quiz::findOrFail($quizId);
-    $user = auth()->user();
+    {
+        $quiz = Quiz::findOrFail($quizId);
+        $submittedAnswers = $request->input('answers', []); // Empty if auto-submitted
 
-    // Fetch the attempt for this user and quiz
-    $attempt = AttemptDetails::where('quiz_id', $quizId)
-                             ->where('student_id', $user->id)
-                             ->first();
+        // Fetch or create attempt record
+        $attempt = AttemptDetails::firstOrCreate(
+            ['quiz_id' => $quizId, 'student_id' => auth()->id()],
+            ['status' => 0]
+        );
 
-    if (!$attempt) {
-        return redirect()->route('attempts.index')->with('error', 'Quiz attempt not found.');
+        // Save responses
+        foreach ($submittedAnswers as $questionId => $selectedOption) {
+            AttemptQuizDetails::updateOrCreate(
+                ['attempt_id' => $attempt->id, 'question_id' => $questionId],
+                ['selected_option' => $selectedOption]
+            );
+        }
+
+        // Mark attempt as submitted
+        $attempt->update(['status' => 1]);
+
+        // Session variable to indicate test is submitted
+        session()->put('test_submitted', true);
+
+        // Redirect to results
+        return redirect()->route('attempts.results', ['quizId' => $quizId])
+            ->with('success', 'Quiz submitted successfully.');
     }
 
-    // Fetch the submitted answers
-    $submittedAnswers = $request->input('answers');
 
-    // If no answers are submitted, return an error
-    if (empty($submittedAnswers)) {
-        return redirect()->back()->withErrors(['answers' => 'You must answer all the questions.']);
-    }
+    public function results(Request $request, $quizId)
+    {
+        // Fetch quiz with its questions
+        $quiz = Quiz::with('questions')->findOrFail($quizId);
 
-    // Store answers in attempts_quiz_details table
-    foreach ($submittedAnswers as $questionId => $selectedOption) {
-        AttemptQuizDetails::create([
-            'attempt_id' => $attempt->id,
-            'question_id' => $questionId,
-            'selected_option' => $selectedOption,
+        // Get the student's attempt for this quiz
+        $attempt = AttemptDetails::where('quiz_id', $quizId)
+            ->where('student_id', auth()->id()) // Ensure correct user
+            ->first();
+
+        if (!$attempt) {
+            return redirect()->route('attempts.index')->with('error', 'Test attempt not found.');
+        }
+
+        // Get all responses for this attempt
+        $responses = AttemptQuizDetails::where('attempt_id', $attempt->id)->get();
+
+        // Initialize variables
+        $correctAnswersCount = 0;
+        $totalQuestions = $quiz->questions->count();
+
+        // Check each question's response
+        foreach ($quiz->questions as $question) {
+            $response = $responses->firstWhere('question_id', $question->id);
+
+            // If response exists and matches the correct option
+            if ($response && strtolower($response->selected_option) === strtolower($question->correct_option)) {
+                $correctAnswersCount++;
+            }
+        }
+
+        // Calculate the score
+        $score = $correctAnswersCount * ($quiz->weightage ?? 1); // Default weightage = 1
+
+        // Clear the session variable after showing results
+        session()->forget('test_submitted');
+
+        // Pass data to the results view
+        return view('attempts.results', [
+            'quiz' => $quiz,
+            'attempt' => $attempt,
+            'totalQuestions' => $totalQuestions,
+            'correctAnswersCount' => $correctAnswersCount,
+            'score' => $score,
+            'responses' => $responses, // Pass responses to the view
         ]);
     }
 
-    // Update the attempt status to indicate that the quiz has been submitted
-    $attempt->status = 1; // 1 means submitted
-    $attempt->save();
+    public function responses($attemptId)
+    {
+        $attempt = AttemptDetails::with(['quiz', 'quiz.questions'])->findOrFail($attemptId);
 
-    // Redirect the user to the results page or any other page
-    return redirect()->route('attempts.results', ['quizId' => $quizId])
-                     ->with('success', 'Quiz submitted successfully.');
-}
+        // Get all responses for this attempt
+        $responses = AttemptQuizDetails::where('attempt_id', $attempt->id)->get();
 
+        // Initialize variables for score calculation
+        $correctAnswersCount = 0;
 
+        $questionsWithResponses = $attempt->quiz->questions->map(function ($question) use ($responses, &$correctAnswersCount) {
+            $response = $responses->firstWhere('question_id', $question->id);
 
+            $isCorrect = isset($response) && strtolower($response->selected_option) === strtolower($question->correct_option);
 
+            if ($isCorrect) {
+                $correctAnswersCount++;
+            }
 
+            return [
+                'question_text' => $question->question_text,
+                'options' => json_decode($question->options),
+                'selected_option' => $response->selected_option ?? null,
+                'correct_option' => $question->correct_option,
+                'is_correct' => $isCorrect,
+            ];
+        });
 
+        // Calculate score based on correct answers and quiz weightage
+        $score = $correctAnswersCount * ($attempt->quiz->weightage ?? 1);
 
-public function results(Request $request, $quizId)
-{
-    // Fetch the quiz details with its questions
-    $quiz = Quiz::with('questions')->findOrFail($quizId);
-    $user = auth()->user();
-
-    // Fetch the user's attempt for this quiz
-    $attempt = AttemptDetails::where('quiz_id', $quizId)
-                             ->where('student_id', $user->id)
-                             ->first();
-
-    if (!$attempt) {
-        return redirect()->route('attempts.index')->with('error', 'Test attempt not found.');
+        return view('attempts.responses', [
+            'attempt' => $attempt,
+            'questionsWithResponses' => $questionsWithResponses,
+            'score' => $score,
+        ]);
     }
-
-    // Fetch the responses for this attempt
-    $responses = AttemptQuizDetails::where('attempt_id', $attempt->id)->get();
-
-    // Initialize variables
-    $correctAnswersCount = 0;
-
-    // Loop through the questions and calculate correct answers
-    foreach ($quiz->questions as $question) {
-        // Find the response for the current question
-        $response = $responses->where('question_id', $question->id)->first();
-
-        // Check if the response matches the correct option
-        if ($response && $response->selected_option == $question->correct_option) {
-            $correctAnswersCount++;
-        }
-    }
-
-    // Calculate the total score
-    $totalQuestions = $quiz->questions->count();
-    $score = $correctAnswersCount * $quiz->weightage;
-
-    // Pass data to the view
-    return view('attempts.results', [
-        'quiz' => $quiz,
-        'attempt' => $attempt,
-        'totalQuestions' => $totalQuestions,
-        'correctAnswersCount' => $correctAnswersCount,
-        'score' => $score,
-    ]);
-}
 
 
 

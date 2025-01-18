@@ -94,9 +94,11 @@
                             <li class="list-group-item "><b>1.</b> If you switch the browser tab during the test, the test
                                 will be automatically submitted, and you will not be allowed to retake it.</li>
                             <li class="list-group-item"><b>2.</b> Total number of questions:
-                                <b>{{ $quiz->total_no_of_question }}</b></li>
+                                <b>{{ $quiz->total_no_of_question }}</b>
+                            </li>
                             <li class="list-group-item"><b>3.</b> You must attempt a total of
-                                <b>{{ $quiz->attempt_no }}</b> questions within <b>{{ $totalMinutes }}</b> minutes.</li>
+                                <b>{{ $quiz->attempt_no }}</b> questions within <b>{{ $totalMinutes }}</b> minutes.
+                            </li>
                             <li class="list-group-item"><b>4.</b> Each question carries <b>{{ $quiz->weightage }}</b>
                                 marks.</li>
                         </ul>
@@ -123,8 +125,6 @@
 
                                     @php
                                         $options = json_decode($question->options, true);
-                                        $correctOptionIndex = $question->correct_option - 1;
-                                        $correctOption = $options[$correctOptionIndex] ?? 'N/A';
                                     @endphp
 
                                     <div class="options-list mt-3">
@@ -140,7 +140,7 @@
 
                                     <div class="correct-option mt-3">
                                         <strong>Correct Option:</strong>
-                                        <p class="text-success">{{ $correctOption }}</p>
+                                        <p class="text-success">{{ $question->correct_option }}</p>
                                     </div>
                                 </div>
                             @endforeach

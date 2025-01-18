@@ -43,11 +43,19 @@ class QuestionController extends Controller
 
         // Loop through each question and save it
         foreach ($request->questions as $questionData) {
+            $options = $questionData['options'];
+            $correctOptionIndex = $questionData['correct_option'] - 1; // Adjust for 0-based index
+            $correctOption = $options[$correctOptionIndex] ?? null;
+
+            if (!$correctOption) {
+                return response()->json(['error' => 'Invalid correct option provided.'], 400);
+            }
+
             Question::create([
                 'quiz_id' => $request->quiz_id,
                 'question_text' => $questionData['question_text'],
-                'options' => json_encode($questionData['options']), // Convert options array to JSON
-                'correct_option' => $questionData['correct_option'],
+                'options' => json_encode($options), // Convert options array to JSON
+                'correct_option' => $correctOption, // Save the option name (value) as a string
             ]);
         }
 
@@ -77,17 +85,17 @@ class QuestionController extends Controller
         $request->validate([
             'question_text' => 'required|string|max:255',
             'options' => 'required|array|min:2',
-            'correct_option' => 'required|string',
+            'correct_option' => 'required|integer|min:1',
         ]);
 
         // Find the question and update it
         $question = Question::findOrFail($id);
 
         $options = $request->input('options');
-        $correctOption = $request->input('correct_option');
+        $correctOptionIndex = $request->input('correct_option') - 1; // Adjust for 0-based index
+        $correctOption = $options[$correctOptionIndex] ?? null;
 
-        // Ensure correct_option is valid
-        if ($correctOption < 1 || $correctOption > count($options)) {
+        if (!$correctOption) {
             return back()->withErrors(['correct_option' => 'The selected correct option is invalid.']);
         }
 
@@ -95,7 +103,7 @@ class QuestionController extends Controller
         $question->update([
             'question_text' => $request->question_text,
             'options' => json_encode($options), // Convert options array to JSON
-            'correct_option' => $correctOption,
+            'correct_option' => $correctOption, // Save the option name (value) as a string
         ]);
 
         // Redirect to index with success message
@@ -110,19 +118,19 @@ class QuestionController extends Controller
     {
         // Find the question or fail
         $question = Question::findOrFail($id);
-    
+
         // Get the quiz ID from the question
         $quizId = $question->quiz_id;
-    
+
         // Delete the question
         $question->delete();
-    
+
         // Redirect to the questions.index route with the correct parameter name
         return redirect()->route('questions.index', ['quiz' => $quizId])
             ->with('success', 'Question deleted successfully!');
     }
-    
-    
+
+
 
     public function submitQuestions($quizId)
     {

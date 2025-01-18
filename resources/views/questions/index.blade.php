@@ -45,7 +45,8 @@
                                         @endforeach
                                     </ul>
                                 </td>
-                                <td>{{ json_decode($question->options, true)[$question->correct_option - 1] ?? 'N/A' }}</td>
+                                <td>{{ $question->correct_option }}</td>
+
                                 <td>
                                     <a href="{{ route('questions.edit', ['quizId' => $quiz->id, 'id' => $question->id]) }}"
                                         class="btn btn-warning btn-sm">Edit</a>
@@ -65,7 +66,8 @@
                 <!-- Checkbox and Final Submit Button -->
                 <div class="mt-4">
                     <input type="checkbox" id="confirmFinalize">
-                    <label for="confirmFinalize"> I confirm that all questions are correct, finalized, and the instructions have been added.</label>
+                    <label for="confirmFinalize"> I confirm that all questions are correct, finalized, and the instructions
+                        have been added.</label>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <form method="POST" action="{{ route('questions.submit', $quiz->id) }}">

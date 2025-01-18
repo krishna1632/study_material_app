@@ -13,17 +13,26 @@
     <div class="card shadow-lg border-0">
         <div class="card shadow-lg border-0 p-4">
             <div class="card-body">
-                <h3 class="fw-bold text-primary">Test Completed!</h3>
+                <h3 class="fw-bold text-primary text-center mb-4">Test Completed!</h3>
 
-                <div>
+
+                <!-- Horizontal Student Details -->
+                <div class="d-flex justify-content-between border-bottom pb-3 mb-4">
                     <p><strong>Student Name:</strong> {{ $attempt->student->name }}</p>
                     <p><strong>Roll Number:</strong> {{ $attempt->roll_no }}</p>
                     <p><strong>Total Questions:</strong> {{ $totalQuestions }}</p>
                     <p><strong>Correct Answers:</strong> {{ $correctAnswersCount }} / {{ $totalQuestions }}</p>
-                    <p><strong>Score:</strong> {{ $score }}</p>
                 </div>
 
-                <div class="d-flex justify-content-end">
+                <!-- Score Section -->
+                <div class="text-center mb-4">
+                    <h1 class="display-3 fw-bold text-success">Your Score: {{ $score }}</h1>
+                </div>
+
+                <!-- Buttons Section -->
+                <div class="d-flex justify-content-between">
+                    <a href="{{ route('attempts.responses', ['attemptId' => $attempt->id]) }}" class="btn btn-primary">View
+                        Responses</a>
                     <a href="{{ route('attempts.index') }}" class="btn btn-secondary">Back to Dashboard</a>
                 </div>
             </div>

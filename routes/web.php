@@ -151,7 +151,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
     Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
 
-    
+
     Route::get('quizzes/{quiz}/instructions', [QuizController::class, 'showInstructions'])->name('quizzes.instructions');
     Route::put('quizzes/{quiz}/update-instructions', [QuizController::class, 'updateInstructions'])->name('quizzes.update.instructions');
     Route::post('/quizzes/start-test', [QuizController::class, 'startTest'])->name('quizzes.startTest');
@@ -173,17 +173,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/attempts/create/{id}', [AttemptController::class, 'create'])->name('attempts.create');
     Route::post('/attempts', [AttemptController::class, 'store'])->name('attempts.store');
     Route::get('/attempts/{id}', [AttemptController::class, 'show'])->name('attempts.show');
-    
+
     Route::get('/start-test/{quizId}/question/{questionId}', [AttemptController::class, 'startTest'])->name('start.test');
     Route::post('/attempts/store-answers', [AttemptController::class, 'storeAnswers'])->name('attempts.storeAnswers');
     Route::post('attempts/{quizId}/submit', [AttemptController::class, 'submitTest'])->name('attempts.submitTest');
     Route::get('attempts/{quizId}/results', [AttemptController::class, 'results'])->name('attempts.results');
-   
-
-
-
-
-
+    Route::get('/attempt/{attemptId}/responses', [AttemptController::class, 'responses'])->name('attempts.responses');
 });
 
 require __DIR__ . '/auth.php';
