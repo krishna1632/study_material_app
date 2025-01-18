@@ -327,7 +327,7 @@ class QuizController extends Controller implements HasMiddleware
 
     // Fetch the quiz by ID
     $quiz = Quiz::findOrFail($id);
-    $quiz->attempts()->delete();
+    // $quiz->attempts()->delete();
     // Optionally, delete related questions
     $quiz->questions()->delete(); // Delete related questions
 

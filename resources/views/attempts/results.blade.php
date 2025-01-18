@@ -16,10 +16,11 @@
                 <h3 class="fw-bold text-primary">Test Completed!</h3>
 
                 <div>
-                    <p><strong>Student Name:</strong> {{ $attempt->student_name }}</p>
+                    <p><strong>Student Name:</strong> {{ $attempt->student->name }}</p>
                     <p><strong>Roll Number:</strong> {{ $attempt->roll_no }}</p>
-                    <p><strong>Correct Answers:</strong> {{ $attempt->correct_answers }} / {{ count($quiz->questions) }}</p>
-                    <p><strong>Score:</strong> {{ $attempt->correct_answers * $quiz->weightage }}</p>
+                    <p><strong>Total Questions:</strong> {{ $totalQuestions }}</p>
+                    <p><strong>Correct Answers:</strong> {{ $correctAnswersCount }} / {{ $totalQuestions }}</p>
+                    <p><strong>Score:</strong> {{ $score }}</p>
                 </div>
 
                 <div class="d-flex justify-content-end">

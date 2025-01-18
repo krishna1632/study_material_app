@@ -18,8 +18,13 @@ class Quiz extends Model
     }
 
 
-    public function attempts()
+//     public function attempts()
+// {
+//     return $this->hasMany(Attempt::class, 'quiz_id');
+// }
+
+public function attemptDetails()
 {
-    return $this->hasMany(Attempt::class, 'quiz_id');
+    return $this->hasMany(AttemptDetails::class, 'quiz_id', 'id');
 }
 }

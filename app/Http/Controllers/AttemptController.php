@@ -176,10 +176,11 @@ class AttemptController extends Controller
 
 public function results(Request $request, $quizId)
 {
-    $quiz = Quiz::findOrFail($quizId);
+    // Fetch the quiz details with its questions
+    $quiz = Quiz::with('questions')->findOrFail($quizId);
     $user = auth()->user();
 
-    // Fetch the attempt for this user and quiz (using AttemptDetails model)
+    // Fetch the user's attempt for this quiz
     $attempt = AttemptDetails::where('quiz_id', $quizId)
                              ->where('student_id', $user->id)
                              ->first();
@@ -188,8 +189,37 @@ public function results(Request $request, $quizId)
         return redirect()->route('attempts.index')->with('error', 'Test attempt not found.');
     }
 
-    return view('attempts.results', compact('quiz', 'attempt'));
+    // Fetch the responses for this attempt
+    $responses = AttemptQuizDetails::where('attempt_id', $attempt->id)->get();
+
+    // Initialize variables
+    $correctAnswersCount = 0;
+
+    // Loop through the questions and calculate correct answers
+    foreach ($quiz->questions as $question) {
+        // Find the response for the current question
+        $response = $responses->where('question_id', $question->id)->first();
+
+        // Check if the response matches the correct option
+        if ($response && $response->selected_option == $question->correct_option) {
+            $correctAnswersCount++;
+        }
+    }
+
+    // Calculate the total score
+    $totalQuestions = $quiz->questions->count();
+    $score = $correctAnswersCount * $quiz->weightage;
+
+    // Pass data to the view
+    return view('attempts.results', [
+        'quiz' => $quiz,
+        'attempt' => $attempt,
+        'totalQuestions' => $totalQuestions,
+        'correctAnswersCount' => $correctAnswersCount,
+        'score' => $score,
+    ]);
 }
+
 
 
     /**
