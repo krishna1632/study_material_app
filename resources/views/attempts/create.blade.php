@@ -16,12 +16,18 @@
             Student Details
         </div>
         <div class="card-body">
-                @error('already_submitted')
-                   <div class="text-danger">{{ $message }}</div>
-                @enderror
+            <!-- Add Red Note here -->
+            <div class="alert alert-danger">
+                <strong>Note:</strong> Fill your details carefully. Once you submit your details, they will be saved and you
+                cannot change them.
+            </div>
+
+            @error('already_submitted')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+
             <form id="quizForm" action="{{ route('attempts.store') }}" method="POST">
                 @csrf
-
                 <!-- Hidden Quiz ID -->
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
@@ -60,12 +66,10 @@
                     <input type="text" class="form-control" id="roll_number" name="roll_no" required>
                 </div>
 
-
-               
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-success" id="submitButton">Submit</button>
             </form>
-         
+
         </div>
     </div>
 @endsection
@@ -77,7 +81,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Add event listener to the submit button
         document.getElementById('submitButton').addEventListener('click', function(e) {
-            e.preventDefault();  // Prevent form submission
+            e.preventDefault(); // Prevent form submission
 
             // Show SweetAlert confirmation
             Swal.fire({
@@ -95,33 +99,41 @@
                 }
             });
         });
+
+        // Success Flash Message
+        @if (session('success'))
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        @endif
+
+        // Error Flash Message for resubmission
+        @if (session('error'))
+            Swal.fire({
+                title: 'Error!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Redirect to the attempts.show page
+                window.location.href = "{{ route('attempts.show', ['id' => session('attempt_id')]) }}";
+            });
+        @endif
+
+        // Already Submitted Quiz Message
+        @if (session('alert'))
+            Swal.fire({
+                title: 'Error!',
+                text: "{{ session('message') }}",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = "{{ session('redirect') }}"; // Redirect to attempts.show
+            });
+        @endif
     });
-
-    // Success Flash Message
-    @if (session('success'))
-        Swal.fire({
-            title: 'Success!',
-            text: "{{ session('success') }}",
-            icon: 'success',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    @endif
-
-    // Error Flash Message
-    @if (session('error'))
-        Swal.fire({
-            title: 'Error!',
-            text: "{{ session('error') }}",
-            icon: 'error',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    @endif
-
-    // Already Submitted Quiz Message
-   
 </script>
-
-
-

@@ -61,6 +61,21 @@ class AttemptController extends Controller
         ]);
 
         try {
+            // Check if the student has already submitted this quiz
+            $existingAttempt = AttemptDetails::where('quiz_id', $request->quiz_id)
+                ->where('roll_no', $request->roll_no)
+                ->where('status', 1) // Check if status is submitted (1)
+                ->first();
+
+            if ($existingAttempt) {
+                return redirect()->route('attempts.show', ['id' => $existingAttempt->id])
+                    ->with([
+                        'alert' => true,
+                        'message' => 'This student details is already submitted.',
+                        'redirect' => route('attempts.show', ['id' => $existingAttempt->id]), // Redirect to attempts.show
+                    ]);
+            }
+
             $attempt = AttemptDetails::create([
                 'student_id' => auth()->id(),
                 'quiz_id' => $request->quiz_id,
@@ -111,6 +126,21 @@ class AttemptController extends Controller
         $quiz = Quiz::find($quizId);
         $questions = Question::where('quiz_id', $quizId)->get();
 
+        // Check if the user has already submitted this test
+        $attempt = AttemptDetails::where('quiz_id', $quizId)
+            ->where('student_id', auth()->id()) // Ensure the current user's attempt is checked
+            ->where('status', 1) // Check for submitted status
+            ->first();
+
+        if ($attempt) {
+            // Test already submitted, show SweetAlert and redirect
+            return response()->json([
+                'alert' => true,
+                'message' => 'You have already submitted this quiz. Redirecting to attempts list.',
+                'redirect' => route('attempts.index'),
+            ]);
+        }
+
         // Get answers from session or initialize empty array
         $previousAnswers = session()->get('answers', []);
 
@@ -133,6 +163,22 @@ class AttemptController extends Controller
         $quiz = Quiz::findOrFail($quizId);
         $submittedAnswers = $request->input('answers', []); // Empty if auto-submitted
 
+        // Check if the attempt is already submitted
+        $existingAttempt = AttemptDetails::where('quiz_id', $quizId)
+            ->where('status', 1)
+            ->first();
+
+        if ($existingAttempt) {
+            return redirect()->route('attempts.index')
+                ->with('error', 'You have already submitted this quiz.');
+        }
+
+        // Fetch or create attempt record
+        $attempt = AttemptDetails::firstOrCreate(
+            ['quiz_id' => $quizId],
+            ['status' => 0]
+        );
+
         // Fetch or create attempt record
         $attempt = AttemptDetails::firstOrCreate(
             ['quiz_id' => $quizId, 'student_id' => auth()->id()],
@@ -149,9 +195,6 @@ class AttemptController extends Controller
 
         // Mark attempt as submitted
         $attempt->update(['status' => 1]);
-
-        // Session variable to indicate test is submitted
-        session()->put('test_submitted', true);
 
         // Redirect to results
         return redirect()->route('attempts.results', ['quizId' => $quizId])
@@ -192,9 +235,6 @@ class AttemptController extends Controller
 
         // Calculate the score
         $score = $correctAnswersCount * ($quiz->weightage ?? 1); // Default weightage = 1
-
-        // Clear the session variable after showing results
-        session()->forget('test_submitted');
 
         // Pass data to the results view
         return view('attempts.results', [

@@ -18,9 +18,9 @@
             <div class="d-flex justify-content-end">
 
 
-                <!-- Check if questions are finalized -->
-                @if ($quiz->questions && $quiz->questions->where('is_submitted', 1)->count() > 0)
-                    <!-- If questions are finalized, show Start Test button -->
+                <!-- Check if questions are finalized and quiz is not started yet -->
+                @if ($quiz->questions && $quiz->questions->where('is_submitted', 1)->count() > 0 && $quiz->status != 1)
+                    <!-- If questions are finalized and quiz has not started, show Start Test button -->
                     <form id="startTestForm" action="{{ route('quizzes.startTest') }}" method="POST"
                         style="display:inline;">
                         @csrf
@@ -161,7 +161,7 @@
 
                 Swal.fire({
                     title: 'Are you sure you want to start the test?',
-                    text: "Once started, you can't change your answers.",
+                    text: "Once started, you can't end test from your side. You can only edit date and timing of the test",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',

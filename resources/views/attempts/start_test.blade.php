@@ -49,27 +49,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Check if test is already submitted (backend session flag)
-        const testSubmitted = {{ session('test_submitted', false) ? 'true' : 'false' }};
-
-        if (testSubmitted) {
-            // Prevent back navigation and show alert if test is already submitted
-            window.addEventListener("pageshow", function(event) {
-                if (event.persisted || performance.navigation.type === 2) { // Detect back navigation
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Your test is already submitted!',
-                        text: 'You cannot attempt the test again.',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = "{{ route('attempts.results', $quiz->id) }}";
-                    });
-                }
+        // Check if the backend response contains an alert flag
+        @if (session('alert'))
+            Swal.fire({
+                title: 'Test Already Submitted!',
+                text: "{{ session('message') }}",
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = "{{ session('redirect') }}";
             });
-        }
+        @endif
 
         let formSubmitted = false;
-
         // Function to detect illegal activity (minimize, tab change, etc.)
         function detectIllegalActivity() {
             if (formSubmitted) return;

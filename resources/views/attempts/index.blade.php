@@ -57,7 +57,7 @@
                                 <td>
                                     @if ($attempt && $attempt->status == 1)
                                         <!-- Test already submitted -->
-                                        <a href="{{ route('attempts.responses', ['attemptId' => $attempt->id]) }}"
+                                        <a href="{{ route('attempts.results', ['quizId' => $quiz->id]) }}"
                                             class="btn btn-primary btn-sm">View Result and Response</a>
                                     @elseif ($currentDateTime->lt($quizStartDateTime))
                                         <!-- Timer for quiz start -->
