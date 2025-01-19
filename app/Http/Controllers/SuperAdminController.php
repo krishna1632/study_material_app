@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use App\Models\Quiz;
+use App\Models\Pyq;
+use App\Models\StudyMaterial;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -15,10 +18,25 @@ class SuperAdminController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return view('superadmin.dashboard'); // Superadmin-specific dashboard view
-    }
+
+     public function index()
+{
+    // Fetch data from the respective tables
+    $totalUsers = User::count(); // Count all users
+    $totalQuizzes = Quiz::count(); // Count all quizzes
+    $totalPYQs = Pyq::count(); // Count all uploaded PYQs
+    $totalStudyMaterials = StudyMaterial::count(); // Count all study materials
+
+    // Pass data to the view
+    return view('superadmin.dashboard', [
+        'totalUsers' => $totalUsers,
+        'totalQuizzes' => $totalQuizzes,
+        'totalPYQs' => $totalPYQs,
+        'totalStudyMaterials' => $totalStudyMaterials,
+    ]);
+}
+
+   
 
     /**
      * Show the form for creating a new resource.

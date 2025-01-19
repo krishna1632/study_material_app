@@ -11,12 +11,11 @@
                 <div class="card-body">
                     <h5>Total Users</h5>
                     <div class="mt-2" style="font-size: 2.5rem; font-weight: bold; text-align: center;">
-                        9
-                        {{-- {{ $totalFaculties - 1 }} --}}
-                    </div> <!-- Display total count prominently -->
+                        {{ $totalUsers }}
+                    </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View All</a>
+                    <a class="small text-white stretched-link" href="{{ route('users.list') }}">View All</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -26,12 +25,11 @@
                 <div class="card-body">
                     <h5>Total Quiz Created</h5>
                     <div class="mt-2" style="font-size: 2.5rem; font-weight: bold; text-align: center;">
-                        <!-- Replace with dynamic value -->
-                        10
+                        {{ $totalQuizzes }}
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View All</a>
+                    <a class="small text-white stretched-link" href="{{ route('quizzes.index') }}">View All</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -41,12 +39,11 @@
                 <div class="card-body">
                     <h5>Total Upload PYQ</h5>
                     <div class="mt-2" style="font-size: 2.5rem; font-weight: bold; text-align: center;">
-                        <!-- Replace with dynamic value -->
-                        25
+                        {{ $totalPYQs }}
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View All</a>
+                    <a class="small text-white stretched-link" href="{{ route('pyq.index') }}">View All</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
@@ -56,12 +53,11 @@
                 <div class="card-body">
                     <h5>No. of Study Materials</h5>
                     <div class="mt-2" style="font-size: 2.5rem; font-weight: bold; text-align: center;">
-                        <!-- Replace with dynamic value -->
-                        15
+                        {{ $totalStudyMaterials }}
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View All</a>
+                    <a class="small text-white stretched-link" href="{{ route('study_materials.index') }}">View All</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
