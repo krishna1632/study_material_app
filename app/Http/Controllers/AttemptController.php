@@ -163,9 +163,15 @@ class AttemptController extends Controller
         $quiz = Quiz::findOrFail($quizId);
         $submittedAnswers = $request->input('answers', []); // Empty if auto-submitted
 
+        // Get the current date and time
+        $currentDateTime = now();
+
+        // Convert quiz end_time to Carbon instance
+        $quizEndDateTime = \Carbon\Carbon::parse($quiz->date . ' ' . $quiz->end_time);
+
         // Check if the attempt is already submitted
         $existingAttempt = AttemptDetails::where('quiz_id', $quizId)
-            ->where('status', 1)
+            ->where('status', 1) // Check if status is 1 (submitted)
             ->first();
 
         if ($existingAttempt) {
@@ -173,19 +179,19 @@ class AttemptController extends Controller
                 ->with('error', 'You have already submitted this quiz.');
         }
 
-        // Fetch or create attempt record
-        $attempt = AttemptDetails::firstOrCreate(
-            ['quiz_id' => $quizId],
-            ['status' => 0]
-        );
+        // Check if the quiz end time has passed and auto-submit if necessary
+        if ($currentDateTime->gt($quizEndDateTime)) {
+            // Auto-submit the quiz
+            $submittedAnswers = []; // No need to take answers from user input if time expired
+        }
 
         // Fetch or create attempt record
         $attempt = AttemptDetails::firstOrCreate(
             ['quiz_id' => $quizId, 'student_id' => auth()->id()],
-            ['status' => 0]
+            ['status' => 0] // Set status to 0 (not submitted yet)
         );
 
-        // Save responses
+        // Save responses (if available)
         foreach ($submittedAnswers as $questionId => $selectedOption) {
             AttemptQuizDetails::updateOrCreate(
                 ['attempt_id' => $attempt->id, 'question_id' => $questionId],
@@ -193,13 +199,14 @@ class AttemptController extends Controller
             );
         }
 
-        // Mark attempt as submitted
+        // Mark attempt as submitted (status = 1)
         $attempt->update(['status' => 1]);
 
         // Redirect to results
         return redirect()->route('attempts.results', ['quizId' => $quizId])
             ->with('success', 'Quiz submitted successfully.');
     }
+
 
 
     public function results(Request $request, $quizId)

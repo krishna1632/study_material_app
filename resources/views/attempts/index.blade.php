@@ -38,12 +38,17 @@
                     @else
                         @foreach ($quizzes as $index => $quiz)
                             @php
-                                // Fetch the attempt details for the current quiz and logged-in user
-                                $attempt = $quiz->attemptDetails()->where('student_id', auth()->id())->first();
+                                // Current date and time
                                 $currentDateTime = now();
+
+                                // Get quiz start and end times
                                 $quizStartDateTime = \Carbon\Carbon::parse($quiz->date . ' ' . $quiz->start_time);
                                 $quizEndDateTime = \Carbon\Carbon::parse($quiz->date . ' ' . $quiz->end_time);
+
+                                // Check if the student has already submitted the quiz
+                                $attempt = $quiz->attemptDetails()->where('student_id', auth()->id())->first();
                             @endphp
+
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $quiz->subject_type }}</td>
@@ -87,9 +92,15 @@
                                                 }
                                             }, 1000);
                                         </script>
-                                    @elseif ($currentDateTime->gt($quizEndDateTime) || ($attempt && $attempt->status == 1))
-                                        <!-- Time is over or quiz already submitted -->
-                                        <a href="{{ route('attempts.responses', ['attemptId' => $attempt->id ?? null]) }}"
+                                    @elseif ($currentDateTime->gt($quizEndDateTime))
+                                        <!-- Time is over -->
+                                        @if ($attempt && $attempt->status == 0)
+                                            <!-- Auto-submit if not submitted -->
+                                            <script>
+                                                window.location.href = "{{ route('attempts.submitTest', ['quizId' => $quiz->id]) }}";
+                                            </script>
+                                        @endif
+                                        <a href="{{ route('attempts.results', ['quizId' => $quiz->id]) }}"
                                             class="btn btn-primary btn-sm">View Result and Response</a>
                                     @else
                                         @if (!$attempt || $attempt->status == 0)
