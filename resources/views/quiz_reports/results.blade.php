@@ -9,6 +9,13 @@
         <li class="breadcrumb-item active">Quiz Results</li>
     </ol>
 
+    <!-- Export Buttons -->
+    <div class="mb-4">
+        <a href="#" class="btn btn-success">Export to Excel</a>
+        <a href="#" class="btn btn-primary">Export to Word</a>
+        <a href="#" class="btn btn-danger">Export to PDF</a>
+    </div>
+
     <div class="card mb-4">
         <div class="card-body">
             <table class="table table-bordered">
