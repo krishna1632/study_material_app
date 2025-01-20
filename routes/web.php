@@ -19,6 +19,7 @@ use App\Http\Controllers\PyqController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\AttemptController;
+use App\Http\Controllers\QuizReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -179,6 +180,11 @@ Route::middleware('auth')->group(function () {
     Route::post('attempts/{quizId}/submit', [AttemptController::class, 'submitTest'])->name('attempts.submitTest');
     Route::get('attempts/{quizId}/results', [AttemptController::class, 'results'])->name('attempts.results');
     Route::get('/attempt/{attemptId}/responses', [AttemptController::class, 'responses'])->name('attempts.responses');
+
+    // Quiz Reports
+    Route::get('quiz_reports/', [QuizReportController::class, 'index'])->name('quiz_reports.index');
+    Route::post('/quiz_reports/fetch-quizzes', [QuizReportController::class, 'fetchQuizzes'])->name('quiz_reports.fetch-quizzes');
+    Route::get('/quiz_reports/{quiz_id}/results', [QuizReportController::class, 'viewResults'])->name('quiz_reports.viewResults');
 });
 
 require __DIR__ . '/auth.php';

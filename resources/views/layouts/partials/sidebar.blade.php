@@ -137,11 +137,14 @@
                 data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
 
-                @can('view create test')
-                    <a class="nav-link" href="{{ route('quizzes.index') }}">  <i class="fas fa-pen"></i> Create Test</a>
-                @endcan
-                    <a class="nav-link" href="{{ route('attempts.index') }}"><i class="fas fa-edit"></i> Attempt Test</a>
-                    <a class="nav-link" href="{{ url('admin/quiz/reports') }}"> <i class="fas fa-chart-bar"></i> Student Test Reports</a>
+                    @can('view create test')
+                        <a class="nav-link" href="{{ route('quizzes.index') }}"> <i class="fas fa-pen"></i> Create
+                            Test</a>
+                    @endcan
+                    <a class="nav-link" href="{{ route('attempts.index') }}"><i class="fas fa-edit"></i> Attempt
+                        Test</a>
+                    <a class="nav-link" href="{{ route('quiz_reports.index') }}"> <i class="fas fa-chart-bar"></i>
+                        Student Test Reports</a>
                 </nav>
             </div>
 
