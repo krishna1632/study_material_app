@@ -8,10 +8,21 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\AttemptDetails;
 use App\Models\Quiz;
 use App\Models\AttemptQuizDetails;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-
-class AttemptController extends Controller
+class AttemptController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view attempts', only: ['index']),
+            // new Middleware('permission:create attempts', only: ['create']),
+            // new Middleware('permission:edit attempts', only: ['edit']),
+            // new Middleware('permission:destroy attempts', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

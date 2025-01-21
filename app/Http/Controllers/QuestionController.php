@@ -5,9 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\Quiz;
+// use Illuminate\Routing\Controllers\HasMiddleware;
+// use Illuminate\Routing\Controllers\Middleware;
 
-class QuestionController extends Controller
+class QuestionController extends Controller //implements HasMiddleware
 {
+    // public static function middleware()
+    // {
+    //     return [
+    //         new Middleware('permission:view questions', only: ['index']),
+    //         new Middleware('permission:create questions', only: ['create']),
+    //         new Middleware('permission:edit questions', only: ['edit']),
+    //         new Middleware('permission:destroy questions', only: ['destroy']),
+    //     ];
+    // }
+
     /**
      * Display a listing of the resource for a specific quiz.
      */

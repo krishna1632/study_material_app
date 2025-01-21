@@ -13,14 +13,16 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class QuizController extends Controller implements HasMiddleware
 {
-
     public static function middleware()
     {
         return [
-            new Middleware('permission:view create test', only: ['index']),
-           
+            new Middleware('permission:view quiz', only: ['index']),
+            new Middleware('permission:create quiz', only: ['create']),
+            new Middleware('permission:edit quiz', only: ['edit']),
+            new Middleware('permission:destroy quiz', only: ['destroy']),
         ];
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -322,23 +324,23 @@ class QuizController extends Controller implements HasMiddleware
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-{
-   
+    {
 
-    // Fetch the quiz by ID
-    $quiz = Quiz::findOrFail($id);
-    // $quiz->attempts()->delete();
-    // Optionally, delete related questions
-    $quiz->questions()->delete(); // Delete related questions
 
-    // Now, delete the quiz itself
-    $quiz->delete();
+        // Fetch the quiz by ID
+        $quiz = Quiz::findOrFail($id);
+        // $quiz->attempts()->delete();
+        // Optionally, delete related questions
+        $quiz->questions()->delete(); // Delete related questions
 
- 
+        // Now, delete the quiz itself
+        $quiz->delete();
 
-    // Redirect with success message
-    return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
-}
+
+
+        // Redirect with success message
+        return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
+    }
 
 
     public function startTest(Request $request)

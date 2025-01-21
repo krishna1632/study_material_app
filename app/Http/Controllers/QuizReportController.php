@@ -9,10 +9,18 @@ use App\Models\User;
 use App\Models\AttemptDetails;
 use App\Models\Quiz;
 use App\Models\AttemptQuizDetails;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-
-class QuizReportController extends Controller
+class QuizReportController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('permission:view reports', only: ['index']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

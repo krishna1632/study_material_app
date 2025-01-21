@@ -12,9 +12,9 @@
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-question-circle me-1"></i>
-            
+            @can('create quiz')
                 <a href="{{ route('quizzes.create') }}" class="btn btn-primary btn-sm float-end">Create Quiz</a>
-            
+            @endcan
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
@@ -53,14 +53,18 @@
                                 @endif
                                 <a href="{{ route('quizzes.show', $quiz->id) }}" class="btn btn-info btn-sm">Preview and
                                     Start</a>
-                                <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('quizzes.destroy', $quiz->id) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="confirmDelete({{ $quiz->id }})">Delete</button>
-                                </form>
+                                @can('edit quiz')
+                                    <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                @endcan
+                                @can('delete quiz')
+                                    <form action="{{ route('quizzes.destroy', $quiz->id) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="confirmDelete({{ $quiz->id }})">Delete</button>
+                                    </form>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach
@@ -75,23 +79,22 @@
     <!-- SweetAlert Confirmation for Delete -->
     <script>
         function confirmDelete(quizId) {
-    console.log('Deleting quiz with ID: ' + quizId); // Check if the function is called
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.querySelector(`form[action='${window.location.origin}/quizzes/${quizId}']`).submit();
+            console.log('Deleting quiz with ID: ' + quizId); // Check if the function is called
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.querySelector(`form[action='${window.location.origin}/quizzes/${quizId}']`).submit();
 
+                }
+            });
         }
-    });
-}
-
     </script>
 
     <!-- SweetAlert Success Popup -->
