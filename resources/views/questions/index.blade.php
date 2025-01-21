@@ -5,7 +5,13 @@
 @section('content')
     <h1 class="mt-4">Questions List</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item">
+            @can('is superadmin')
+                <a href="{{ route('superadmin.dashboard') }}">Dashboard</a>
+            @else
+                <a href="{{ route('others.dashboard') }}">Dashboard</a>
+            @endcan
+        </li>
         <li class="breadcrumb-item"><a href="{{ route('quizzes.index') }}">Quizzes</a></li>
         <li class="breadcrumb-item active">Questions List</li>
     </ol>
@@ -66,7 +72,8 @@
                 <!-- Checkbox and Final Submit Button -->
                 <div class="mt-4">
                     <input type="checkbox" id="confirmFinalize">
-                    <label for="confirmFinalize"> I confirm that all questions are correct, finalized, and the instructions
+                    <label for="confirmFinalize" class="text-danger"> I confirm that all questions are correct, finalized,
+                        and the instructions
                         have been added. Once the final submit button gets clicked the questions will be
                         non-editable</label>
                 </div>

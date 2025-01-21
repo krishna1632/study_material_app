@@ -5,16 +5,22 @@
 @section('content')
     <h1 class="mt-4">Subjects</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item">
+            @can('is superadmin')
+                <a href="{{ route('superadmin.dashboard') }}">Dashboard</a>
+            @else
+                <a href="{{ route('others.dashboard') }}">Dashboard</a>
+            @endcan
+        </li>
         <li class="breadcrumb-item active">Subjects</li>
     </ol>
 
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-book me-1"></i>
-                @can('create subjects')
+            @can('create subjects')
                 <a href="{{ route('subjects.create') }}" class="btn btn-primary btn-sm float-end">Add New Subject</a>
-                @endcan
+            @endcan
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
@@ -24,9 +30,11 @@
                         <th>Department/Elective</th>
                         <th>Semester</th>
                         <th>Subject Name</th>
-                        <!-- @canany(['edit subjects','delete subjects']) -->
-                        <th>Action</th>
-                        <!-- @endcanany -->
+                        <!-- @canany(['edit subjects', 'delete subjects'])
+        -->
+                            <th>Action</th>
+                            <!--
+    @endcanany -->
                         <!-- <th></th> -->
                     </tr>
                 </thead>
@@ -38,9 +46,10 @@
                             <td>{{ $subject->semester }}</td>
                             <td>{{ $subject->subject_name }}</td>
                             <td>
-                                
+
                                 @can('edit subjects')
-                                    <a href="{{ route('subjects.edit', Crypt::encryptString($subject->id)) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ route('subjects.edit', Crypt::encryptString($subject->id)) }}"
+                                        class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
                                 @endcan

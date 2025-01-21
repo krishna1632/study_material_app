@@ -5,7 +5,13 @@
 @section('content')
     <h1 class="mt-4">PYQ List</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item">
+            @can('is superadmin')
+                <a href="{{ route('superadmin.dashboard') }}">Dashboard</a>
+            @else
+                <a href="{{ route('others.dashboard') }}">Dashboard</a>
+            @endcan
+        </li>
         <li class="breadcrumb-item active">PYQ List</li>
     </ol>
 
@@ -15,14 +21,14 @@
             PYQ List
 
             @can('create pyq')
-            <a href="{{ route('pyq.create') }}" class="btn btn-primary btn-sm float-end">Add New PYQ</a>
+                <a href="{{ route('pyq.create') }}" class="btn btn-primary btn-sm float-end">Add New PYQ</a>
             @endcan
             @if (auth()->user()->hasRole('student'))
-            <a href="{{ route('pyq.elective') }}" class="btn btn-primary btn-sm float-end me-2">
-                View Elective PYQ
-            </a>
+                <a href="{{ route('pyq.elective') }}" class="btn btn-primary btn-sm float-end me-2">
+                    View Elective PYQ
+                </a>
             @endif
-       
+
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
@@ -63,19 +69,21 @@
 
                             <td>
 
-                            @can('edit pyq')
-                                <!-- Edit Button (If required) -->
-                                <a href="{{ route('pyq.edit',  Crypt::encryptString($pyq->id)) }}" class="btn btn-warning btn-sm">Edit</a>
-
-                            @endcan
+                                @can('edit pyq')
+                                    <!-- Edit Button (If required) -->
+                                    <a href="{{ route('pyq.edit', Crypt::encryptString($pyq->id)) }}"
+                                        class="btn btn-warning btn-sm">Edit</a>
+                                @endcan
 
 
                                 @can('delete pyq')
-                                    <form id="delete-form-{{ $pyq->id }}" action="{{ route('pyq.destroy', $pyq->id) }}" method="POST" style="display:inline;">
-                                             @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $pyq->id }})">Delete</button>
-                                     </form>
+                                    <form id="delete-form-{{ $pyq->id }}" action="{{ route('pyq.destroy', $pyq->id) }}"
+                                        method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="confirmDelete({{ $pyq->id }})">Delete</button>
+                                    </form>
                                 @endcan
                             </td>
                         </tr>

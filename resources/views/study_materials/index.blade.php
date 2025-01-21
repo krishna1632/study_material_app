@@ -5,32 +5,37 @@
 @section('content')
     <h1 class="mt-4">Study Materials</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item">
+            @can('is superadmin')
+                <a href="{{ route('superadmin.dashboard') }}">Dashboard</a>
+            @else
+                <a href="{{ route('others.dashboard') }}">Dashboard</a>
+            @endcan
+        </li>
         <li class="breadcrumb-item active">Study Materials</li>
     </ol>
-   
+
     <div class="card mb-4">
-   
-                
-           
-    <div class="card-header">
-    <i class="fas fa-book me-1"></i>
-    Study Materials List
-
-    @can('create study material')
-        <a href="{{ route('study_materials.create') }}" class="btn btn-primary btn-sm float-end">
-            Add New Study Material
-        </a>
-    @endcan
-    @if (auth()->user()->hasRole('student'))
-    <a href="{{ route('study_materials.elective') }}" class="btn btn-primary btn-sm float-end me-2">
-        View Elective Study Material
-    </a>
-
-    @endif
 
 
-</div>
+
+        <div class="card-header">
+            <i class="fas fa-book me-1"></i>
+            Study Materials List
+
+            @can('create study material')
+                <a href="{{ route('study_materials.create') }}" class="btn btn-primary btn-sm float-end">
+                    Add New Study Material
+                </a>
+            @endcan
+            @if (auth()->user()->hasRole('student'))
+                <a href="{{ route('study_materials.elective') }}" class="btn btn-primary btn-sm float-end me-2">
+                    View Elective Study Material
+                </a>
+            @endif
+
+
+        </div>
 
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped">
@@ -41,16 +46,16 @@
                         <th>Department</th>
                         <th>Semester</th>
                         <th>Subject Name</th>
-                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin')||$roles->contains('student'))
-                        <th>Faculty Name</th>
+                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin') || $roles->contains('student'))
+                            <th>Faculty Name</th>
                         @endif
                         <th>File</th>
                         <th>Description</th>
                         @canany(['edit study material', 'delete study material'])
-                        <th>Action</th>
+                            <th>Action</th>
                         @endcanany
-                        @if($roles->contains('student'))
-                        <th></th>
+                        @if ($roles->contains('student'))
+                            <th></th>
                         @endif
                     </tr>
                 </thead>
@@ -63,8 +68,8 @@
                             <td>{{ $material->semester }}</td>
                             <td>{{ $material->subject_name }}</td>
 
-                            @if ($roles->contains('Admin') || $roles->contains('SuperAdmin')||$roles->contains('student'))
-                            <td>{{ $material->faculty_name }}</td>
+                            @if ($roles->contains('Admin') || $roles->contains('SuperAdmin') || $roles->contains('student'))
+                                <td>{{ $material->faculty_name }}</td>
                             @endif
                             <td>
                                 @if ($material->file)
@@ -102,7 +107,7 @@
                     @endforeach
                 </tbody>
             </table>
-           
+
         </div>
     </div>
 

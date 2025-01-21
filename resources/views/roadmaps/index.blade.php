@@ -5,9 +5,16 @@
 @section('content')
     <h1 class="mt-4">Roadmaps</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item">
+            @can('is superadmin')
+                <a href="{{ route('superadmin.dashboard') }}">Dashboard</a>
+            @else
+                <a href="{{ route('others.dashboard') }}">Dashboard</a>
+            @endcan
+        </li>
         <li class="breadcrumb-item active">Roadmaps</li>
     </ol>
+
 
     <div class="card mb-4">
         <div class="card-header">
@@ -45,11 +52,13 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('roadmaps.show', Crypt::encryptString($roadmap->id)) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('roadmaps.show', Crypt::encryptString($roadmap->id)) }}"
+                                    class="btn btn-info btn-sm">
                                     View
                                 </a>
                                 @can('edit roadmaps')
-                                    <a href="{{ route('roadmaps.edit', Crypt::encryptString($roadmap->id)) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ route('roadmaps.edit', Crypt::encryptString($roadmap->id)) }}"
+                                        class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
                                 @endcan
