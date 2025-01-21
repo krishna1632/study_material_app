@@ -67,7 +67,8 @@
                 <div class="mt-4">
                     <input type="checkbox" id="confirmFinalize">
                     <label for="confirmFinalize"> I confirm that all questions are correct, finalized, and the instructions
-                        have been added.</label>
+                        have been added. Once the final submit button gets clicked the questions will be
+                        non-editable</label>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <form method="POST" action="{{ route('questions.submit', $quiz->id) }}">
@@ -156,4 +157,25 @@
             }
         </script>
     @endif
+
+    <script>
+        // Final Submit Button SweetAlert Confirmation
+        document.getElementById('finalSubmit')?.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Once you finalize, questions will be non-editable!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Final Submit!',
+                cancelButtonText: 'No, Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If confirmed, submit the form
+                    this.closest('form').submit();
+                }
+            });
+        });
+    </script>
 @endsection

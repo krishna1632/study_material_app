@@ -20,88 +20,92 @@
                 @csrf
                 @method('POST')
 
-                <!-- Subject Type -->
-                <div class="mb-3">
-                    <label for="subject_type" class="form-label">Subject Type</label>
-                    <select name="subject_type" id="subject_type" class="form-control" required>
-                        <option value="" disabled selected>Select Subject Type</option>
-                        <option value="CORE">CORE</option>
-                        <option value="SEC">SEC</option>
-                        <option value="VAC">VAC</option>
-                        <option value="GE">GE</option>
-                        <option value="AEC">AEC</option>
-                        <option value="DSE">DSE</option>
-                    </select>
+                <div class="row g-3">
+                    <!-- Subject Type -->
+                    <div class="col-md-4">
+                        <label for="subject_type" class="form-label">Subject Type</label>
+                        <select name="subject_type" id="subject_type" class="form-control" required>
+                            <option value="" disabled selected>Select Subject Type</option>
+                            <option value="CORE">CORE</option>
+                            <option value="SEC">SEC</option>
+                            <option value="VAC">VAC</option>
+                            <option value="GE">GE</option>
+                            <option value="AEC">AEC</option>
+                            <option value="DSE">DSE</option>
+                        </select>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="col-md-4">
+                        <label for="department" class="form-label">Department/ELECTIVE</label>
+                        <select name="department" id="department" class="form-control" required>
+                            <option value="" disabled selected>Select Department</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department }}">{{ $department }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Semester -->
+                    <div class="col-md-4">
+                        <label for="semester" class="form-label">Semester</label>
+                        <select name="semester" id="semester" class="form-control" required>
+                            <option value="" disabled selected>Select Semester</option>
+                            @for ($i = 1; $i <= 8; $i++)
+                                <option value="{{ $i }}"> {{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
 
-                <!-- Department -->
-                <div class="mb-3">
-                    <label for="department" class="form-label">Department/ELECTIVE</label>
-                    <select name="department" id="department" class="form-control" required>
-                        
-                        <option value="" disabled selected>Select Department</option>
-                        @foreach ($departments as $department)
-                            <option value="{{ $department }}">{{ $department }}</option>
-                        @endforeach
-                    </select>
+                <div class="row g-3 mt-3">
+                    <!-- Subject Name Field -->
+                    <div class="col-md-4">
+                        <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
+                        <select name="subject_name" id="subject_name" class="form-control" required>
+                            <option value="" disabled selected>Select Subject</option>
+                            @foreach ($subjects as $subject)
+                                <option value="{{ $subject->subject_name }}">{{ $subject->subject_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Faculty Name Field -->
+                    <div class="col-md-4">
+                        <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
+                        <select name="faculty_name" id="faculty_name" class="form-select" required>
+                            <option value="" disabled selected>Select Faculty Name</option>
+                            @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
+                                <option value="Admin" class="admin-option">Admin</option>
+                            @endif
+
+                            @foreach ($faculties as $faculty)
+                                <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Quiz Date Field -->
+                    <div class="col-md-4">
+                        <label for="date" class="form-label">Quiz Date<font color="red">*</font></label>
+                        <input type="date" name="date" id="date" class="form-control" required>
+                    </div>
                 </div>
 
-                <!-- Semester -->
-                <div class="mb-3">
-                    <label for="semester" class="form-label">Semester</label>
-                    <select name="semester" id="semester" class="form-control" required>
-                        <option value="" disabled selected>Select Semester</option>
-                        @for ($i = 1; $i <= 8; $i++)
-                            <option value="{{ $i }}"> {{ $i }}</option>
-                        @endfor
-                    </select>
+                <div class="row g-3 mt-3">
+                    <!-- Quiz Time Fields -->
+                    <div class="col-md-6">
+                        <label for="start_time" class="form-label">Start Time</label>
+                        <input type="time" name="start_time" class="form-control" id="start_time" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="end_time" class="form-label">End Time</label>
+                        <input type="time" name="end_time" class="form-control" id="end_time" required>
+                    </div>
                 </div>
 
-                <!-- Subject Name Field -->
-                <div class="mb-3">
-                    <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
-                    <select name="subject_name" id="subject_name" class="form-control" required>
-                        <option value="" disabled selected>Select Subject</option>
-                        @foreach ($subjects as $subject)
-                            <option value="{{ $subject->subject_name }}">{{ $subject->subject_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Faculty Name Field -->
-                <div class="mb-3">
-                    <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
-                    <select name="faculty_name" id="faculty_name" class="form-select" required>
-                        <option value="" disabled selected>Select Faculty Name</option>
-                        <!-- Conditionally show the "Admin" option -->
-                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
-                            <option value="Admin" class="admin-option">Admin</option>
-                        @endif
-
-                        @foreach ($faculties as $faculty)
-                            <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Quiz Date Field -->
-                <div class="mb-3">
-                    <label for="date" class="form-label">Quiz Date<font color="red">*</font></label>
-                    <input type="date" name="date" id="date" class="form-control" required>
-                </div>
-
-                <!-- Quiz Time Field -->
-                <div class="mb-3">
-                    <label for="start_time" class="form-label">Start Time</label>
-                    <input type="time" name="start_time" class="form-control" id="start_time" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="end_time" class="form-label">End Time</label>
-                    <input type="time" name="end_time" class="form-control" id="end_time" required>
-                </div>
-
-                <div class="text-end">
+                <div class="text-end mt-4">
                     <button type="submit" class="btn btn-primary">Create Your Questions</button>
                     <a href="{{ route('quizzes.index') }}" class="btn btn-secondary">Cancel</a>
                 </div>

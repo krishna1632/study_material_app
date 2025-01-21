@@ -28,132 +28,102 @@ class SyllabusController extends Controller implements HasMiddleware
      * Display a listing of the syllabus.
      */
     public function index()
-{
-    $user = auth()->user();
-    $department = $user->department; // User's department
-    $semester = $user->semester; // Assuming semester is stored in the user's record
-
-    if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin')) {
-        // SuperAdmin or Admin: Show all data
+    {
         $syllabus = Syllabus::all();
-    } elseif ($user->hasRole('Faculty')) {
-        // Faculty: Filter by department
-        $syllabus = Syllabus::where('department', $department)->get();
-    } elseif ($user->hasRole('student')) {
-        // Student: Filter by semester and department, including "ELECTIVE"
-        $syllabus = Syllabus::where(function ($query) use ($semester, $department) {
-            $query->where('semester', $semester)
-                  ->where(function ($q) use ($department) {
-                      $q->where('department', $department)
-                        ->orWhere('department', 'ELECTIVE');
-                  });
-        })->get();
 
-        $syllabus = $syllabus->sortBy(function ($item) {
-            return $item->subject_type === 'CORE' ? 0 : 1; // CORE gets priority (0)
-        });
-    } else {
-        // Default: No data
-        $syllabus = [];
+        return view('syllabus.index', compact('syllabus'));
     }
-
-    return view('syllabus.index', compact('syllabus'));
-}
 
 
     /**
      * Show the form for creating a new syllabus.
      */
     public function create()
-{
-    $user = auth()->user();
-    $roles = $user->getRoleNames();
+    {
+        $departments = [
+            'Applied Psychology',
+            'Computer Science',
+            'B.voc(Software Development)',
+            'Economics',
+            'English',
+            'Environmental Studies',
+            'Commerce',
+            'Punjabi',
+            'Hindi',
+            'History',
+            'Management Studies',
+            'Mathematics',
+            'Philosophy',
+            'Physical Education',
+            'Political Science',
+            'Statistics',
+            'B.voc(Banking Operations)',
+            'ELECTIVE'
+        ];
 
-    $subjectTypes = ['CORE', 'DSE', 'SEC', 'VAC', 'GE', 'AEC'];
-    $departments = $roles->contains('Admin') || $roles->contains('SuperAdmin')
-        ? [
-            'Applied Psychology', 'Computer Science', 'B.voc(Software Development)', 'Economics', 'English', 'Environmental Studies', 'Commerce',
-            'Punjabi', 'Hindi', 'History', 'Management Studies', 'Mathematics',
-            'Philosophy', 'Physical Education', 'Political Science', 'Statistics',
-            'B.voc(Banking Operations)','ELECTIVE'
-        ]
-        : [$user->department];
-    $semesters = [1, 2, 3, 4, 5, 6,7,8]; // Example semesters
-    
-    // Initial empty subject list
-    $subjects = [];
 
-    return view('syllabus.create', compact('subjectTypes', 'departments', 'semesters', 'subjects'));
-}
-
-
-
-public function filterSubjects(Request $request)
-{
-    // Validate the input
-    $validated = $request->validate([
-        'subject_type' => 'required|string',
-        'department' => 'required|string',
-        'semester' => 'required|integer',
-    ]);
-
-    // Initialize the query builder for the Subject model
-    $query = Subject::query();
-
-    // If the subject type is either 'CORE' or 'DSE', filter by department and semester
-    if (in_array($validated['subject_type'], ['CORE', 'DSE'])) {
-        $query->where('subject_type', $validated['subject_type'])
-              ->where('department', $validated['department'])
-              ->where('semester', $validated['semester']);
-    } else {
-        // If the subject type is 'SEC', 'VAC', 'GE', or 'AEC', only filter by semester
-        $query->where('subject_type', $validated['subject_type'])
-              ->where('semester', $validated['semester']);
+        return view('syllabus.create', compact('departments'));
     }
 
-    // Fetch the subjects based on the filters
-    $subjects = $query->get();
 
-    // Return subjects as JSON response with id and name
-    return response()->json($subjects->pluck('subject_name', 'id'));
-}
+
+    public function filterSubjects(Request $request)
+    {
+        // Validate the input
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|integer',
+        ]);
+
+        // Initialize the query builder for the Subject model
+        $query = Subject::query();
+
+        // If the subject type is either 'CORE' or 'DSE', filter by department and semester
+        if (in_array($validated['subject_type'], ['CORE', 'DSE'])) {
+            $query->where('subject_type', $validated['subject_type'])
+                ->where('department', $validated['department'])
+                ->where('semester', $validated['semester']);
+        } else {
+            // If the subject type is 'SEC', 'VAC', 'GE', or 'AEC', only filter by semester
+            $query->where('subject_type', $validated['subject_type'])
+                ->where('semester', $validated['semester']);
+        }
+
+        // Fetch the subjects based on the filters
+        $subjects = $query->get();
+
+        // Return subjects as JSON response with id and name
+        return response()->json($subjects->pluck('subject_name', 'id'));
+    }
 
     /**
      * Store a newly created syllabus in storage.
      */
     public function store(Request $request)
-{
-    // Validate the input
-    $request->validate([
-        'subject_type' => 'required',
-        'department' => 'nullable|string',
-        'semester' => 'required|integer',
-        'subject_name' => 'required|string',
-        'file' => 'required|file|mimes:pdf,doc,docx',
-    ]);
+    {
+        // Validate the input
+        $request->validate([
+            'department' => 'required|string',
+            'file' => 'required|file|mimes:pdf,doc,docx',
+        ]);
 
+        // Handle file upload and get the path
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('syllabus', 'public');
+        } else {
+            // Manually throw an error if file is not provided
+            return redirect()->back()->with('error', 'File is required!');
+        }
 
-    // Department will default to 'ELECTIVE' if not provided
-    $department = $request->department ?? 'ELECTIVE';
-    // Handle file upload and get the path
-    if ($request->hasFile('file')) {
-        $filePath = $request->file('file')->store('syllabus', 'public');
-    } else {
-        // Manually throw an error if file is not provided
-        return redirect()->back()->with('error', 'File is required!');
+        // Create the syllabus record
+        Syllabus::create([
+            'department' => $request->department,
+            'file' => $filePath ?? null,
+        ]);
+
+        return redirect()->route('syllabus.index')->with('success', 'Syllabus uploaded successfully!');
     }
-
-    // Create the syllabus record
-    Syllabus::create([
-        'subject_type' => $request->subject_type,
-        'department' => $request->department,
-        'semester' => $request->semester,
-        'subject_name' => $request->subject_name,
-        'file' => $filePath ?? null,
-    ]);
-
-    return redirect()->route('syllabus.index')->with('success', 'Syllabus uploaded successfully!');
-}
 
 
     /**
@@ -183,44 +153,28 @@ public function filterSubjects(Request $request)
             return redirect()->route('syllabus.index')->with('error', 'Syllabus not found!');
         }
 
-        $user = auth()->user();
-        $roles = $user->getRoleNames();
+        $departments = [
+            'Applied Psychology',
+            'Computer Science',
+            'B.voc(Software Development)',
+            'Economics',
+            'English',
+            'Environmental Studies',
+            'Commerce',
+            'Punjabi',
+            'Hindi',
+            'History',
+            'Management Studies',
+            'Mathematics',
+            'Philosophy',
+            'Physical Education',
+            'Political Science',
+            'Statistics',
+            'B.voc(Banking Operations)',
+            'ELECTIVE'
+        ];
 
-        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
-            $departments = [
-                'Applied Psychology',
-                'Computer Science',
-                'B.voc(Software Development)',
-                'Economics',
-                'English',
-                'Environmental Studies',
-                'Commerce',
-                'Punjabi',
-                'Hindi',
-                'History',
-                'Management Studies',
-                'Mathematics',
-                'Philosophy',
-                'Physical Education',
-                'Political Science',
-                'Statistics',
-                'B.voc(Banking Operations)',
-                'ELECTIVE'
-            ];
-        } else {
-            $departments = [$user->department];
-        }
-
-        $subjectTypes = ['CORE', 'SEC', 'GE', 'VAC', 'DSE', 'AEC'];
-        $semesters = ['1', '2', '3', '4', '5', '6','7','8'];
-
-        // Fetch subjects based on the current syllabus data
-        $subjects = Subject::where('subject_type', $syllabus->subject_type)
-            ->where('department', $syllabus->department)
-            ->where('semester', $syllabus->semester)
-            ->pluck('subject_name', 'id'); // Fetch subjects as id => name pairs
-
-        return view('syllabus.edit', compact('syllabus', 'departments', 'subjectTypes', 'semesters', 'subjects'));
+        return view('syllabus.edit', compact('syllabus', 'departments'));
     }
 
 
@@ -228,7 +182,6 @@ public function filterSubjects(Request $request)
      * Update the specified syllabus in storage.
      */
     public function update(Request $request, $encryptedID)
-
     {
         $id = Crypt::decryptString($encryptedID);
         $syllabus = Syllabus::find($id);
@@ -238,15 +191,11 @@ public function filterSubjects(Request $request)
         }
 
         $validated = $request->validate([
-            'subject_type' => 'required|string|max:255',
             'department' => 'required_if:subject_type,Core|string|max:255',
-            'semester' => 'required|string|max:255',
-            'subject_name' => 'required|string|max:255',
             'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
 
-        $department = $request->department ?? 'Elective';
         if ($request->hasFile('file')) {
             if (Storage::exists('public/' . $syllabus->file)) {
                 Storage::delete('public/' . $syllabus->file);
@@ -257,10 +206,7 @@ public function filterSubjects(Request $request)
         }
 
         $syllabus->update([
-            'subject_type' => $validated['subject_type'],
-            'department' => $validated['department'] ?? null,
-            'semester' => $validated['semester'],
-            'subject_name' => $validated['subject_name'],
+            'department' => $validated['department'],
             'file' => $syllabus->file,
         ]);
 

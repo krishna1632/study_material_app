@@ -10,7 +10,7 @@
                         @csrf
                         <div class="row">
                             <!-- Subject Type -->
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label for="subject_type">Subject Type<font color="red">*</font></label>
                                 <select name="subject_type" id="subject_type" class="form-control" required>
                                     <option value="" disabled selected>Select Subject Type</option>
@@ -18,7 +18,7 @@
                                         <option value="{{ $type }}">{{ $type }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <!-- Department -->
                             <div class="col-md-6">
@@ -31,7 +31,7 @@
                                 </select>
                             </div>
 
-                            <!-- Semester -->
+                            {{-- <!-- Semester -->
                             <div class="col-md-6 mt-3">
                                 <label for="semester">Semester<font color="red">*</font></label>
                                 <select name="semester" id="semester" class="form-control" required>
@@ -51,10 +51,10 @@
                                         <option value="{{ $subject }}">{{ $subject }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <!-- File -->
-                            <div class="col-md-6 mt-3">
+                            <div class="col-md-6">
                                 <label for="file">File<font color="red">*</font></label>
                                 <input type="file" name="file" id="file" class="form-control" required>
                             </div>
