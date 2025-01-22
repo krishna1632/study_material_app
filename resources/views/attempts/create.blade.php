@@ -110,29 +110,21 @@
                 showConfirmButton: false
             });
         @endif
-
+    });
+</script>
+<script>
+    // DOM Ready
+    document.addEventListener("DOMContentLoaded", function() {
         // Error Flash Message for resubmission
-        @if (session('error'))
-            Swal.fire({
-                title: 'Error!',
-                text: "{{ session('error') }}",
-                icon: 'error',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                // Redirect to the attempts.show page
-                window.location.href = "{{ route('attempts.show', ['id' => session('attempt_id')]) }}";
-            });
-        @endif
-
-        // Already Submitted Quiz Message
         @if (session('alert'))
             Swal.fire({
-                title: 'Error!',
+                title: 'Already Submitted!',
                 text: "{{ session('message') }}",
                 icon: 'error',
                 confirmButtonText: 'OK'
             }).then(() => {
-                window.location.href = "{{ session('redirect') }}"; // Redirect to attempts.show
+                // Redirect to the specific attempt's page
+                window.location.href = "{{ route('attempts.show', ['id' => session('attempt_id')]) }}";
             });
         @endif
     });

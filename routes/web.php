@@ -152,7 +152,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
     Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
 
-
     Route::get('quizzes/{quiz}/instructions', [QuizController::class, 'showInstructions'])->name('quizzes.instructions');
     Route::put('quizzes/{quiz}/update-instructions', [QuizController::class, 'updateInstructions'])->name('quizzes.update.instructions');
     Route::post('/quizzes/start-test', [QuizController::class, 'startTest'])->name('quizzes.startTest');
@@ -160,13 +159,11 @@ Route::middleware('auth')->group(function () {
 
     // Questions Routes
     Route::get('/quizzes/{quiz}/questions', [QuestionController::class, 'index'])->name('questions.index');
-
     Route::get('/quizzes/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
     Route::get('quizzes/{quizId}/questions/{id}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
     Route::put('quizzes/{quizId}/questions/{id}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
-
     Route::post('/quizzes/{quizId}/submit-questions', [QuestionController::class, 'submitQuestions'])->name('questions.submit');
 
     // Attempt Quiz Routes
@@ -174,7 +171,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/attempts/create/{id}', [AttemptController::class, 'create'])->name('attempts.create');
     Route::post('/attempts', [AttemptController::class, 'store'])->name('attempts.store');
     Route::get('/attempts/{id}', [AttemptController::class, 'show'])->name('attempts.show');
-
     Route::get('/start-test/{quizId}/question/{questionId}', [AttemptController::class, 'startTest'])->name('start.test');
     Route::post('/attempts/store-answers', [AttemptController::class, 'storeAnswers'])->name('attempts.storeAnswers');
     Route::post('attempts/{quizId}/submit', [AttemptController::class, 'submitTest'])->name('attempts.submitTest');

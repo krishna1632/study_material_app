@@ -70,41 +70,32 @@ class AttemptController extends Controller implements HasMiddleware
             'quiz_id' => 'required|exists:quizzes,id',
             'roll_no' => 'required|string|max:50',
         ]);
+        // Check if the student has already submitted this quiz
+        $existingAttempt = AttemptDetails::where('quiz_id', $request->quiz_id)
+            ->where('roll_no', $request->roll_no)
+            ->where('status', 1) // Check if status is submitted (1)
+            ->first();
 
-        try {
-            // Check if the student has already submitted this quiz
-            $existingAttempt = AttemptDetails::where('quiz_id', $request->quiz_id)
-                ->where('roll_no', $request->roll_no)
-                ->where('status', 1) // Check if status is submitted (1)
-                ->first();
-
-            if ($existingAttempt) {
-                return redirect()->route('attempts.show', ['id' => $existingAttempt->id])
-                    ->with([
-                        'alert' => true,
-                        'message' => 'This student details is already submitted.',
-                        'redirect' => route('attempts.show', ['id' => $existingAttempt->id]), // Redirect to attempts.show
-                    ]);
-            }
-
-            $attempt = AttemptDetails::create([
-                'student_id' => auth()->id(),
-                'quiz_id' => $request->quiz_id,
-                'roll_no' => $request->roll_no,
-                'status' => 0,
-            ]);
-
-            return redirect()->route('attempts.show', ['id' => $attempt->id])
-                ->with('success', 'Quiz attempt saved successfully.');
-        } catch (\Illuminate\Database\QueryException $exception) {
-            // Check if it's a unique constraint violation
-            if ($exception->getCode() === '23000') { // MySQL code for integrity constraint violation
-                return redirect()->back()
-                    ->withErrors(['already_submitted' => 'You have already attempted this quiz with the provided roll number.']);
-            }
-
-            throw $exception;
+        if ($existingAttempt) {
+            // Redirect to the existing attempt's page with an error
+            return redirect()->route('attempts.show', ['id' => $existingAttempt->id])
+                ->with([
+                    'alert' => true,
+                    'message' => 'You have already submitted this quiz.',
+                    'attempt_id' => $existingAttempt->id, // For error redirection
+                ]);
         }
+
+        $attempt = AttemptDetails::create([
+            'student_id' => auth()->id(),
+            'quiz_id' => $request->quiz_id,
+            'roll_no' => $request->roll_no,
+            'status' => 0,
+        ]);
+
+        return redirect()->route('attempts.show', ['id' => $attempt->id])
+            ->with('success', 'Quiz attempt saved successfully.');
+
 
     }
 
