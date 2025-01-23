@@ -16,7 +16,7 @@
             Edit User Details
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('users.update',Crypt::encryptString($user->id))}}" class="form-horizontal">
+            <form method="POST" action="{{ route('users.update', Crypt::encryptString($user->id)) }}" class="form-horizontal">
                 @csrf
                 @method('POST')
 
@@ -104,6 +104,17 @@
                     @enderror
                 </div>
 
+                <!-- Roll No Field -->
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4" id="rollno-field" style="{{ $hasRoles->contains('student') ? '' : 'display: none;' }}">
+                        <label for="roll_no" class="form-label">Roll No<span class="text-danger">*</span></label>
+                        <input type="text" name="roll_no" id="roll_no" class="form-control" value="{{ old('roll_no', $user->roll_no) }}">
+                        @error('roll_no')
+                            <div class="text-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between">
                     <a href="{{ route('users.list') }}" class="btn btn-secondary">Back</a>
                     <button type="submit" class="btn btn-primary">Update</button>
@@ -116,21 +127,23 @@
         document.addEventListener('DOMContentLoaded', function () {
             const roleCheckboxes = document.querySelectorAll('input[name="role[]"]');
             const semesterField = document.getElementById('semester-field');
+            const rollNoField = document.getElementById('rollno-field');
 
-            function toggleSemesterField() {
-                const isStudentSelected = Array.from(roleCheckboxes).some(checkbox => 
+            function toggleFields() {
+                const isStudentSelected = Array.from(roleCheckboxes).some(checkbox =>
                     checkbox.checked && checkbox.value === 'student'
                 );
                 semesterField.style.display = isStudentSelected ? 'block' : 'none';
+                rollNoField.style.display = isStudentSelected ? 'block' : 'none';
             }
 
             // Attach the toggle function to all role checkboxes
             roleCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', toggleSemesterField);
+                checkbox.addEventListener('change', toggleFields);
             });
 
             // Initialize the visibility on page load
-            toggleSemesterField();
+            toggleFields();
         });
     </script>
 @endsection

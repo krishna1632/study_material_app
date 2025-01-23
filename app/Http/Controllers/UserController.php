@@ -62,6 +62,7 @@ class UserController extends Controller implements HasMiddleware
             'phone' => 'required|string|unique:users,phone|max:15',
             'department' => 'required|string|max:255',
             'semester' => 'nullable|integer|min:1|max:10',
+            'roll_no' => 'nullable|string|min:3|max:255',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string|exists:roles,name',
         ]);
@@ -73,6 +74,7 @@ class UserController extends Controller implements HasMiddleware
         $user->phone = $request->phone;
         $user->department = $request->department;
         $user->semester = $request->semester;
+        $user->roll_no = $request->roll_no;
         $user->password = bcrypt($request->password);
         $user->save();
 
@@ -94,59 +96,62 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $encryptedId)
+    public function edit($id)
     {
-        // Decrypt the ID
-        $id = Crypt::decryptString($encryptedId);
+        $userId = Crypt::decryptString($id); // Decrypt the user ID
+        $user = User::findOrFail($userId); // Fetch the user details
+        $roles = Role::all(); // Get all roles
+        $hasRoles = $user->roles; // Get the roles assigned to the user
 
-        $user = User::findOrFail($id);
-        $roles = Role::orderBy('name', 'ASC')->get();
-        $hasRoles = $user->roles->pluck('id');
-        return view('users.edit', [
-            'user' => $user,
-            'roles' => $roles,
-            'hasRoles' => $hasRoles
-        ]);
+        return view('users.edit', compact('user', 'roles', 'hasRoles'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the user details.
      */
-    public function update(Request $request, string $encryptedId)
+    public function update(Request $request, $id)
     {
-        // Decrypt the ID
-        $id = Crypt::decryptString($encryptedId);
+        $userId = Crypt::decryptString($id); // Decrypt the user ID
+        $user = User::findOrFail($userId);
 
-        $user = User::findOrFail($id);
-
-        $request->validate([
+        // Validate the incoming data
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'required|string|max:15',
             'department' => 'required|string',
-            'semester' => $request->has('role') && in_array('student', $request->role)
-                ? 'required|integer|min:1|max:8'
-                : 'nullable',
-            'role' => 'required|array',
-            'role.*' => 'string|exists:roles,name',
+            'role' => 'required|array', // Role is mandatory
+            'semester' => 'nullable|integer|min:1|max:8',
+            'roll_no' => 'nullable|string|max:50',
         ]);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->department = $request->department;
-        $user->semester = $request->has('role') && in_array('student', $request->role)
-            ? $request->semester
-            : null; // Handle semester for non-student roles
+        // Update user details
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'department' => $validated['department'],
+        ]);
 
-        $user->save();
+        // Sync roles
+        $user->syncRoles($validated['role']);
 
-        $roles = Role::whereIn('name', $request->role)->pluck('id');
-        $user->roles()->sync($roles);
+        // Check if the 'student' role is selected
+        if (in_array('student', $validated['role'])) {
+            // Update semester and roll number if 'student' role is selected
+            $user->semester = $validated['semester'] ?? null;
+            $user->roll_no = $validated['roll_no'] ?? null;
+        } else {
+            // Clear semester and roll number if 'student' role is not selected
+            $user->semester = null;
+            $user->roll_no = null;
+        }
 
-        return redirect()->route('users.list')->with('success', 'User updated successfully.');
+        $user->save(); // Save the changes
+
+        // Redirect back with a success message
+        return redirect()->route('users.list')->with('success', 'User updated successfully!');
     }
-
     /**
      * Remove the specified resource from storage.
      */

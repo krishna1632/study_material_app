@@ -132,7 +132,21 @@
             <span class="text-danger small">{{ $message }}</span>
         @enderror
     </div>
+
 @endif
+
+            
+            <!-- Roll No Field -->
+<div class="row g-3 mt-3">
+    <div class="col-md-4" id="rollno-field" style="{{ $student->roles->contains('student')  }}">
+        <label for="roll_no" class="form-label">Roll No<span class="text-danger">*</span></label>
+        <input type="text" name="roll_no" id="roll_no" class="form-control" value="{{ old('roll_no', $student->roll_no) }}">
+        @error('roll_no')
+            <div class="text-danger mt-2">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
+
 
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">

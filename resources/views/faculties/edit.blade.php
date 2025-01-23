@@ -51,69 +51,34 @@
                     @enderror
                 </div>
 
+                <!-- Department Field -->
                 <div class="form-group mb-3">
                     <label for="department" class="form-label font-weight-bold">Department</label>
                     <select name="department" id="department" class="form-select" required>
                         <option value="" disabled>Select Department</option>
-                        <option value="Applied Psychology" {{ old('department', $faculty->department) == 'Applied Psychology' ? 'selected' : '' }}>
-                            Department of Applied Psychology
-                        </option>
-                        <option value="Computer Science" {{ old('department', $faculty->department) == 'Computer Science' ? 'selected' : '' }}>
-                            Department of Computer Science
-                        </option>
-                        <option value="B.voc(Software Development)" {{ old('department', $faculty->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
-                            Department of B.voc (Software Development)
-                        </option>
-                        <option value="Economics" {{ old('department', $faculty->department) == 'Economics' ? 'selected' : '' }}>
-                            Department of Economics
-                        </option>
-                        <option value="English" {{ old('department', $faculty->department) == 'English' ? 'selected' : '' }}>
-                            Department of English
-                        </option>
-                        <option value="Environmental Studies" {{ old('department', $faculty->department) == 'Environmental Studies' ? 'selected' : '' }}>
-                            Department of Environmental Studies
-                        </option>
-                        <option value="Commerce" {{ old('department', $faculty->department) == 'Commerce' ? 'selected' : '' }}>
-                            Department of Commerce
-                        </option>
-                        <option value="Punjabi" {{ old('department', $faculty->department) == 'Punjabi' ? 'selected' : '' }}>
-                            Department of Punjabi
-                        </option>
-                        <option value="Hindi" {{ old('department', $faculty->department) == 'Hindi' ? 'selected' : '' }}>
-                            Department of Hindi
-                        </option>
-                        <option value="History" {{ old('department', $faculty->department) == 'History' ? 'selected' : '' }}>
-                            Department of History
-                        </option>
-                        <option value="Management Studies" {{ old('department', $faculty->department) == 'Management Studies' ? 'selected' : '' }}>
-                            Department of Management Studies
-                        </option>
-                        <option value="Mathematics" {{ old('department', $faculty->department) == 'Mathematics' ? 'selected' : '' }}>
-                            Department of Mathematics
-                        </option>
-                        <option value="Philosophy" {{ old('department', $faculty->department) == 'Philosophy' ? 'selected' : '' }}>
-                            Department of Philosophy
-                        </option>
-                        <option value="Physical Education" {{ old('department', $faculty->department) == 'Physical Education' ? 'selected' : '' }}>
-                            Department of Physical Education
-                        </option>
-                        <option value="Political Science" {{ old('department', $faculty->department) == 'Political Science' ? 'selected' : '' }}>
-                            Department of Political Science
-                        </option>
-                        <option value="Statistics" {{ old('department', $faculty->department) == 'Statistics' ? 'selected' : '' }}>
-                            Department of Statistics
-                        </option>
-                        <option value="B.voc(Banking)" {{ old('department', $faculty->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
-                            Department of B.voc (Banking)
-                        </option>
+                        <option value="Applied Psychology" {{ old('department', $faculty->department) == 'Applied Psychology' ? 'selected' : '' }}>Department of Applied Psychology</option>
+                        <option value="Computer Science" {{ old('department', $faculty->department) == 'Computer Science' ? 'selected' : '' }}>Department of Computer Science</option>
+                        <option value="B.voc(Software Development)" {{ old('department', $faculty->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>Department of B.voc (Software Development)</option>
+                        <option value="Economics" {{ old('department', $faculty->department) == 'Economics' ? 'selected' : '' }}>Department of Economics</option>
+                        <option value="English" {{ old('department', $faculty->department) == 'English' ? 'selected' : '' }}>Department of English</option>
+                        <option value="Environmental Studies" {{ old('department', $faculty->department) == 'Environmental Studies' ? 'selected' : '' }}>Department of Environmental Studies</option>
+                        <option value="Commerce" {{ old('department', $faculty->department) == 'Commerce' ? 'selected' : '' }}>Department of Commerce</option>
+                        <option value="Punjabi" {{ old('department', $faculty->department) == 'Punjabi' ? 'selected' : '' }}>Department of Punjabi</option>
+                        <option value="Hindi" {{ old('department', $faculty->department) == 'Hindi' ? 'selected' : '' }}>Department of Hindi</option>
+                        <option value="History" {{ old('department', $faculty->department) == 'History' ? 'selected' : '' }}>Department of History</option>
+                        <option value="Management Studies" {{ old('department', $faculty->department) == 'Management Studies' ? 'selected' : '' }}>Department of Management Studies</option>
+                        <option value="Mathematics" {{ old('department', $faculty->department) == 'Mathematics' ? 'selected' : '' }}>Department of Mathematics</option>
+                        <option value="Philosophy" {{ old('department', $faculty->department) == 'Philosophy' ? 'selected' : '' }}>Department of Philosophy</option>
+                        <option value="Physical Education" {{ old('department', $faculty->department) == 'Physical Education' ? 'selected' : '' }}>Department of Physical Education</option>
+                        <option value="Political Science" {{ old('department', $faculty->department) == 'Political Science' ? 'selected' : '' }}>Department of Political Science</option>
+                        <option value="Statistics" {{ old('department', $faculty->department) == 'Statistics' ? 'selected' : '' }}>Department of Statistics</option>
+                        <option value="B.voc(Banking)" {{ old('department', $faculty->department) == 'B.voc(Banking)' ? 'selected' : '' }}>Department of B.voc (Banking)</option>
                     </select>
                     @error('department')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror
                 </div>
 
-
-           
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">
                     <label for="roles" class="form-label font-weight-bold">Roles</label>
@@ -124,6 +89,7 @@
                                     <div class="form-check">
                                         <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
                                             value="{{ $role->name }}" class="form-check-input role-checkbox"
+                                            data-role-name="{{ $role->name }}"
                                             {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
                                         <label for="role-{{ $role->id }}" class="form-check-label">{{ $role->name }}</label>
                                     </div>
@@ -135,17 +101,30 @@
                     </div>
                 </div>
 
+                <!-- Roll Number Field -->
+                <div class="form-group mb-3" id="roll-no-field" style="display: none;">
+                    <label for="roll_no" class="form-label font-weight-bold">Roll Number</label>
+                    <input type="text" name="roll_no" id="roll_no" class="form-control"
+                           placeholder="Enter Roll Number" value="{{ old('roll_no', $faculty->roll_no ?? '') }}">
+                    @error('roll_no')
+                        <span class="text-danger small">{{ $message }}</span>
+                    @enderror
+                </div>
+
                 <!-- Semester Field -->
-                <div class="mb-3" id="semester-field" style="{{ $hasRoles->contains('student') ? '' : 'display: none;' }}">
-                    <label for="semester" class="form-label">Semester</label>
+                <div class="form-group mb-3" id="semester-field" style="display: none;">
+                    <label for="semester" class="form-label font-weight-bold">Semester</label>
                     <select name="semester" id="semester" class="form-select">
                         <option value="" disabled>Select Semester</option>
-                        @for ($i = 1; $i <= 8; $i++)
-                            <option value="{{ $i }}" {{ old('semester', $faculty->semester) == $i ? 'selected' : '' }}>{{ $i }}</option>
-                        @endfor
+                        @foreach (range(1, 8) as $semester)
+                            <option value="{{ $semester }}" 
+                                {{ old('semester', $faculty->semester ?? '') == $semester ? 'selected' : '' }}>
+                                {{ $semester }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('semester')
-                        <div class="text-danger mt-2">{{ $message }}</div>
+                        <span class="text-danger small">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -160,26 +139,28 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const roleCheckboxes = document.querySelectorAll('input.role-checkbox');
-            const semesterField = document.getElementById('semester-field');
+    document.addEventListener('DOMContentLoaded', function () {
+        const semesterField = document.getElementById('semester-field');
+        const rollNoField = document.getElementById('roll-no-field');
+        const roleCheckboxes = document.querySelectorAll('.role-checkbox');
 
-            function toggleSemesterField() {
-                // Check if "Student" role is selected
-                const isStudentSelected = Array.from(roleCheckboxes).some(checkbox =>
-                    checkbox.checked && checkbox.value === 'student'
-                );
-                // Show or hide the Semester field based on the selection
-                semesterField.style.display = isStudentSelected ? 'block' : 'none';
-            }
+        // Function to toggle fields based on 'student' role
+        function toggleStudentFields() {
+            let isStudentChecked = Array.from(roleCheckboxes).some(checkbox =>
+                checkbox.dataset.roleName === 'student' && checkbox.checked
+            );
 
-            // Attach event listeners to all role checkboxes
-            roleCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', toggleSemesterField);
-            });
+            semesterField.style.display = isStudentChecked ? 'block' : 'none';
+            rollNoField.style.display = isStudentChecked ? 'block' : 'none';
+        }
 
-            // Initialize the visibility on page load
-            toggleSemesterField();
+        // Add event listeners to checkboxes
+        roleCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', toggleStudentFields);
         });
+
+        // Initial toggle on page load
+        toggleStudentFields();
+    });
     </script>
 @endsection

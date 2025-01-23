@@ -21,7 +21,7 @@
                 <div class="row g-3">
                     <!-- Name Field -->
                     <div class="col-md-4">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
                         <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}"
                             required autofocus>
                         @error('name')
@@ -31,7 +31,7 @@
 
                     <!-- Email Field -->
                     <div class="col-md-4">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                         <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}"
                             required>
                         @error('email')
@@ -41,7 +41,7 @@
 
                     <!-- Phone Field -->
                     <div class="col-md-4">
-                        <label for="phone" class="form-label">Phone</label>
+                        <label for="phone" class="form-label">Phone<span class="text-danger">*</span></label>
                         <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}"
                             required>
                         @error('phone')
@@ -53,7 +53,7 @@
                 <div class="row g-3 mt-3">
                     <!-- Department Field -->
                     <div class="col-md-4">
-                        <label for="department" class="form-label">Department</label>
+                        <label for="department" class="form-label">Department<span class="text-danger">*</span></label>
                         <select name="department" id="department" class="form-select" required>
                             <option value="" disabled selected>Select Department</option>
                             <option value="Applied Psychology">Department of Applied Psychology</option>
@@ -82,7 +82,7 @@
 
                     <!-- Assign Role Field -->
                     <div class="col-md-4">
-                        <label for="role" class="form-label">Assign Role</label>
+                        <label for="role" class="form-label">Assign Role<span class="text-danger">*</span></label>
                         <select name="role" id="role" class="form-select" required>
                             <option value="" disabled selected>Select Role</option>
                             @foreach ($roles as $role)
@@ -96,7 +96,7 @@
 
                     <!-- Semester Field -->
                     <div class="col-md-4" id="semester-field" style="display: none;">
-                        <label for="semester" class="form-label">Semester</label>
+                        <label for="semester" class="form-label">Semester<span class="text-danger">*</span></label>
                         <select name="semester" id="semester" class="form-select">
                             <option value="" disabled selected>Select Semester</option>
                             <option value="1">1</option>
@@ -115,9 +115,20 @@
                 </div>
 
                 <div class="row g-3 mt-3">
+                    <!-- Roll No Field -->
+                    <div class="col-md-4" id="rollno-field" style="display: none;">
+                        <label for="roll_no" class="form-label">Roll No<span class="text-danger">*</span></label>
+                        <input type="text" name="roll_no" id="roll_no" class="form-control">
+                        @error('roll_no')
+                            <div class="text-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
                     <!-- Password Field -->
                     <div class="col-md-4">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">Password<span class="text-danger">*</span></label>
                         <input type="password" name="password" id="password" class="form-control" required>
                         @error('password')
                             <div class="text-danger mt-2">{{ $message }}</div>
@@ -126,7 +137,7 @@
 
                     <!-- Confirm Password Field -->
                     <div class="col-md-4">
-                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                        <label for="password_confirmation" class="form-label">Confirm Password<span class="text-danger">*</span></label>
                         <input type="password" name="password_confirmation" id="password_confirmation"
                             class="form-control" required>
                         @error('password_confirmation')
@@ -169,23 +180,31 @@
             const roleSelect = document.getElementById('role'); // Role Dropdown
             const semesterField = document.getElementById('semester-field'); // Semester Field Div
             const semesterSelect = document.getElementById('semester'); // Semester Dropdown
+            const rollNoField = document.getElementById('rollno-field'); // Roll No Field Div
+            const rollNoInput = document.getElementById('roll_no'); // Roll No Input
 
-            // Function to toggle semester field visibility
-            function toggleSemesterField() {
+            // Function to toggle semester and roll no field visibility
+            function toggleFields() {
                 if (roleSelect.value === 'student') {
                     semesterField.style.display = 'block'; // Show Semester Field
                     semesterSelect.setAttribute('required', 'required');
+                    
+                    rollNoField.style.display = 'block'; // Show Roll No Field
+                    rollNoInput.setAttribute('required', 'required');
                 } else {
                     semesterField.style.display = 'none'; // Hide Semester Field
                     semesterSelect.removeAttribute('required');
+                    
+                    rollNoField.style.display = 'none'; // Hide Roll No Field
+                    rollNoInput.removeAttribute('required');
                 }
             }
 
             // Run on page load
-            toggleSemesterField();
+            toggleFields();
 
             // Attach event listener for role change
-            roleSelect.addEventListener('change', toggleSemesterField);
+            roleSelect.addEventListener('change', toggleFields);
         });
     </script>
 @endsection

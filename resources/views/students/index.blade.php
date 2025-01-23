@@ -21,6 +21,7 @@
                         <th>#</th>
                         <th>Name</th>
                         <th>Semester</th>
+                        <th>Role No.</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Department</th>
@@ -34,6 +35,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $student->name }}</td>
                                 <td>{{ $student->semester }}</td>
+                                <td>{{ $student->roll_no }}</td>
                                 <td>{{ $student->email }}</td>
                                 <td>{{ $student->phone }}</td>
                                 <td>{{ $student->department }}</td>

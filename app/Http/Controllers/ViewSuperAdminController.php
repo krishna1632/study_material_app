@@ -98,13 +98,9 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        // Decrypt the ID
         $decryptedId = Crypt::decryptString($id);
-    
-        // Find the user by ID
         $super = User::findOrFail($decryptedId);
-    
-        // Validate the incoming data
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $decryptedId,
@@ -116,31 +112,33 @@ class ViewSuperAdminController extends Controller implements HasMiddleware
             'semester' => $request->has('role') && in_array('student', $request->role)
                 ? 'required|integer|min:1|max:8'
                 : 'nullable',
+            'roll_no' => $request->has('role') && in_array('student', $request->role)
+                ? 'required|string|max:255'
+                : 'nullable',
         ]);
-    
-        // Update the user details
+
         $super->update([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'department' => $request->department,
         ]);
-    
-        // Sync roles
+
         $roles = $request->role ?? [];
         $super->syncRoles($roles);
-    
-        // Update semester if the student role is selected
+
         if (in_array('student', $roles)) {
-            $super->semester = $request->semester; // Save the semester value
+            $super->semester = $request->semester;
+            $super->roll_no = $request->roll_no; // Save the roll number value
         } else {
-            $super->semester = null; // Clear semester if not a student
+            $super->semester = null;
+            $super->roll_no = null; // Clear roll number if not a student
         }
         $super->save();
-    
-        // Redirect back with a success message
+
         return redirect()->route('superadminView.index')->with('success', 'User updated successfully!');
     }
+    
     
 
     /**

@@ -99,48 +99,57 @@ class FacultyController extends Controller implements HasMiddleware
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $encrypted_id)
-    {
-        $id = Crypt::decryptString($encrypted_id);
+ * Update the specified resource in storage.
+ */
+public function update(Request $request, string $encrypted_id)
+{
+    // Decrypt the encrypted ID
+    $id = Crypt::decryptString($encrypted_id);
 
-        // Fetch the faculty user by ID
-        $faculty = User::findOrFail($id);
+    // Fetch the faculty user by ID
+    $faculty = User::findOrFail($id);
 
-        // Validate the input data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'phone' => 'required|string|max:15|unique:users,phone,' . $id,
-            'department' => 'required|string|max:255',
-            'semester' => $request->has('role') && in_array('student', $request->role)
-                ? 'required|integer|min:1|max:8'
-                : 'nullable',
-            'role' => 'required|array',
-            'role.*' => 'string|exists:roles,name',
-        ]);
+    // Validate the input data
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'phone' => 'required|string|max:15|unique:users,phone,' . $id,
+        'department' => 'required|string|max:255',
+        'semester' => $request->has('role') && in_array('student', $request->role)
+            ? 'required|integer|min:1|max:8'
+            : 'nullable',
+        'roll_no' => $request->has('role') && in_array('student', $request->role)
+            ? 'required|string|max:255'
+            : 'nullable',
+        'role' => 'required|array|min:1', // Ensure at least one role is selected
+        'role.*' => 'string|exists:roles,name',
+    ]);
 
-        // Update the faculty details
-        $faculty->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'department' => $request->department,
-        ]);
+    // Update the faculty details
+    $faculty->update([
+        'name' => $validatedData['name'],
+        'email' => $validatedData['email'],
+        'phone' => $validatedData['phone'],
+        'department' => $validatedData['department'],
+    ]);
 
-        // Sync roles if provided
-        if ($request->has('role')) {
-            $roles = $request->input('role'); // Array of role names
-            $faculty->syncRoles($roles); // Sync roles for the faculty
-        } else {
-            // If no roles are selected, remove all roles
-            $faculty->syncRoles([]);
-        }
-
-        // Redirect to the faculty index page with a success message
-        return redirect()->route('faculties.index')->with('success', 'Faculty updated successfully!');
+    // Update semester and roll_no if the "student" role is assigned
+    if (in_array('student', $request->role)) {
+        $faculty->semester = $validatedData['semester'];
+        $faculty->roll_no = $validatedData['roll_no'];
+    } else {
+        $faculty->semester = null; // Clear semester if "student" role is removed
+        $faculty->roll_no = null; // Clear roll_no if "student" role is removed
     }
+    $faculty->save();
+
+    // Sync roles for the faculty
+    $faculty->syncRoles($validatedData['role']);
+
+    // Redirect to the faculty index page with a success message
+    return redirect()->route('faculties.index')->with('success', 'Faculty updated successfully!');
+}
+
 
     /**
      * Remove the specified resource from storage.

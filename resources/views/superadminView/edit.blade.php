@@ -134,22 +134,32 @@
                     </div>
                 </div>
 
-                <!-- Semester Field -->
-                <div class="form-group mb-3" id="semester-field" style="display: none;">
-                    <label for="semester" class="form-label font-weight-bold">Semester</label>
-                    <select name="semester" id="semester" class="form-select">
-                        <option value="" disabled>Select Semester</option>
-                        @foreach (range(1, 8) as $semester)
-                            <option value="{{ $semester }}"
-                                {{ old('semester', $super->semester ?? '') == $semester ? 'selected' : '' }}>
-                                 {{ $semester }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('semester')
-                        <span class="text-danger small">{{ $message }}</span>
-                    @enderror
-                </div>
+               <!-- Roll Number Field -->
+<div class="form-group mb-3" id="roll-no-field" style="display: none;">
+    <label for="roll_no" class="form-label font-weight-bold">Roll Number</label>
+    <input type="text" name="roll_no" id="roll_no" class="form-control" 
+           placeholder="Enter Roll Number" value="{{ old('roll_no', $super->roll_no ?? '') }}">
+    @error('roll_no')
+        <span class="text-danger small">{{ $message }}</span>
+    @enderror
+</div>
+
+<!-- Semester Field -->
+<div class="form-group mb-3" id="semester-field" style="display: none;">
+    <label for="semester" class="form-label font-weight-bold">Semester</label>
+    <select name="semester" id="semester" class="form-select">
+        <option value="" disabled>Select Semester</option>
+        @foreach (range(1, 8) as $semester)
+            <option value="{{ $semester }}" 
+                {{ old('semester', $super->semester ?? '') == $semester ? 'selected' : '' }}>
+                {{ $semester }}
+            </option>
+        @endforeach
+    </select>
+    @error('semester')
+        <span class="text-danger small">{{ $message }}</span>
+    @enderror
+</div>
 
                 <!-- Submit Button -->
                 <div class="text-end">
@@ -164,26 +174,30 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Show/Hide Semester Field -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const semesterField = document.getElementById('semester-field');
-            const roleCheckboxes = document.querySelectorAll('.role-checkbox');
+    <!-- Updated Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const semesterField = document.getElementById('semester-field');
+        const rollNoField = document.getElementById('roll-no-field');
+        const roleCheckboxes = document.querySelectorAll('.role-checkbox');
 
-            // Function to toggle semester field
-            function toggleSemesterField() {
-                let isStudentChecked = Array.from(roleCheckboxes).some(checkbox =>
-                    checkbox.dataset.roleName === 'student' && checkbox.checked
-                );
-                semesterField.style.display = isStudentChecked ? 'block' : 'none';
-            }
+        // Function to toggle fields based on 'student' role
+        function toggleStudentFields() {
+            let isStudentChecked = Array.from(roleCheckboxes).some(checkbox =>
+                checkbox.dataset.roleName === 'student' && checkbox.checked
+            );
 
-            // Add event listener to checkboxes
-            roleCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', toggleSemesterField);
-            });
+            semesterField.style.display = isStudentChecked ? 'block' : 'none';
+            rollNoField.style.display = isStudentChecked ? 'block' : 'none';
+        }
 
-            // Initial toggle on page load
-            toggleSemesterField();
+        // Add event listeners to checkboxes
+        roleCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', toggleStudentFields);
         });
-    </script>
+
+        // Initial toggle on page load
+        toggleStudentFields();
+    });
+</script>
 @endsection

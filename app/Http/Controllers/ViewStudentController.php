@@ -86,6 +86,7 @@ class ViewStudentController extends Controller
             'phone' => 'nullable|string|max:15',
             'department' => 'required|string|max:255',
             'semester' => 'required|integer|min:1|max:10',
+            'roll_no' => 'nullable|string|max:50',
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
         ]);
@@ -97,6 +98,7 @@ class ViewStudentController extends Controller
         $student->phone = $request->input('phone');
         $student->department = $request->input('department');
         $student->semester = $request->semester;
+        $student->roll_no = $request->roll_no;
        
 
          // Sync roles

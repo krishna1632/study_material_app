@@ -127,9 +127,12 @@ class AdminController extends Controller implements HasMiddleware
              'email' => 'required|email|max:255|unique:users,email,' . $id,
              'phone' => 'required|string|max:15',
              'department' => 'required|string|max:255',
-             'semester' => $request->has('role') && in_array('student', $request->role) 
-                 ? 'required|integer|min:1|max:8' 
-                 : 'nullable',
+            'semester' => $request->has('role') && in_array('student', $request->role)
+                ? 'required|integer|min:1|max:8'
+                : 'nullable',
+            'roll_no' => $request->has('role') && in_array('student', $request->role)
+                ? 'required|string|max:255'
+                : 'nullable',
          ]);
      
          // Update admin details
@@ -152,6 +155,7 @@ class AdminController extends Controller implements HasMiddleware
          // Update semester if applicable
          if ($request->has('semester')) {
              $admin->semester = $request->semester;
+             $admin->roll_no = $request->roll_no; 
              $admin->save();
          } else {
              // Clear semester if the role is not 'student'
