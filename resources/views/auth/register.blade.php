@@ -123,9 +123,7 @@
                             <div class="text-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
 
-                <div class="row g-3 mt-3">
                     <!-- Password Field -->
                     <div class="col-md-4">
                         <label for="password" class="form-label">Password<span class="text-danger">*</span></label>
@@ -137,7 +135,8 @@
 
                     <!-- Confirm Password Field -->
                     <div class="col-md-4">
-                        <label for="password_confirmation" class="form-label">Confirm Password<span class="text-danger">*</span></label>
+                        <label for="password_confirmation" class="form-label">Confirm Password<span
+                                class="text-danger">*</span></label>
                         <input type="password" name="password_confirmation" id="password_confirmation"
                             class="form-control" required>
                         @error('password_confirmation')
@@ -188,13 +187,13 @@
                 if (roleSelect.value === 'student') {
                     semesterField.style.display = 'block'; // Show Semester Field
                     semesterSelect.setAttribute('required', 'required');
-                    
+
                     rollNoField.style.display = 'block'; // Show Roll No Field
                     rollNoInput.setAttribute('required', 'required');
                 } else {
                     semesterField.style.display = 'none'; // Hide Semester Field
                     semesterSelect.removeAttribute('required');
-                    
+
                     rollNoField.style.display = 'none'; // Hide Roll No Field
                     rollNoInput.removeAttribute('required');
                 }

@@ -53,58 +53,74 @@
 
                 <!-- Student Department Field -->
                 <div class="form-group mb-3">
-                <label for="department" class="form-label font-weight-bold">Department</label>
+                    <label for="department" class="form-label font-weight-bold">Department</label>
                     <select name="department" id="department" class="form-select" required>
                         <option value="" disabled>Select Department</option>
-                        <option value="Applied Psychology" {{ old('department', $student->department) == 'Applied Psychology' ? 'selected' : '' }}>
+                        <option value="Applied Psychology"
+                            {{ old('department', $student->department) == 'Applied Psychology' ? 'selected' : '' }}>
                             Department of Applied Psychology
                         </option>
-                        <option value="Computer Science" {{ old('department', $student->department) == 'Computer Science' ? 'selected' : '' }}>
+                        <option value="Computer Science"
+                            {{ old('department', $student->department) == 'Computer Science' ? 'selected' : '' }}>
                             Department of Computer Science
                         </option>
-                        <option value="B.voc(Software Development)" {{ old('department', $student->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
+                        <option value="B.voc(Software Development)"
+                            {{ old('department', $student->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
                             Department of B.voc (Software Development)
                         </option>
-                        <option value="Economics" {{ old('department', $student->department) == 'Economics' ? 'selected' : '' }}>
+                        <option value="Economics"
+                            {{ old('department', $student->department) == 'Economics' ? 'selected' : '' }}>
                             Department of Economics
                         </option>
-                        <option value="English" {{ old('department', $student->department) == 'English' ? 'selected' : '' }}>
+                        <option value="English"
+                            {{ old('department', $student->department) == 'English' ? 'selected' : '' }}>
                             Department of English
                         </option>
-                        <option value="Environmental Studies" {{ old('department', $student->department) == 'Environmental Studies' ? 'selected' : '' }}>
+                        <option value="Environmental Studies"
+                            {{ old('department', $student->department) == 'Environmental Studies' ? 'selected' : '' }}>
                             Department of Environmental Studies
                         </option>
-                        <option value="Commerce" {{ old('department', $student->department) == 'Commerce' ? 'selected' : '' }}>
+                        <option value="Commerce"
+                            {{ old('department', $student->department) == 'Commerce' ? 'selected' : '' }}>
                             Department of Commerce
                         </option>
-                        <option value="Punjabi" {{ old('department', $student->department) == 'Punjabi' ? 'selected' : '' }}>
+                        <option value="Punjabi"
+                            {{ old('department', $student->department) == 'Punjabi' ? 'selected' : '' }}>
                             Department of Punjabi
                         </option>
                         <option value="Hindi" {{ old('department', $student->department) == 'Hindi' ? 'selected' : '' }}>
                             Department of Hindi
                         </option>
-                        <option value="History" {{ old('department', $student->department) == 'History' ? 'selected' : '' }}>
+                        <option value="History"
+                            {{ old('department', $student->department) == 'History' ? 'selected' : '' }}>
                             Department of History
                         </option>
-                        <option value="Management Studies" {{ old('department', $student->department) == 'Management Studies' ? 'selected' : '' }}>
+                        <option value="Management Studies"
+                            {{ old('department', $student->department) == 'Management Studies' ? 'selected' : '' }}>
                             Department of Management Studies
                         </option>
-                        <option value="Mathematics" {{ old('department', $student->department) == 'Mathematics' ? 'selected' : '' }}>
+                        <option value="Mathematics"
+                            {{ old('department', $student->department) == 'Mathematics' ? 'selected' : '' }}>
                             Department of Mathematics
                         </option>
-                        <option value="Philosophy" {{ old('department', $student->department) == 'Philosophy' ? 'selected' : '' }}>
+                        <option value="Philosophy"
+                            {{ old('department', $student->department) == 'Philosophy' ? 'selected' : '' }}>
                             Department of Philosophy
                         </option>
-                        <option value="Physical Education" {{ old('department', $student->department) == 'Physical Education' ? 'selected' : '' }}>
+                        <option value="Physical Education"
+                            {{ old('department', $student->department) == 'Physical Education' ? 'selected' : '' }}>
                             Department of Physical Education
                         </option>
-                        <option value="Political Science" {{ old('department', $student->department) == 'Political Science' ? 'selected' : '' }}>
+                        <option value="Political Science"
+                            {{ old('department', $student->department) == 'Political Science' ? 'selected' : '' }}>
                             Department of Political Science
                         </option>
-                        <option value="Statistics" {{ old('department', $student->department) == 'Statistics' ? 'selected' : '' }}>
+                        <option value="Statistics"
+                            {{ old('department', $student->department) == 'Statistics' ? 'selected' : '' }}>
                             Department of Statistics
                         </option>
-                        <option value="B.voc(Banking)" {{ old('department', $student->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
+                        <option value="B.voc(Banking)"
+                            {{ old('department', $student->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
                             Department of B.voc (Banking)
                         </option>
                     </select>
@@ -113,62 +129,71 @@
                     @enderror
                 </div>
 
-                    <!-- Semester Field (Visible Only for Students) -->
-                    @if (old('role', $student->roles->first()->name) === 'student' || $user->roles->contains('student'))
-    <div class="form-group mb-3">
-        <label for="semester" class="form-label font-weight-bold">Semester</label>
-        <select name="semester" id="semester" class="form-select">
-            <option value="" disabled>Select Semester</option>
-            <option value="1" {{ old('semester', $student->semester) == 1 ? 'selected' : '' }}>1</option>
-            <option value="2" {{ old('semester', $student->semester) == 2 ? 'selected' : '' }}>2</option>
-            <option value="3" {{ old('semester', $student->semester) == 3 ? 'selected' : '' }}>3</option>
-            <option value="4" {{ old('semester', $student->semester) == 4 ? 'selected' : '' }}>4</option>
-            <option value="5" {{ old('semester', $student->semester) == 5 ? 'selected' : '' }}>5</option>
-            <option value="6" {{ old('semester', $student->semester) == 6 ? 'selected' : '' }}>6</option>
-            <option value="7" {{ old('semester', $student->semester) == 7 ? 'selected' : '' }}>7</option>
-            <option value="8" {{ old('semester', $student->semester) == 8 ? 'selected' : '' }}>8</option>
-        </select>
-        @error('semester')
-            <span class="text-danger small">{{ $message }}</span>
-        @enderror
-    </div>
+                <!-- Semester Field (Visible Only for Students) -->
+                @if (old('role', $student->roles->first()->name) === 'student' || $user->roles->contains('student'))
+                    <div class="form-group mb-3">
+                        <label for="semester" class="form-label font-weight-bold">Semester</label>
+                        <select name="semester" id="semester" class="form-select">
+                            <option value="" disabled>Select Semester</option>
+                            <option value="1" {{ old('semester', $student->semester) == 1 ? 'selected' : '' }}>1
+                            </option>
+                            <option value="2" {{ old('semester', $student->semester) == 2 ? 'selected' : '' }}>2
+                            </option>
+                            <option value="3" {{ old('semester', $student->semester) == 3 ? 'selected' : '' }}>3
+                            </option>
+                            <option value="4" {{ old('semester', $student->semester) == 4 ? 'selected' : '' }}>4
+                            </option>
+                            <option value="5" {{ old('semester', $student->semester) == 5 ? 'selected' : '' }}>5
+                            </option>
+                            <option value="6" {{ old('semester', $student->semester) == 6 ? 'selected' : '' }}>6
+                            </option>
+                            <option value="7" {{ old('semester', $student->semester) == 7 ? 'selected' : '' }}>7
+                            </option>
+                            <option value="8" {{ old('semester', $student->semester) == 8 ? 'selected' : '' }}>8
+                            </option>
+                        </select>
+                        @error('semester')
+                            <span class="text-danger small">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endif
 
-@endif
 
-            
-            <!-- Roll No Field -->
-<div class="row g-3 mt-3">
-    <div class="col-md-4" id="rollno-field" style="{{ $student->roles->contains('student')  }}">
-        <label for="roll_no" class="form-label">Roll No<span class="text-danger">*</span></label>
-        <input type="text" name="roll_no" id="roll_no" class="form-control" value="{{ old('roll_no', $student->roll_no) }}">
-        @error('roll_no')
-            <div class="text-danger mt-2">{{ $message }}</div>
-        @enderror
-    </div>
-</div>
+                <!-- Roll No Field -->
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4" id="rollno-field" style="{{ $student->roles->contains('student') }}">
+                        <label for="roll_no" class="form-label">Roll No<span class="text-danger">*</span></label>
+                        <input type="text" name="roll_no" id="roll_no" class="form-control"
+                            value="{{ old('roll_no', $student->roll_no) }}">
+                        @error('roll_no')
+                            <div class="text-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
 
 
                 <!-- Roles Checkboxes -->
                 <div class="form-group mb-4">
-    <label for="roles" class="form-label font-weight-bold">Roles</label>
-    <div class="d-flex flex-wrap gap-3 mt-2">
-        @if ($roles->isNotEmpty())
-            @foreach ($roles as $role)
-                @if ($role->name !== 'SuperAdmin' && $role->name !== 'Admin') <!-- Add condition to exclude SuperAdmin and Admin -->
-                    <div class="form-check">
-                        <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
-                            value="{{ $role->name }}" class="form-check-input"
-                            {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
-                        <label for="role-{{ $role->id }}"
-                            class="form-check-label">{{ $role->name }}</label>
+                    <label for="roles" class="form-label font-weight-bold">Roles</label>
+                    <div class="d-flex flex-wrap gap-3 mt-2">
+                        @if ($roles->isNotEmpty())
+                            @foreach ($roles as $role)
+                                @if ($role->name !== 'SuperAdmin' && $role->name !== 'Admin')
+                                    <!-- Add condition to exclude SuperAdmin and Admin -->
+                                    <div class="form-check">
+                                        <input type="checkbox" name="role[]" id="role-{{ $role->id }}"
+                                            value="{{ $role->name }}" class="form-check-input"
+                                            {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
+                                        <label for="role-{{ $role->id }}"
+                                            class="form-check-label">{{ $role->name }}</label>
+                                    </div>
+                                @endif
+                            @endforeach
+                        @else
+                            <p class="text-muted">No roles available.</p>
+                        @endif
                     </div>
-                @endif
-            @endforeach
-        @else
-            <p class="text-muted">No roles available.</p>
-        @endif
-    </div>
-</div>
+                </div>
 
 
                 <!-- Submit Button -->
