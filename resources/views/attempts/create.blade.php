@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'View Quiz Details')
+@section('title', 'Start Quiz')
 
 @section('content')
     <h1 class="mt-4">Start Quiz</h1>
@@ -16,7 +16,6 @@
             Student Details
         </div>
         <div class="card-body">
-            <!-- Add Red Note here -->
             <div class="alert alert-danger">
                 <strong>Note:</strong> Fill your details carefully. Once you submit your details, they will be saved and you
                 cannot change them.
@@ -28,7 +27,6 @@
 
             <form id="quizForm" action="{{ route('attempts.store') }}" method="POST">
                 @csrf
-                <!-- Hidden Quiz ID -->
                 <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
 
                 <div class="mb-3">
@@ -64,27 +62,27 @@
                 <div class="mb-3">
                     <label for="roll_number" class="form-label">Roll Number</label>
                     <input type="text" class="form-control" id="roll_number" name="roll_no" required
-                        value= "{{ $user->roll_no }} " readonly>
+                        value="{{ $user->roll_no }}" readonly>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-success" id="submitButton">Submit</button>
+                @if ($existingAttempt)
+                    <button type="button" class="btn btn-primary" id="viewAttemptsButton"
+                        onclick="window.location.href='{{ route('attempts.show', ['id' => $existingAttempt->id]) }}'">
+                        View Attempts
+                    </button>
+                @else
+                    <button type="submit" class="btn btn-success" id="submitButton">Submit</button>
+                @endif
             </form>
-
         </div>
     </div>
 @endsection
 
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Wait for the DOM to load
-    document.addEventListener("DOMContentLoaded", function() {
-        // Add event listener to the submit button
-        document.getElementById('submitButton').addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent form submission
-
-            // Show SweetAlert confirmation
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('submitButton')?.addEventListener('click', function (e) {
+            e.preventDefault();
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Please check your Roll No. before submitting.",
@@ -95,28 +93,11 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // If the user clicks "Yes, submit it!", submit the form
                     document.getElementById('quizForm').submit();
                 }
             });
         });
 
-        // Success Flash Message
-        @if (session('success'))
-            Swal.fire({
-                title: 'Success!',
-                text: "{{ session('success') }}",
-                icon: 'success',
-                timer: 3000,
-                showConfirmButton: false
-            });
-        @endif
-    });
-</script>
-<script>
-    // DOM Ready
-    document.addEventListener("DOMContentLoaded", function() {
-        // Error Flash Message for resubmission
         @if (session('alert'))
             Swal.fire({
                 title: 'Already Submitted!',
@@ -124,8 +105,17 @@
                 icon: 'error',
                 confirmButtonText: 'OK'
             }).then(() => {
-                // Redirect to the specific attempt's page
                 window.location.href = "{{ route('attempts.show', ['id' => session('attempt_id')]) }}";
+            });
+        @endif
+
+        @if (session('success'))
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: false
             });
         @endif
     });

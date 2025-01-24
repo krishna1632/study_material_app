@@ -26,20 +26,19 @@ class AttemptController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
+        /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
-        $department = auth()->user()->department; // User ka department
-        $semester = auth()->user()->semester; // User ka semester
+        $department = auth()->user()->department;
+        $semester = auth()->user()->semester;
 
-        // Fetch quizzes with status = 1 and matching department & semester
         $quizzes = Quiz::where('status', 1)
             ->where('department', $department)
             ->where('semester', $semester)
             ->get();
 
-        $currentDateTime = now();
-
-        // Pass quizzes to the view
         return view('attempts.index', compact('quizzes'));
     }
 
@@ -48,17 +47,14 @@ class AttemptController extends Controller implements HasMiddleware
      */
     public function create($id)
     {
-        // Fetch quiz details
         $quiz = Quiz::findOrFail($id);
-
-        // Get the logged-in user details
         $user = auth()->user();
 
-        // Pass quiz and user details to the view
-        return view('attempts.create', [
-            'quiz' => $quiz,
-            'user' => $user,
-        ]);
+        $existingAttempt = AttemptDetails::where('quiz_id', $id)
+            ->where('student_id', $user->id)
+            ->first();
+
+        return view('attempts.create', compact('quiz', 'user', 'existingAttempt'));
     }
 
     /**
@@ -71,6 +67,17 @@ class AttemptController extends Controller implements HasMiddleware
             'roll_no' => 'required|string|max:50',
         ]);
 
+        $existingAttempt = AttemptDetails::where('quiz_id', $request->quiz_id)
+            ->where('student_id', auth()->id())
+            ->first();
+
+        if ($existingAttempt) {
+            return redirect()->route('attempts.show', ['id' => $existingAttempt->id])
+                ->with('alert', true)
+                ->with('message', 'You have already attempted this quiz.')
+                ->with('attempt_id', $existingAttempt->id);
+        }
+
         $attempt = AttemptDetails::create([
             'student_id' => auth()->id(),
             'quiz_id' => $request->quiz_id,
@@ -80,20 +87,15 @@ class AttemptController extends Controller implements HasMiddleware
 
         return redirect()->route('attempts.show', ['id' => $attempt->id])
             ->with('success', 'Quiz attempt saved successfully.');
-
-
     }
-
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        // Fetch the attempt details
         $attempt = AttemptDetails::with(['quiz', 'student'])->findOrFail($id);
 
-        // Pass data to the view
         return view('attempts.show', [
             'attempt' => $attempt,
             'quiz' => $attempt->quiz,
@@ -105,6 +107,8 @@ class AttemptController extends Controller implements HasMiddleware
             ],
         ]);
     }
+
+
 
 
     // Add a new method to fetch quiz questions
