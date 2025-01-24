@@ -75,33 +75,26 @@ class QuizController extends Controller implements HasMiddleware
             $faculties = collect();
         }
 
-        // Determine departments
-        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
-            // If Admin or SuperAdmin, show all departments
-            $departments = [
-                'Applied Psychology',
-                'Computer Science',
-                'B.voc(Software Development)',
-                'Economics',
-                'English',
-                'Environmental Studies',
-                'Commerce',
-                'Punjabi',
-                'Hindi',
-                'History',
-                'Management Studies',
-                'Mathematics',
-                'Philosophy',
-                'Physical Education',
-                'Political Science',
-                'Statistics',
-                'B.voc(Banking Operations)',
-                'ELECTIVE',
-            ];
-        } else {
-            // If the user has other roles, show only their department
-            $departments = [$user->department, 'ELECTIVE'];
-        }
+        $departments = [
+            'Applied Psychology',
+            'Computer Science',
+            'B.voc(Software Development)',
+            'Economics',
+            'English',
+            'Environmental Studies',
+            'Commerce',
+            'Punjabi',
+            'Hindi',
+            'History',
+            'Management Studies',
+            'Mathematics',
+            'Philosophy',
+            'Physical Education',
+            'Political Science',
+            'Statistics',
+            'B.voc(Banking Operations)',
+            'ELECTIVE',
+        ];
         // Initial empty subject list
         $subjects = [];
 

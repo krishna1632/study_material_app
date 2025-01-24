@@ -63,7 +63,8 @@
 
                 <div class="mb-3">
                     <label for="roll_number" class="form-label">Roll Number</label>
-                    <input type="text" class="form-control" id="roll_number" name="roll_no" required value= "{{ $user->roll_no }} " readonly>
+                    <input type="text" class="form-control" id="roll_number" name="roll_no" required
+                        value= "{{ $user->roll_no }} " readonly>
                 </div>
 
                 <!-- Submit Button -->

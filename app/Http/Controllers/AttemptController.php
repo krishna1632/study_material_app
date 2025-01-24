@@ -70,21 +70,6 @@ class AttemptController extends Controller implements HasMiddleware
             'quiz_id' => 'required|exists:quizzes,id',
             'roll_no' => 'required|string|max:50',
         ]);
-        // Check if the student has already submitted this quiz
-        $existingAttempt = AttemptDetails::where('quiz_id', $request->quiz_id)
-            ->where('roll_no', $request->roll_no)
-            ->where('status', 1) // Check if status is submitted (1)
-            ->first();
-
-        if ($existingAttempt) {
-            // Redirect to the existing attempt's page with an error
-            return redirect()->route('attempts.show', ['id' => $existingAttempt->id])
-                ->with([
-                    'alert' => true,
-                    'message' => 'You have already submitted this quiz.',
-                    'attempt_id' => $existingAttempt->id, // For error redirection
-                ]);
-        }
 
         $attempt = AttemptDetails::create([
             'student_id' => auth()->id(),
