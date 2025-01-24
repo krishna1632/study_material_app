@@ -21,82 +21,88 @@
                 @csrf
                 @method('POST')
 
-                <!-- Subject Type Field -->
-                <div class="mb-3">
-                    <label for="subject_type" class="form-label">Subject Type<font color="red">*</font></label>
-                    <select name="subject_type" id="subject_type" class="form-select" required>
-                        <option value="CORE" {{ $roadmap->subject_type === 'CORE' ? 'selected' : '' }}>CORE</option>
-                        <option value="SEC" {{ $roadmap->subject_type === 'SEC' ? 'selected' : '' }}>SEC</option>
-                        <option value="VAC" {{ $roadmap->subject_type === 'VAC' ? 'selected' : '' }}>VAC</option>
-                        <option value="AEC" {{ $roadmap->subject_type === 'AEC' ? 'selected' : '' }}>AEC</option>
-                        <option value="GE" {{ $roadmap->subject_type === 'GE' ? 'selected' : '' }}>GE</option>
-                        <option value="DSE" {{ $roadmap->subject_type === 'DSE' ? 'selected' : '' }}>DSE</option>
-                    </select>
+                <div class="row g-3">
+                    <!-- Subject Type Field -->
+                    <div class="col-md-4">
+                        <label for="subject_type" class="form-label">Subject Type<font color="red">*</font></label>
+                        <select name="subject_type" id="subject_type" class="form-select" required>
+                            <option value="CORE" {{ $roadmap->subject_type === 'CORE' ? 'selected' : '' }}>CORE</option>
+                            <option value="SEC" {{ $roadmap->subject_type === 'SEC' ? 'selected' : '' }}>SEC</option>
+                            <option value="VAC" {{ $roadmap->subject_type === 'VAC' ? 'selected' : '' }}>VAC</option>
+                            <option value="AEC" {{ $roadmap->subject_type === 'AEC' ? 'selected' : '' }}>AEC</option>
+                            <option value="GE" {{ $roadmap->subject_type === 'GE' ? 'selected' : '' }}>GE</option>
+                            <option value="DSE" {{ $roadmap->subject_type === 'DSE' ? 'selected' : '' }}>DSE</option>
+                        </select>
+                    </div>
+
+                    <!-- Department Field -->
+                    <div class="col-md-4">
+                        <label for="department" class="form-label">Department/Elective</label>
+                        <select name="department" id="department" class="form-control">
+                            @foreach ($departments as $dept)
+                                <option value="{{ $dept }}" {{ $roadmap->department === $dept ? 'selected' : '' }}>
+                                    {{ $dept }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Semester Field -->
+                    <div class="col-md-4">
+                        <label for="semester" class="form-label">Semester<font color="red">*</font></label>
+                        <select name="semester" id="semester" class="form-select" required>
+                            @for ($i = 1; $i <= 8; $i++)
+                                <option value="{{ $i }}" {{ $roadmap->semester == $i ? 'selected' : '' }}>
+                                    {{ $i }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
 
-                <!-- Department Field -->
-                <div class="mb-3">
-                    <label for="department" class="form-label">Department/Elective</label>
-                    <select name="department" id="department" class="form-control">
-                        @foreach ($departments as $dept)
-                            <option value="{{ $dept }}"
-                                {{ $roadmap->department === $dept ? 'selected' : '' }}>
-                                {{ $dept }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="row g-3 mt-2">
+                    <!-- Subject Name Field -->
+                    <div class="col-md-4">
+                        <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
+                        <select name="subject_name" id="subject_name" class="form-control" required>
+                            @foreach ($subjects as $subject)
+                                <option value="{{ $subject }}"
+                                    {{ $roadmap->subject_name === $subject ? 'selected' : '' }}>
+                                    {{ $subject }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Faculty Name Field -->
+                    <div class="col-md-4">
+                        <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
+                        <select name="faculty_name" id="faculty_name" class="form-control" required>
+                            @foreach ($faculties as $faculty)
+                                <option value="{{ $faculty->name }}"
+                                    {{ $roadmap->faculty_name === $faculty->name ? 'selected' : '' }}>
+                                    {{ $faculty->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- File Upload Field -->
+                    <div class="col-md-4">
+                        <label for="file" class="form-label">Upload File (Optional)</label>
+                        <input type="file" name="file" id="file" class="form-control">
+                        <small>Current File: {{ $roadmap->file }}</small>
+                    </div>
                 </div>
 
-                <!-- Semester Field -->
-                <div class="mb-3">
-                    <label for="semester" class="form-label">Semester<font color="red">*</font></label>
-                    <select name="semester" id="semester" class="form-select" required>
-                        @for ($i = 1; $i <= 8; $i++)
-                            <option value="{{ $i }}" {{ $roadmap->semester == $i ? 'selected' : '' }}>
-                                {{ $i }}
-                            </option>
-                        @endfor
-                    </select>
+                <div class="row g-3 mt-2">
+                    <!-- Description Field -->
+                    <div class="col-md-4">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea name="description" id="description" rows="4" class="form-control" required>{{ $roadmap->description }}</textarea>
+                    </div>
                 </div>
 
-                <!-- Subject Name Field -->
-                <div class="mb-3">
-                    <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
-                    <select name="subject_name" id="subject_name" class="form-control" required>
-                        @foreach ($subjects as $subject)
-                            <option value="{{ $subject }}"
-                                {{ $roadmap->subject_name === $subject ? 'selected' : '' }}>
-                                {{ $subject }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Faculty Name Field -->
-                <div class="mb-3">
-                    <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
-                    <select name="faculty_name" id="faculty_name" class="form-control" required>
-                        @foreach ($faculties as $faculty)
-                            <option value="{{ $faculty->name }}"
-                                {{ $roadmap->faculty_name === $faculty->name ? 'selected' : '' }}>
-                                {{ $faculty->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- File Upload Field -->
-                <div class="mb-3">
-                    <label for="file" class="form-label">Upload File (Optional)</label>
-                    <input type="file" name="file" id="file" class="form-control">
-                    <small>Current File: {{ $roadmap->file }}</small>
-                </div>
-
-                <!-- Description Field -->
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="description" id="description" rows="4" class="form-control" required>{{ $roadmap->description }}</textarea>
-                </div>
 
                 <!-- Buttons -->
                 <div class="text-end">

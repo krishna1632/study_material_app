@@ -34,6 +34,7 @@
                         <th>Semester</th>
                         <th>Subject Name</th>
                         <th>Faculty Name</th>
+                        <th>Description</th>
                         <th>File</th>
                         <th>Action</th>
                     </tr>
@@ -41,12 +42,13 @@
                 <tbody>
                     @foreach ($roadmaps as $index => $roadmap)
                         <tr>
-                        <td>{{ $index + 1 }}</td>
+                            <td>{{ $index + 1 }}</td>
                             <td>{{ $roadmap->department }}</td>
                             <td>{{ $roadmap->subject_type }}</td>
                             <td>{{ $roadmap->semester }}</td>
                             <td>{{ $roadmap->subject_name }}</td>
                             <td>{{ $roadmap->faculty_name }}</td>
+                            <td>{{ $roadmap->description }}</td>
                             <td>
                                 @if ($roadmap->file)
                                     <a href="{{ asset('storage/' . $roadmap->file) }}" target="_blank">
