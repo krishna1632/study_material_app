@@ -7,21 +7,21 @@
         </span>
     </h1>
     <ol class="breadcrumb mb-4"></ol>
-    <div class="row">
-        <!-- Profile Picture and Static Info (Left Card) profile photo key lieay -->
-        <div class="container col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
+    <div class="row justify-content-center mt-5">
+        <!-- Profile Picture and Static Info (Enhanced Design) -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-lg border-0 rounded-4" style="background-color: #f8f9fa;">
+                <div class="card-body p-4">
                     <!-- Profile Picture -->
-                    <img src="{{ asset($other->profilePic) }}" alt="Profile Picture" class="rounded-circle" width="150"
-                        height="150">
-                    <h3 class="mt-3 text-primary">{{ $other->name }}</h3>
-                    <hr>
-                    <div class="mt-4">
-                        <p><strong>College:</strong> Ramanujan College</p>
-                        <hr>
-                        <p><strong>Department:</strong> {{ $other->department }}</p>
-
+                    <div class="profile-pic-wrapper mb-4">
+                        <img src="{{ asset($other->profilePic) }}" alt="Profile Picture" class="rounded-circle border border-4 border-dark shadow-sm" width="150" height="150">
+                    </div>
+                    <h3 class="mt-3 font-weight-bold" style="font-family: 'Arial', sans-serif; color: #343a40;">{{ $other->name }}</h3>
+                    <hr class="my-4" style="border-color: #dee2e6;">
+                    <div class="static-info mt-4">
+                        <p class="mb-3"><strong>College:</strong> <span style="color: #6c757d;">Ramanujan College</span></p>
+                        <hr class="w-75 mx-auto" style="border-color: #dee2e6;">
+                        <p class="mb-0"><strong>Department:</strong> <span style="color: #6c757d;">{{ $other->department }}</span></p>
                     </div>
                 </div>
             </div>
@@ -29,41 +29,35 @@
 
         <!-- Editable Form (Right Card) -->
         <div class="container col-md-8">
-            <div class="card" style="font-weight: 700; font-size:17px">
-                <div class="card-header">
-                    User Profile
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-dark text-white rounded-top-4">
+                    <h5 class="mb-0">User Profile</h5>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('others.update', ['id' => Auth::user()->id]) }}" method="POST"
-                        enctype="multipart/form-data">
+                <div class="card-body p-4">
+                    <form action="{{ route('others.update', ['id' => Auth::user()->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <!-- Full Name (Read-only) -->
                         <div class="row mb-3">
                             <label for="fullName" class="col-sm-3 col-form-label">Full Name</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="fullName" value="{{ $other->name }}"
-                                    readonly>
+                                <input type="text" class="form-control" id="fullName" value="{{ $other->name }}" readonly>
                             </div>
                         </div>
 
                         <!-- Email (Editable) -->
                         <div class="row mb-3">
-                            <label for="email" class="col-sm-3 col-form-label">Email <span
-                                    class="text-danger">*</span></label>
+                            <label for="email" class="col-sm-3 col-form-label">Email <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="email" class="form-control" name="email" id="email"
-                                    value="{{ $other->email }}">
+                                <input type="email" class="form-control" name="email" id="email" value="{{ $other->email }}">
                             </div>
                         </div>
 
                         <!-- Phone (Editable) -->
                         <div class="row mb-3">
-                            <label for="phone" class="col-sm-3 col-form-label">Phone <span
-                                    class="text-danger">*</span></label>
+                            <label for="phone" class="col-sm-3 col-form-label">Phone <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" name="phone" id="phone"
-                                    value="{{ $other->phone }}">
+                                <input type="text" class="form-control" name="phone" id="phone" value="{{ $other->phone }}">
                             </div>
                         </div>
 
@@ -77,22 +71,20 @@
 
                         <!-- Buttons -->
                         <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-warning">Update Profile</button>
-                            <button type="button" class="btn btn-primary" onclick="togglePasswordForm()">Change
-                                Password</button>
+                            <button type="submit" class="btn btn-dark">Update Profile</button>
+                            <button type="button" class="btn btn-secondary" onclick="togglePasswordForm()">Change Password</button>
                         </div>
                     </form>
                 </div>
             </div>
 
             <!-- Change Password Form (Hidden initially) -->
-            <div id="passwordForm" class="card mt-4" style="display: none;">
-                <div class="card-header">
-                    <h2 class="text-lg font-medium text-gray-900">Change Password</h2>
+            <div id="passwordForm" class="card mt-4 shadow-lg rounded-4" style="display: none;">
+                <div class="card-header bg-secondary text-white rounded-top-4">
+                    <h5 class="mb-0">Change Password</h5>
                 </div>
-                <div class="card-body">
-                    <p class="mt-1 text-sm text-gray-600">Ensure your account is using a long, random password to stay
-                        secure.</p>
+                <div class="card-body p-4">
+                    <p class="mt-1 text-sm text-muted">Ensure your account is using a long, random password to stay secure.</p>
 
                     <form id="updatePasswordForm" method="post" action="{{ route('password.update') }}" class="mt-4">
                         @csrf
@@ -100,33 +92,27 @@
 
                         <!-- Current Password -->
                         <div class="row mb-3">
-                            <label for="update_password_current_password"
-                                class="col-sm-4 col-form-label">{{ __('Current Password') }}</label>
+                            <label for="update_password_current_password" class="col-sm-4 col-form-label">{{ __('Current Password') }}</label>
                             <div class="col-sm-8">
-                                <x-text-input id="update_password_current_password" name="current_password" type="password"
-                                    class="form-control" required autocomplete="current-password" />
+                                <x-text-input id="update_password_current_password" name="current_password" type="password" class="form-control" required autocomplete="current-password" />
                                 <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
                             </div>
                         </div>
 
                         <!-- New Password -->
                         <div class="row mb-3">
-                            <label for="update_password_password"
-                                class="col-sm-4 col-form-label">{{ __('New Password') }}</label>
+                            <label for="update_password_password" class="col-sm-4 col-form-label">{{ __('New Password') }}</label>
                             <div class="col-sm-8">
-                                <x-text-input id="update_password_password" name="password" type="password"
-                                    class="form-control" required autocomplete="new-password" />
+                                <x-text-input id="update_password_password" name="password" type="password" class="form-control" required autocomplete="new-password" />
                                 <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                             </div>
                         </div>
 
                         <!-- Confirm New Password -->
                         <div class="row mb-3">
-                            <label for="update_password_password_confirmation"
-                                class="col-sm-4 col-form-label">{{ __('Confirm Password') }}</label>
+                            <label for="update_password_password_confirmation" class="col-sm-4 col-form-label">{{ __('Confirm Password') }}</label>
                             <div class="col-sm-8">
-                                <x-text-input id="update_password_password_confirmation" name="password_confirmation"
-                                    type="password" class="form-control" required autocomplete="new-password" />
+                                <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="form-control" required autocomplete="new-password" />
                                 <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
                             </div>
                         </div>
@@ -137,8 +123,7 @@
                         </div>
 
                         @if (session('status') === 'password-updated')
-                            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
-                                class="text-sm text-gray-600 mt-3">
+                            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-success mt-3">
                                 {{ __('Saved.') }}
                             </p>
                         @endif
