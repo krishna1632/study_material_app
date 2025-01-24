@@ -114,7 +114,7 @@
 
                 <!-- Buttons -->
                 <div class="text-end">
-                    <a href="{{ route('study_materials.index') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ route('roadmaps.index') }}" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
