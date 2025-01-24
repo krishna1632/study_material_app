@@ -127,6 +127,10 @@
                                 {{ old('department', $admin->department) == 'B.voc(Banking)' ? 'selected' : '' }}>
                                 Department of B.voc (Banking)
                             </option>
+                            <option value="Admin"
+                                {{ old('department', $admin->department) == 'Admin' ? 'selected' : '' }}>
+                                Admin
+                            </option>
                         </select>
                         @error('department')
                             <span class="text-danger small">{{ $message }}</span>

@@ -58,7 +58,7 @@ class SyllabusController extends Controller implements HasMiddleware
             'Political Science',
             'Statistics',
             'B.voc(Banking Operations)',
-            'ELECTIVE'
+            
         ];
 
 
@@ -171,7 +171,7 @@ class SyllabusController extends Controller implements HasMiddleware
             'Political Science',
             'Statistics',
             'B.voc(Banking Operations)',
-            'ELECTIVE'
+            
         ];
 
         return view('syllabus.edit', compact('syllabus', 'departments'));
