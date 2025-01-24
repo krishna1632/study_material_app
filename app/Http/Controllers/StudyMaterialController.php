@@ -81,7 +81,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
         }
 
         // Determine departments
-        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+        
             // If Admin or SuperAdmin, show all departments
             $departments = [
                 'Applied Psychology',
@@ -103,10 +103,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
                 'B.voc(Banking Operations)',
                 'ELECTIVE',
             ];
-        } else {
-            // If the user has other roles, show only their department
-            $departments = [$user->department, 'ELECTIVE'];
-        }
+       
 
         // Initial empty subject list
         $subjects = [];
@@ -250,7 +247,6 @@ class StudyMaterialController extends Controller implements HasMiddleware
         }
 
         // Determine departments
-        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
             $departments = [
                 'Applied Psychology',
                 'Computer Science',
@@ -271,9 +267,7 @@ class StudyMaterialController extends Controller implements HasMiddleware
                 'B.voc(Banking Operations)',
                 'ELECTIVE',
             ];
-        } else {
-            $departments = [$user->department];
-        }
+       
 
         // Fetch all subjects
         $subjects = Subject::all()->pluck('subject_name', 'id');
