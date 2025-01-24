@@ -30,12 +30,8 @@
                         <th>Department/Elective</th>
                         <th>Semester</th>
                         <th>Subject Name</th>
-                        <!-- @canany(['edit subjects', 'delete subjects'])
-        -->
-                            <th>Action</th>
-                            <!--
-    @endcanany -->
-                        <!-- <th></th> -->
+                        <th>Action</th>
+
                     </tr>
                 </thead>
                 <tbody>
