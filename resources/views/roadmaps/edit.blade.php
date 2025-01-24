@@ -91,7 +91,13 @@
                     <div class="col-md-4">
                         <label for="file" class="form-label">Upload File (Optional)</label>
                         <input type="file" name="file" id="file" class="form-control">
-                        <small>Current File: {{ $roadmap->file }}</small>
+                        <p class="mt-3"><small style="font-weight: 500;">Current File: </small>
+                            <a href="{{ asset('storage/' . $roadmap->file) }}" target="_blank"
+                                class="btn btn-outline-primary">
+                                <i class="fas fa-file-alt me-2"></i>View File
+                            </a>
+                        </p>
+
                     </div>
                 </div>
 
@@ -106,7 +112,7 @@
 
                 <!-- Buttons -->
                 <div class="text-end">
-                    <a href="{{ route('study_materials.index') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ route('roadmaps.index') }}" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>

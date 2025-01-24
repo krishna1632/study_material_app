@@ -30,15 +30,16 @@
                 <span>{{ $roadmap->description }}</span>
             </div>
             <div class="mb-3">
-                <strong>File:</strong>
-                @if ($roadmap->file)
-                    <a href="{{ asset('storage/' . $roadmap->file) }}" target="_blank" class="btn btn-primary btn-sm">
-                        View File
-                    </a>
-                @else
-                    <p>No File Uploaded</p>
-                @endif
-            </div>
+                        
+                       
+                        <p class="mt-3"><small style="font-weight: 500;">Current File: </small>
+                            <a href="{{ asset('storage/' . $roadmap->file) }}" target="_blank"
+                                class="btn btn-outline-primary">
+                                <i class="fas fa-file-alt me-2"></i>View File
+                            </a>
+                        </p>
+
+                    </div>
         </div>
     </div>
 
