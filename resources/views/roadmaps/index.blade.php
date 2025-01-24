@@ -28,19 +28,25 @@
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
+                        <th>S.N.</th>
                         <th>Department</th>
-                        <th>Title</th>
-                        <th>Description</th>
+                        <th>Subject type</th>
+                        <th>Semester</th>
+                        <th>Subject Name</th>
+                        <th>Faculty Name</th>
                         <th>File</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($roadmaps as $roadmap)
+                    @foreach ($roadmaps as $index => $roadmap)
                         <tr>
+                        <td>{{ $index + 1 }}</td>
                             <td>{{ $roadmap->department }}</td>
-                            <td>{{ $roadmap->title }}</td>
-                            <td>{{ $roadmap->description }}</td>
+                            <td>{{ $roadmap->subject_type }}</td>
+                            <td>{{ $roadmap->semester }}</td>
+                            <td>{{ $roadmap->subject_name }}</td>
+                            <td>{{ $roadmap->faculty_name }}</td>
                             <td>
                                 @if ($roadmap->file)
                                     <a href="{{ asset('storage/' . $roadmap->file) }}" target="_blank">

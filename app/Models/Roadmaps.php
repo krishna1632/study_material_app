@@ -13,5 +13,5 @@ class Roadmaps extends Model
     protected $table = 'roadmaps';
 
     // Specify the fillable fields
-    protected $fillable = ['description', 'file', 'title', 'department'];
+    protected $fillable = ['description', 'file', 'subject_type','subject_name','faculty_name','semester', 'department'];
 }
