@@ -210,34 +210,41 @@ class RoadmapsController extends Controller implements HasMiddleware
     {
         $id = Crypt::decryptString($encryptedId);
         $roadmap = Roadmaps::find($id);
+    
         // Validate the request
         $validated = $request->validate([
             'department' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
+            'subject_type' => 'required|string|max:255',
+            'semester' => 'required|integer',
+            'subject_name' => 'required|string|max:255',
+            'faculty_name' => 'required|string|max:255',
             'file' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // Optional file upload
             'description' => 'required|string',
         ]);
-
+    
         // Handle file upload (if new file is uploaded)
         if ($request->hasFile('file')) {
             // Delete the old file if it exists
             if ($roadmap->file && Storage::exists('public/' . $roadmap->file)) {
                 Storage::delete('public/' . $roadmap->file);
             }
-
+    
             // Store the new file
             $filePath = $request->file('file')->store('roadmaps', 'public');
             $roadmap->file = $filePath;
         }
-
+    
         // Update the roadmap record
         $roadmap->update([
             'department' => $validated['department'],
-            'title' => $validated['title'],
+            'subject_type' => $validated['subject_type'],
+            'semester' => $validated['semester'],
+            'subject_name' => $validated['subject_name'],
+            'faculty_name' => $validated['faculty_name'],
             'file' => $roadmap->file ?? null, // Keep the old file if no new file is uploaded
             'description' => $validated['description'],
         ]);
-
+    
         return redirect()->route('roadmaps.index')->with('success', 'Roadmap updated successfully!');
     }
 
