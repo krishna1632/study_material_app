@@ -40,6 +40,12 @@
                     @endforeach
                 </tbody>
             </table>
+
         </div>
+
+
+    </div>
+    <div class="text-start">
+        <a href="{{ route('quiz_reports.index') }}" class="btn btn-secondary">Back</a>
     </div>
 @endsection

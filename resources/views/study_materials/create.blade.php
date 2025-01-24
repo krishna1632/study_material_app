@@ -5,7 +5,14 @@
 @section('content')
     <h1 class="mt-4">Add New Study Material</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item">
+            @can('is superadmin')
+                <a href="{{ route('superadmin.dashboard') }}">Dashboard</a>
+            @else
+                <a href="{{ route('others.dashboard') }}">Dashboard</a>
+            @endcan
+        </li>
+
         <li class="breadcrumb-item active">Add Study Material</li>
     </ol>
 
@@ -18,90 +25,94 @@
             <form action="{{ route('study_materials.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
-                <!-- Subject Type Field -->
-                <div class="mb-3">
-                    <label for="subject_type" class="form-label">Subject Type<font color="red">*</font></label>
-                    <select name="subject_type" id="subject_type" class="form-select" required>
-                        <option value="" disabled selected>Select Subject Type</option>
 
-                        <option value="CORE">CORE</option>
-                        <option value="SEC">SEC</option>
-                        <option value="VAC">VAC</option>
-                        <option value="AEC">AEC</option>
-                        <option value="GE">GE</option>
-                        <option value="DSE">DSE</option>
+                <div class="row g-3">
+                    <!-- Subject Type Field -->
+                    <div class="col-md-4">
+                        <label for="subject_type" class="form-label">Subject Type<font color="red">*</font></label>
+                        <select name="subject_type" id="subject_type" class="form-select" required>
+                            <option value="" disabled selected>Select Subject Type</option>
+                            <option value="CORE">CORE</option>
+                            <option value="SEC">SEC</option>
+                            <option value="VAC">VAC</option>
+                            <option value="AEC">AEC</option>
+                            <option value="GE">GE</option>
+                            <option value="DSE">DSE</option>
+                        </select>
+                    </div>
 
-                    </select>
+                    <!-- Department Field -->
+                    <div class="col-md-4">
+                        <label for="department" class="form-label">Department/Elective</label>
+                        <select name="department" id="department" class="form-control">
+                            <option value="" disabled selected>Select Department</option>
+                            @foreach ($departments as $dept)
+                                <option value="{{ $dept }}">{{ $dept }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Semester Field -->
+                    <div class="col-md-4">
+                        <label for="semester" class="form-label">Semester<font color="red">*</font></label>
+                        <select name="semester" id="semester" class="form-select" required>
+                            <option value="" disabled selected>Select Semester</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
                 </div>
 
-                <!-- Department Field -->
-                <div class="mb-3">
-                    <label for="department" class="form-label">Department/Elective</label>
-                    <select name="department" id="department" class="form-control">
-                        <option value="" disabled selected>Select Department</option>
-                        @foreach ($departments as $dept)
-                            <option value="{{ $dept }}">{{ $dept }}</option>
-                        @endforeach
-                    </select>
+                <div class="row g-3 mt-2">
+                    <!-- Subject Name Field -->
+                    <div class="col-md-4">
+                        <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
+                        <select name="subject_name" id="subject_name" class="form-control" required>
+                            <option value="" disabled selected>Select Subject</option>
+                            @foreach ($subjects as $subject)
+                                <option value="{{ $subject }}">{{ $subject }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Faculty Name Field -->
+                    <div class="col-md-4">
+                        <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
+                        <select name="faculty_name" id="faculty_name" class="form-control" required>
+                            <option value="" disabled selected>Select Faculty Name</option>
+
+                            <!-- Conditionally show the "Admin" option -->
+                            @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
+                                <option value="Admin" class="admin-option">Admin</option>
+                            @endif
+
+                            @foreach ($faculties as $faculty)
+                                <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- File Upload Field -->
+                    <div class="col-md-4">
+                        <label for="file" class="form-label">Upload File<font color="red">*</font></label>
+                        <input type="file" name="file" id="file" class="form-control" required>
+                    </div>
+
                 </div>
 
-                <!-- Semester Field -->
-                <div class="mb-3">
-                    <label for="semester" class="form-label">Semester<font color="red">*</font></label>
-                    <select name="semester" id="semester" class="form-select" required>
-                        <option value="" disabled selected>Select Semester</option>
-
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                    </select>
-                </div>
-
-                <!-- Subject Name Field -->
-                <div class="mb-3">
-                    <label for="subject_name" class="form-label">Subject<font color="red">*</font></label>
-                    <select name="subject_name" id="subject_name" class="form-control" required>
-                        <option value="" disabled selected>Select Subject</option>
-                        @foreach ($subjects as $subject)
-                            <option value="{{ $subject }}">{{ $subject }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Faculty Name Field -->
-                <div class="mb-3">
-                    <label for="faculty_name" class="form-label">Faculty Name<font color="red">*</font></label>
-                    <select name="faculty_name" id="faculty_name" class="form-control" required>
-                        <option value="" disabled selected>Select Faculty Name</option>
-
-                        <!-- Conditionally show the "Admin" option -->
-                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
-                            <option value="Admin" class="admin-option">Admin</option>
-                        @endif
-
-                        @foreach ($faculties as $faculty)
-                            <option value="{{ $faculty->name }}">{{ $faculty->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-
-                <!-- File Upload Field -->
-                <div class="mb-3">
-                    <label for="file" class="form-label">Upload File<font color="red">*</font></label>
-                    <input type="file" name="file" id="file" class="form-control" required>
-                </div>
-
-                <!-- Description Field -->
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="description" id="description" rows="4" class="form-control"
-                        placeholder="Enter a brief description about the material" required></textarea>
+                <div class="row g-3 mt-2">
+                    <!-- Description Field -->
+                    <div class="col-md-4">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea name="description" id="description" rows="4" class="form-control"
+                            placeholder="Enter a brief description about the material" required></textarea>
+                    </div>
                 </div>
 
                 <!-- Buttons -->

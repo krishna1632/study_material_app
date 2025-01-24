@@ -1,26 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Question</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
+@section('title', 'Edit Question')
 
-<body>
-    <div class="container mt-5">
-        <h1>Edit Question</h1>
+@section('content')
+    <h1 class="mt-4">Edit Question</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('quizzes.index') }}">Quizzes</a></li>
+        <li class="breadcrumb-item active">Edit Question</li>
+    </ol>
 
-        <form method="POST" action="{{ route('questions.update', ['quizId' => $quiz->id, 'id' => $question->id]) }}">
-            @csrf
-            @method('PUT')
-            <div class="card p-3 mb-3">
-                <h5>Question</h5>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit me-1"></i>
+            Update Question Details
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('questions.update', ['quizId' => $quiz->id, 'id' => $question->id]) }}">
+                @csrf
+                @method('PUT')
+
                 <div class="mb-3">
-                    <label for="question_text" class="form-label">Write Your Question</label>
+                    <label for="question_text" class="form-label">Question</label>
                     <input type="text" name="question_text" class="form-control" id="question_text"
                         value="{{ old('question_text', $question->question_text) }}" required>
                 </div>
@@ -52,37 +53,33 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="correct_option" class="form-label">Choose the Correct Option</label>
+                    <label for="correct_option" class="form-label">Correct Option</label>
                     <select name="correct_option" id="correct_option" class="form-select" required>
                         @foreach ($question->options as $index => $option)
                             <option value="{{ $index + 1 }}"
-                                {{ $question->correct_option == $index + 1 ? 'selected' : '' }}>Option
-                                {{ $index + 1 }}</option>
+                                {{ $question->correct_option == $index + 1 ? 'selected' : '' }}>Option {{ $index + 1 }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Update Question</button>
                 <a href="{{ route('questions.index', $quiz->id) }}" class="btn btn-danger">Cancel</a>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
     <script>
-        // Handle radio button changes for options count
         document.querySelectorAll('input[name="option_count"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const count = parseInt(this.value);
                 const optionsContainer = document.getElementById('optionsContainer');
                 const correctOptionSelect = document.getElementById('correct_option');
 
-                // Clear existing options and correct_option dropdown
                 optionsContainer.innerHTML = '';
                 correctOptionSelect.innerHTML = '';
 
-                // Add new options based on the selected count
                 for (let i = 0; i < count; i++) {
-                    // Add input fields for options
                     const input = document.createElement('input');
                     input.type = 'text';
                     input.name = `options[${i}]`;
@@ -90,16 +87,12 @@
                     input.placeholder = `Option ${i + 1}`;
                     optionsContainer.appendChild(input);
 
-                    // Add corresponding options to correct_option dropdown
                     const option = document.createElement('option');
-                    option.value = i + 1; // Correct option value starts from 1
+                    option.value = i + 1;
                     option.textContent = `Option ${i + 1}`;
                     correctOptionSelect.appendChild(option);
                 }
             });
         });
     </script>
-
-</body>
-
-</html>
+@endsection

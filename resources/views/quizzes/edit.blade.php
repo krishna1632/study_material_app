@@ -20,88 +20,94 @@
                 @csrf
                 @method('PUT') <!-- To specify it's a PUT request for update -->
 
-                <div class="mb-3">
-                    <label for="subject_type" class="form-label">Subject Type</label>
-                    <select name="subject_type" id="subject_type" class="form-control" required>
-                        <option value="" disabled>Select Subject Type</option>
-                        <option value="CORE" {{ $quiz->subject_type == 'CORE' ? 'selected' : '' }}>CORE</option>
-                        <option value="SEC" {{ $quiz->subject_type == 'SEC' ? 'selected' : '' }}>SEC</option>
-                        <option value="VAC" {{ $quiz->subject_type == 'VAC' ? 'selected' : '' }}>VAC</option>
-                        <option value="GE" {{ $quiz->subject_type == 'GE' ? 'selected' : '' }}>GE</option>
-                        <option value="AEC" {{ $quiz->subject_type == 'AEC' ? 'selected' : '' }}>AEC</option>
-                        <option value="DSE" {{ $quiz->subject_type == 'DSE' ? 'selected' : '' }}>DSE</option>
-                    </select>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="subject_type" class="form-label">Subject Type</label>
+                        <select name="subject_type" id="subject_type" class="form-control" required>
+                            <option value="" disabled>Select Subject Type</option>
+                            <option value="CORE" {{ $quiz->subject_type == 'CORE' ? 'selected' : '' }}>CORE</option>
+                            <option value="SEC" {{ $quiz->subject_type == 'SEC' ? 'selected' : '' }}>SEC</option>
+                            <option value="VAC" {{ $quiz->subject_type == 'VAC' ? 'selected' : '' }}>VAC</option>
+                            <option value="GE" {{ $quiz->subject_type == 'GE' ? 'selected' : '' }}>GE</option>
+                            <option value="AEC" {{ $quiz->subject_type == 'AEC' ? 'selected' : '' }}>AEC</option>
+                            <option value="DSE" {{ $quiz->subject_type == 'DSE' ? 'selected' : '' }}>DSE</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="department" class="form-label">Department/ELECTIVE</label>
+                        <select name="department" id="department" class="form-control" required>
+                            <option value="" disabled>Select Department</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department }}"
+                                    {{ $quiz->department == $department ? 'selected' : '' }}>
+                                    {{ $department }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label for="semester" class="form-label">Semester</label>
+                        <select name="semester" id="semester" class="form-control" required>
+                            <option value="" disabled>Select Semester</option>
+                            @for ($i = 1; $i <= 8; $i++)
+                                <option value="{{ $i }}" {{ $quiz->semester == $i ? 'selected' : '' }}>
+                                    {{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="department" class="form-label">Department/ELECTIVE</label>
-                    <select name="department" id="department" class="form-control" required>
-                        <option value="" disabled>Select Department</option>
-                        @foreach ($departments as $department)
-                            <option value="{{ $department }}" {{ $quiz->department == $department ? 'selected' : '' }}>
-                                {{ $department }}</option>
-                        @endforeach
-                    </select>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <label for="subject_name" class="form-label">Subject Name</label>
+                        <select name="subject_name" id="subject_name" class="form-control" required>
+                            <option value="" disabled>Select Subject</option>
+                            @foreach ($subjects as $subject)
+                                <option value="{{ $subject->subject_name }}"
+                                    {{ $quiz->subject_name == $subject ? 'selected' : '' }}>{{ $subject->subject_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label for="faculty_name" class="form-label">Faculty Name</label>
+                        <select name="faculty_name" id="faculty_name" class="form-control" required>
+                            <option value="" disabled>Select Faculty Name</option>
+                            @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
+                                <option value="Admin" class="admin-option"
+                                    {{ $quiz->faculty_name == 'Admin' ? 'selected' : '' }}>Admin</option>
+                            @endif
+                            @foreach ($faculties as $faculty)
+                                <option value="{{ $faculty->name }}"
+                                    {{ $quiz->faculty_name == $faculty->name ? 'selected' : '' }}>{{ $faculty->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" name="date" class="form-control" id="date"
+                            value="{{ old('date', $quiz->date) }}" required>
+                    </div>
                 </div>
 
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <label for="start_time" class="form-label">Start Time</label>
+                        <input type="time" name="start_time" class="form-control" id="start_time"
+                            value="{{ old('start_time', $quiz->start_time) }}" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="semester" class="form-label">Semester</label>
-                    <select name="semester" id="semester" class="form-control" required>
-                        <option value="" disabled>Select Semester</option>
-                        @for ($i = 1; $i <= 8; $i++)
-                            <option value="{{ $i }}" {{ $quiz->semester == $i ? 'selected' : '' }}>
-                                {{ $i }}</option>
-                        @endfor
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="subject_name" class="form-label">Subject Name</label>
-                    <select name="subject_name" id="subject_name" class="form-control" required>
-                        <option value="" disabled>Select Subject</option>
-                        @foreach ($subjects as $subject)
-                            <option value="{{ $subject->subject_name }}"
-                                {{ $quiz->subject_name == $subject ? 'selected' : '' }}>{{ $subject->subject_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-
-                <div class="mb-3">
-                    <label for="faculty_name" class="form-label">Faculty Name</label>
-                    <select name="faculty_name" id="faculty_name" class="form-control" required>
-                        <option value="" disabled>Select Faculty Name</option>
-                        @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
-                            <option value="Admin" class="admin-option"
-                                {{ $quiz->faculty_name == 'Admin' ? 'selected' : '' }}>Admin</option>
-                        @endif
-                        @foreach ($faculties as $faculty)
-                            <option value="{{ $faculty->name }}"
-                                {{ $quiz->faculty_name == $faculty->name ? 'selected' : '' }}>{{ $faculty->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="date" class="form-label">Date</label>
-                    <input type="date" name="date" class="form-control" id="date"
-                        value="{{ old('date', $quiz->date) }}" required>
-                </div>
-
-
-                <div class="mb-3">
-                    <label for="start_time" class="form-label">Start Time</label>
-                    <input type="time" name="start_time" class="form-control" id="start_time"
-                        value="{{ old('start_time', $quiz->start_time) }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="end_time" class="form-label">End Time</label>
-                    <input type="time" name="end_time" class="form-control" id="end_time"
-                        value="{{ old('end_time', $quiz->end_time) }}" required>
+                    <div class="col-md-4">
+                        <label for="end_time" class="form-label">End Time</label>
+                        <input type="time" name="end_time" class="form-control" id="end_time"
+                            value="{{ old('end_time', $quiz->end_time) }}" required>
+                    </div>
                 </div>
 
                 <div class="text-end">

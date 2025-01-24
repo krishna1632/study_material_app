@@ -28,7 +28,7 @@
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="answers[{{ $question->id }}]"
                                             value="{{ $option }}"
-                                            id="option{{ $loop->parent->iteration }}{{ $loop->iteration }}" required>
+                                            id="option{{ $loop->parent->iteration }}{{ $loop->iteration }}">
                                         <label for="option{{ $loop->parent->iteration }}{{ $loop->iteration }}"
                                             class="form-check-label text-dark">
                                             {{ $option }}
@@ -44,6 +44,7 @@
                     <button type="submit" class="btn btn-success btn-lg px-5">Submit Test</button>
                 </div>
             </form>
+
         </div>
     </div>
 
