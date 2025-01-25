@@ -181,6 +181,12 @@ Route::middleware('auth')->group(function () {
     Route::get('quiz_reports/', [QuizReportController::class, 'index'])->name('quiz_reports.index');
     Route::post('/quiz_reports/fetch-quizzes', [QuizReportController::class, 'fetchQuizzes'])->name('quiz_reports.fetch-quizzes');
     Route::get('/quiz_reports/{quiz_id}/results', [QuizReportController::class, 'viewResults'])->name('quiz_reports.viewResults');
+
+    Route::get('quiz-reports/export/excel/{quiz_id}', [QuizReportController::class, 'exportToExcel'])->name('quiz_reports.export.excel');
+    Route::get('quiz-reports/export/word/{quiz_id}', [QuizReportController::class, 'exportToWord'])->name('quiz_reports.export.word');
+    Route::get('quiz-reports/export/pdf/{quiz_id}', [QuizReportController::class, 'exportToPDF'])->name('quiz_reports.export.pdf');
+
+
 });
 
 require __DIR__ . '/auth.php';

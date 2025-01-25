@@ -15,15 +15,16 @@
         <li class="breadcrumb-item active">Quiz Reports</li>
     </ol>
 
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <form id="quizForm" action="{{ route('quiz_reports.fetch-quizzes') }}" method="POST">
+            <form id="quizForm" action="{{ route('quiz_reports.fetch-quizzes') }}" method="POST" class="needs-validation"
+                novalidate>
                 @csrf
                 <div class="row g-3 align-items-center">
                     <!-- Subject Type -->
                     <div class="col-md-2">
                         <label for="subject_type" class="form-label">Subject Type</label>
-                        <select name="subject_type" id="subject_type" class="form-control" required>
+                        <select name="subject_type" id="subject_type" class="form-control form-select-lg" required>
                             <option value="" disabled selected>Select</option>
                             <option value="CORE">CORE</option>
                             <option value="SEC">SEC</option>
@@ -37,7 +38,7 @@
                     <!-- Department -->
                     <div class="col-md-2">
                         <label for="department" class="form-label">Department</label>
-                        <select name="department" id="department" class="form-control" required>
+                        <select name="department" id="department" class="form-control form-select-lg" required>
                             <option value="" disabled selected>Select</option>
                             @foreach ($departments as $department)
                                 <option value="{{ $department }}">{{ $department }}</option>
@@ -48,7 +49,7 @@
                     <!-- Semester -->
                     <div class="col-md-2">
                         <label for="semester" class="form-label">Semester</label>
-                        <select name="semester" id="semester" class="form-control" required>
+                        <select name="semester" id="semester" class="form-control form-select-lg" required>
                             <option value="" disabled selected>Select</option>
                             @for ($i = 1; $i <= 8; $i++)
                                 <option value="{{ $i }}"> {{ $i }}</option>
@@ -59,7 +60,7 @@
                     <!-- Subject Name -->
                     <div class="col-md-3">
                         <label for="subject_name" class="form-label">Subject</label>
-                        <select name="subject_name" id="subject_name" class="form-control" required>
+                        <select name="subject_name" id="subject_name" class="form-control form-select-lg" required>
                             <option value="" disabled selected>Select</option>
                         </select>
                     </div>
@@ -67,7 +68,7 @@
                     <!-- Faculty Name -->
                     <div class="col-md-3">
                         <label for="faculty_name" class="form-label">Faculty Name</label>
-                        <select name="faculty_name" id="faculty_name" class="form-select" required>
+                        <select name="faculty_name" id="faculty_name" class="form-select form-select-lg" required>
                             <option value="" disabled selected>Select</option>
                             @if ($roles->contains('Admin') || $roles->contains('SuperAdmin'))
                                 <option value="Admin">Admin</option>
@@ -80,7 +81,7 @@
                 </div>
 
                 <div class="text-end mt-4">
-                    <button type="submit" class="btn btn-primary">Find</button>
+                    <button type="submit" class="btn btn-lg btn-primary">Find</button>
                 </div>
             </form>
         </div>
@@ -88,12 +89,12 @@
 
     <!-- Quizzes List -->
     @if (isset($quizzes) && $quizzes->count() > 0)
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5>Quizzes List</h5>
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Quizzes List</h5>
             </div>
             <div class="card-body">
-                <table class="table table-bordered">
+                <table class="table table-striped table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>Quiz ID</th>
@@ -110,8 +111,7 @@
                                 <td>{{ $quiz->created_at }}</td>
                                 <td>
                                     <a href="{{ route('quiz_reports.viewResults', ['quiz_id' => $quiz->id]) }}"
-                                        class="btn btn-sm btn-primary">View
-                                        Results</a>
+                                        class="btn btn-sm btn-success">View Results</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -120,22 +120,19 @@
             </div>
         </div>
     @else
-        <p>No quizzes found matching the criteria.</p>
+        <p class="text-center mt-4">No quizzes found matching the criteria.</p>
     @endif
-
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            // Trigger the subject filter based on selection changes
             $('#subject_type, #department, #semester').change(function() {
                 var subjectType = $('#subject_type').val();
                 let department = $('#department').val();
                 var semester = $('#semester').val();
 
-                // Filter subjects based on the selected type
                 if (subjectType && department && semester) {
                     $.ajax({
                         url: "/filter-subjects",
@@ -154,56 +151,15 @@
                             alert('Error fetching subjects');
                         }
                     });
-                } else if (subjectType && semester) {
-                    // If only subject type and semester are selected
-                    $.ajax({
-                        url: "/filter-subjects",
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            subject_type: subjectType,
-                            semester: semester
-                        },
-                        success: function(data) {
-                            populateSubjects(data);
-                        },
-                        error: function(error) {
-                            console.log(error);
-                            alert('Error fetching subjects');
-                        }
-                    });
                 } else {
-                    // Reset subject dropdown if conditions are not met
                     $('#subject_name').empty();
                     $('#subject_name').append('<option value="" disabled selected>Select Subject</option>');
                 }
             });
 
-            // Filter the department dropdown
-            $('#subject_type').change(function() {
-                var subjectType = $(this).val();
-                var departmentSelect = $('#department');
-
-                departmentSelect.empty(); // Clear existing options
-                departmentSelect.append('<option value="" disabled selected>Select Department</option>');
-
-                if (subjectType === 'CORE' || subjectType === 'DSE') {
-                    $.each(@json($departments), function(index, value) {
-                        if (value !== 'ELECTIVE') {
-                            departmentSelect.append('<option value="' + value + '">' + value +
-                                '</option>');
-                        }
-                    });
-                } else if (subjectType === 'VAC' || subjectType === 'SEC' || subjectType === 'GE' ||
-                    subjectType === 'AEC') {
-                    departmentSelect.append('<option value="ELECTIVE">ELECTIVE</option>');
-                }
-            });
-
-            // Populate subject dropdown
             function populateSubjects(data) {
                 var subjectSelect = $('#subject_name');
-                subjectSelect.empty(); // Clear existing options
+                subjectSelect.empty();
                 subjectSelect.append('<option value="" disabled selected>Select Subject</option>');
 
                 $.each(data, function(id, name) {

@@ -11,10 +11,12 @@
 
     <!-- Export Buttons -->
     <div class="mb-4">
-        <a href="#" class="btn btn-success">Export to Excel</a>
-        <a href="#" class="btn btn-primary">Export to Word</a>
-        <a href="#" class="btn btn-danger">Export to PDF</a>
+        <a href="{{ route('quiz_reports.export.excel', $quiz_id) }}" class="btn btn-success">Export to Excel</a>
+        <a href="{{ route('quiz_reports.export.word', $quiz_id) }}" class="btn btn-primary">Export to Word</a>
+        <a href="{{ route('quiz_reports.export.pdf', $quiz_id) }}" class="btn btn-danger">Export to PDF</a>
+
     </div>
+
 
     <div class="card mb-4">
         <div class="card-body">

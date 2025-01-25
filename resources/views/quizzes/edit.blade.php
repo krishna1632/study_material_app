@@ -66,7 +66,8 @@
                             <option value="" disabled>Select Subject</option>
                             @foreach ($subjects as $subject)
                                 <option value="{{ $subject->subject_name }}"
-                                    {{ $quiz->subject_name == $subject ? 'selected' : '' }}>{{ $subject->subject_name }}
+                                    {{ $quiz->subject_name == $subject->subject_name ? 'selected' : '' }}>
+                                    {{ $subject->subject_name }}
                                 </option>
                             @endforeach
                         </select>
