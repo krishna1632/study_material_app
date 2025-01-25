@@ -3,56 +3,54 @@
 @section('title', 'Elective Study Materials')
 
 @section('content')
-    <h1 class="mt-4">Elective Study Materials</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-        <li class="breadcrumb-item active">Elective Study Materials</li>
-    </ol>
+    <div class="container py-4">
+        <h1 class="mb-4">Elective Study Materials</h1>
+        <ol class="breadcrumb bg-light p-3 rounded">
+            <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-primary">Dashboard</a></li>
+            <li class="breadcrumb-item active">Elective Study Materials</li>
+        </ol>
 
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-book me-1"></i>
-            Filter Elective Study Materials
+        <!-- Filter Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Elective Study Materials</h5>
+                <a href="{{ route('study_materials.index') }}" class="btn btn-light btn-sm">Back</a>
+            </div>
+            <div class="card-body">
+                <form id="filter-form" class="row g-3">
+                    <!-- Subject Type -->
+                    <div class="col-md-6">
+                        <label for="subject_type" class="form-label fw-bold">Subject Type</label>
+                        <select id="subject_type" class="form-select">
+                            <option value="" disabled selected>Select Subject Type</option>
+                            <option value="SEC">SEC</option>
+                            <option value="VAC">VAC</option>
+                            <option value="GE">GE</option>
+                            <option value="AEC">AEC</option>
+                        </select>
+                    </div>
 
-            <a href="{{ route('study_materials.index') }}" class="btn btn-secondary float-end">Cancel</a>
+                    <!-- Subject Name -->
+                    <div class="col-md-6">
+                        <label for="subject_name" class="form-label fw-bold">Subject Name</label>
+                        <select id="subject_name" class="form-select" disabled>
+                            <option value="" disabled selected>Select Subject Name</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
         </div>
 
-
-        <div class="card-body">
-            <form id="filter-form">
-                <div class="mb-3">
-                    <label for="subject_type" class="form-label">Subject Type</label>
-                    <select id="subject_type" class="form-select">
-                        <option value="" disabled selected>Select Subject Type</option>
-                        <option value="SEC">SEC</option>
-                        <option value="VAC">VAC</option>
-                        <option value="GE">GE</option>
-                        <option value="AEC">AEC</option>
-                    </select>
-                </div>
-
-
-
-                <div class="mb-3">
-                    <label for="subject_name" class="form-label">Subject Name</label>
-                    <select id="subject_name" class="form-select" disabled>
-                        <option value="" disabled selected>Select Subject Name</option>
-                    </select>
-                </div>
-
-            </form>
+        <!-- Spinner for loading -->
+        <div id="loading-spinner" class="text-center d-none mb-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
 
-    </div>
-
-    <div id="study-materials" class="mt-4">
-        <!-- Study materials will be dynamically loaded here -->
-    </div>
-
-    <!-- Spinner for loading -->
-    <div id="loading-spinner" class="d-none text-center">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+        <!-- Study Materials List -->
+        <div id="study-materials-container" class="row g-3">
+            <!-- Study materials will be dynamically loaded here -->
         </div>
     </div>
 

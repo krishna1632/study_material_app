@@ -15,31 +15,24 @@
         <li class="breadcrumb-item active">Study Materials</li>
     </ol>
 
-    <div class="card mb-4">
-
-
-
-        <div class="card-header">
+    <div class="card mb-4 shadow-lg rounded-lg">
+        <div class="card-header bg-primary text-white rounded-top">
             <i class="fas fa-book me-1"></i>
             Study Materials List
 
             @can('create study material')
-                <a href="{{ route('study_materials.create') }}" class="btn btn-primary btn-sm float-end">
-                    Add New Study Material
-                </a>
+                <a href="{{ route('study_materials.create') }}" class="btn btn-light btn-sm float-end">Add New Study Material</a>
             @endcan
             @if (auth()->user()->hasRole('student'))
-                <a href="{{ route('study_materials.elective') }}" class="btn btn-primary btn-sm float-end me-2">
+                <a href="{{ route('study_materials.elective') }}" class="btn btn-light btn-sm float-end me-2">
                     View Elective Study Material
                 </a>
             @endif
-
-
         </div>
 
         <div class="card-body">
-            <table id="datatablesSimple" class="table table-striped">
-                <thead>
+            <table id="datatablesSimple" class="table table-striped table-bordered">
+                <thead class="thead-dark">
                     <tr>
                         <th>Sl No</th>
                         <th>Subject Type</th>
@@ -61,7 +54,7 @@
                 </thead>
                 <tbody>
                     @foreach ($study_materials as $index => $material)
-                        <tr>
+                        <tr class="table-hover">
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $material->subject_type }}</td>
                             <td>{{ $material->department }}</td>
@@ -74,7 +67,7 @@
                             <td>
                                 @if ($material->file)
                                     <a href="{{ asset('storage/' . $material->file) }}" target="_blank">
-                                        <button class="btn btn-primary btn-sm">View File</button>
+                                        <button class="btn btn-info btn-sm">View File</button>
                                     </a>
                                 @else
                                     No File
@@ -82,17 +75,11 @@
                             </td>
                             <td>{{ $material->description }}</td>
                             <td>
-                                {{-- <a href="{{ route('study_materials.show', Crypt::encryptString($material->id)) }}" class="btn btn-info btn-sm">
-                                    View
-                                </a> --}}
                                 @can('edit study material')
                                     <a href="{{ route('study_materials.edit', Crypt::encryptString($material->id)) }}"
-                                        class="btn btn-warning btn-sm">
-                                        Edit
-                                    </a>
+                                        class="btn btn-warning btn-sm">Edit</a>
                                 @endcan
                                 @can('delete study material')
-                                    <!-- Delete Form -->
                                     <form id="delete-form-{{ $material->id }}"
                                         action="{{ route('study_materials.destroy', $material->id) }}" method="POST"
                                         style="display:inline;">
@@ -107,7 +94,6 @@
                     @endforeach
                 </tbody>
             </table>
-
         </div>
     </div>
 
@@ -148,4 +134,33 @@
             }
         </script>
     @endif
+    <style>
+        /* Custom SweetAlert Style */
+        .sweetalert-custom-popup {
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Table Hover Effect */
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Button Hover Effects */
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Table Header Styling */
+        .thead-dark th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        /* Card Shadow */
+        .card {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 @endsection

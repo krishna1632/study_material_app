@@ -15,24 +15,23 @@
         <li class="breadcrumb-item active">PYQ List</li>
     </ol>
 
-    <div class="card mb-4">
-        <div class="card-header">
+    <div class="card mb-4 shadow-lg rounded-lg">
+        <div class="card-header bg-primary text-white rounded-top">
             <i class="fas fa-map me-1"></i>
             PYQ List
 
             @can('create pyq')
-                <a href="{{ route('pyq.create') }}" class="btn btn-primary btn-sm float-end">Add New PYQ</a>
+                <a href="{{ route('pyq.create') }}" class="btn btn-light btn-sm float-end">Add New PYQ</a>
             @endcan
             @if (auth()->user()->hasRole('student'))
-                <a href="{{ route('pyq.elective') }}" class="btn btn-primary btn-sm float-end me-2">
+                <a href="{{ route('pyq.elective') }}" class="btn btn-light btn-sm float-end me-2">
                     View Elective PYQ
                 </a>
             @endif
-
         </div>
         <div class="card-body">
-            <table id="datatablesSimple" class="table table-striped">
-                <thead>
+            <table id="datatablesSimple" class="table table-striped table-bordered">
+                <thead class="thead-dark">
                     <tr>
                         <th>S.N.</th>
                         <th>Subject Type</th>
@@ -47,7 +46,7 @@
                 </thead>
                 <tbody>
                     @foreach ($pyqs as $index => $pyq)
-                        <tr>
+                        <tr class="table-hover">
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $pyq->subject_type }}</td>
                             <td>{{ $pyq->department }}</td>
@@ -58,7 +57,7 @@
                             <td>
                                 @if ($pyq->file)
                                     <a href="{{ asset('storage/' . $pyq->file) }}" target="_blank">
-                                        <button class="btn btn-primary btn-sm">
+                                        <button class="btn btn-info btn-sm">
                                             <i class="fas fa-file-alt"></i> View File
                                         </button>
                                     </a>
@@ -66,15 +65,11 @@
                                     <span class="text-muted">No File</span>
                                 @endif
                             </td>
-
                             <td>
-
                                 @can('edit pyq')
-                                    <!-- Edit Button (If required) -->
                                     <a href="{{ route('pyq.edit', Crypt::encryptString($pyq->id)) }}"
                                         class="btn btn-warning btn-sm">Edit</a>
                                 @endcan
-
 
                                 @can('delete pyq')
                                     <form id="delete-form-{{ $pyq->id }}" action="{{ route('pyq.destroy', $pyq->id) }}"
@@ -92,6 +87,69 @@
             </table>
         </div>
     </div>
+
+    <!-- Include SweetAlert CSS and JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- SweetAlert Confirmation for Delete -->
+    <script>
+        function confirmDelete(pyqId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    popup: 'sweetalert-custom-popup'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + pyqId).submit();
+                }
+            });
+        }
+    </script>
+
+    <!-- SweetAlert Success Popup -->
+    @if (session('success'))
+        <script>
+            window.onload = function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'sweetalert-custom-popup'
+                    }
+                });
+            }
+        </script>
+    @endif
+
+    <style>
+        /* Custom SweetAlert Style */
+        .sweetalert-custom-popup {
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Table Hover Effect */
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Button Hover Effects */
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
 
     <!-- Include SweetAlert CSS and JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

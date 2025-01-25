@@ -31,16 +31,34 @@ class AttemptController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        $department = auth()->user()->department;
-        $semester = auth()->user()->semester;
+        $user = auth()->user(); // Current logged-in student
+        $department = $user->department;
+        $semester = $user->semester;
 
-        $quizzes = Quiz::where('status', 1)
+        // Fetch quizzes attempted by the student
+        $attemptedQuizzes = AttemptDetails::where('student_id', $user->id)
+            ->pluck('quiz_id')
+            ->toArray();
+
+        // Fetch upcoming quizzes
+        $currentDateTime = now();
+        $upcomingQuizzes = Quiz::where('status', 1)
             ->where('department', $department)
             ->where('semester', $semester)
+            ->where('date', '>=', $currentDateTime->toDateString()) // Upcoming quizzes based on date
+            ->pluck('id')
+            ->toArray();
+
+        // Merge the attempted quizzes and upcoming quizzes
+        $quizIds = array_unique(array_merge($attemptedQuizzes, $upcomingQuizzes));
+
+        // Fetch the filtered quizzes
+        $quizzes = Quiz::whereIn('id', $quizIds)
             ->get();
 
         return view('attempts.index', compact('quizzes'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -152,19 +170,17 @@ class AttemptController extends Controller implements HasMiddleware
     public function submitTest(Request $request, $quizId)
     {
         $quiz = Quiz::findOrFail($quizId);
-        $submittedAnswers = $request->input('answers', []); // Empty if no answers are submitted
+        $submittedAnswers = $request->input('answers', []); // Answers submitted by student
+        $currentDateTime = now();
+        $quizEndDateTime = \Carbon\Carbon::parse($quiz->date . ' ' . $quiz->end_time);
 
-        // Validate the request
-        $request->validate([
-            'roll_no' => 'required|string|max:50', // Roll number required for each student
-        ]);
+        // Fetch roll number from the authenticated user
+        $rollNo = auth()->user()->roll_no;
 
-        $rollNo = $request->input('roll_no'); // Roll number of the student
-
-        // Check if the attempt is already submitted for this roll number
+        // Check if the attempt is already submitted
         $existingAttempt = AttemptDetails::where('quiz_id', $quizId)
-            ->where('roll_no', $rollNo) // Match roll number
-            ->where('status', 1) // Status = 1 means already submitted
+            ->where('roll_no', $rollNo) // Use roll_no from users table
+            ->where('status', 1) // Check if already submitted
             ->first();
 
         if ($existingAttempt) {
@@ -172,13 +188,23 @@ class AttemptController extends Controller implements HasMiddleware
                 ->with('error', 'You have already submitted this quiz.');
         }
 
-        // Fetch or create attempt record based on roll number and quiz ID
+        // Auto-submit if the quiz end time has passed
+        if ($currentDateTime->gt($quizEndDateTime)) {
+            $submittedAnswers = []; // Auto-submit without answers
+        }
+
+        // Create or fetch the attempt record
         $attempt = AttemptDetails::firstOrCreate(
-            ['quiz_id' => $quizId, 'roll_no' => $rollNo], // Check unique combination of quiz_id and roll_no
-            ['status' => 0] // Default status is 0 (not submitted)
+            [
+                'quiz_id' => $quizId,
+                'roll_no' => $rollNo, // Use roll_no as unique identifier for student
+            ],
+            [
+                'status' => 0, // Default to not submitted
+            ]
         );
 
-        // Save responses for the student
+        // Save responses
         foreach ($submittedAnswers as $questionId => $selectedOption) {
             AttemptQuizDetails::updateOrCreate(
                 ['attempt_id' => $attempt->id, 'question_id' => $questionId],
@@ -192,9 +218,6 @@ class AttemptController extends Controller implements HasMiddleware
         return redirect()->route('attempts.results', ['quizId' => $quizId])
             ->with('success', 'Quiz submitted successfully.');
     }
-
-
-
 
     public function results(Request $request, $quizId)
     {
