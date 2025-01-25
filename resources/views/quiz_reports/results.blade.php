@@ -29,6 +29,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
+                        <th>S.N.</th>
                         <th>Name</th>
                         <th>Roll No</th>
                         <th>Semester</th>
@@ -37,8 +38,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($studentsResults as $result)
+                    @foreach ($studentsResults as $index => $result)
                         <tr>
+                        <td>{{ $index + 1 }}</td>
                             <td>{{ $result['name'] }}</td>
                             <td>{{ $result['roll_no'] }}</td>
                             <td>{{ $result['semester'] }}</td>

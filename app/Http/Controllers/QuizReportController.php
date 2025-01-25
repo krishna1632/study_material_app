@@ -272,6 +272,7 @@ class QuizReportController extends Controller implements HasMiddleware
 
         // Add Table Header
         $table->addRow();
+        $table->addCell(1000, ['bgColor' => '2E75B6'])->addText('S.N.', $fontHeader, $cellStyle);
         $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Name', $fontHeader, $cellStyle);
         $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Roll No', $fontHeader, $cellStyle);
         $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Semester', $fontHeader, $cellStyle);
@@ -281,6 +282,7 @@ class QuizReportController extends Controller implements HasMiddleware
         // Add Table Rows
         foreach ($studentsResults as $result) {
             $table->addRow();
+            $table->addCell(1000)->addText($index + 1, $fontBody, $cellStyle);
             $table->addCell(2000)->addText($result['name'], $fontBody, $cellStyle);
             $table->addCell(2000)->addText($result['roll_no'], $fontBody, $cellStyle);
             $table->addCell(2000)->addText($result['semester'], $fontBody, $cellStyle);
@@ -354,6 +356,7 @@ class QuizReportController extends Controller implements HasMiddleware
             <table>
                 <thead>
                     <tr>
+                     <th>S.N.</th>
                         <th>Name</th>
                         <th>Roll No</th>
                         <th>Semester</th>
@@ -363,9 +366,10 @@ class QuizReportController extends Controller implements HasMiddleware
                 </thead>
                 <tbody>';
 
-        foreach ($studentsResults as $result) {
+        foreach ($studentsResults as $index => $result) {
             $html .= '
                     <tr>
+                    <td>' . ($index + 1) . '</td>
                         <td>' . $result['name'] . '</td>
                         <td>' . $result['roll_no'] . '</td>
                         <td>' . $result['semester'] . '</td>
