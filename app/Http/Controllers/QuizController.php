@@ -39,11 +39,7 @@ class QuizController extends Controller implements HasMiddleware
             $quizzes = Quiz::all();
         } elseif ($roles->contains('Faculty')) {
 
-            $quizzes = Quiz::where(function ($query) use ($department) {
-                $query->where('department', $department)
-                    ->orWhere('department', 'ELECTIVE');
-            })
-                ->where('faculty_name', $faculty_name)
+            $quizzes = Quiz::where('faculty_name', $faculty_name)
                 ->get();
         } else {
 

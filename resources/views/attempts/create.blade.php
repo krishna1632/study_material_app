@@ -68,7 +68,7 @@
                 @if ($existingAttempt)
                     <button type="button" class="btn btn-primary" id="viewAttemptsButton"
                         onclick="window.location.href='{{ route('attempts.show', ['id' => $existingAttempt->id]) }}'">
-                        View Attempts
+                        Move to Instructions
                     </button>
                 @else
                     <button type="submit" class="btn btn-success" id="submitButton">Submit</button>
@@ -85,7 +85,7 @@
             e.preventDefault();
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Please check your Roll No. before submitting.",
+                text: "Please check your all details before submitting.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, submit it!',

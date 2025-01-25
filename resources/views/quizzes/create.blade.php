@@ -23,7 +23,7 @@
                 <div class="row g-3">
                     <!-- Subject Type -->
                     <div class="col-md-4">
-                        <label for="subject_type" class="form-label">Subject Type</label>
+                        <label for="subject_type" class="form-label">Subject Type<font color="red">*</font></label>
                         <select name="subject_type" id="subject_type" class="form-control" required>
                             <option value="" disabled selected>Select Subject Type</option>
                             <option value="CORE">CORE</option>
@@ -37,7 +37,7 @@
 
                     <!-- Department -->
                     <div class="col-md-4">
-                        <label for="department" class="form-label">Department/ELECTIVE</label>
+                        <label for="department" class="form-label">Department/ELECTIVE<font color="red">*</font></label>
                         <select name="department" id="department" class="form-control" required>
                             <option value="" disabled selected>Select Department</option>
                             @foreach ($departments as $department)
@@ -48,7 +48,7 @@
 
                     <!-- Semester -->
                     <div class="col-md-4">
-                        <label for="semester" class="form-label">Semester</label>
+                        <label for="semester" class="form-label">Semester<font color="red">*</font></label>
                         <select name="semester" id="semester" class="form-control" required>
                             <option value="" disabled selected>Select Semester</option>
                             @for ($i = 1; $i <= 8; $i++)
@@ -95,12 +95,12 @@
                 <div class="row g-3 mt-3">
                     <!-- Quiz Time Fields -->
                     <div class="col-md-6">
-                        <label for="start_time" class="form-label">Start Time</label>
+                        <label for="start_time" class="form-label">Start Time<font color="red">*</font></label>
                         <input type="time" name="start_time" class="form-control" id="start_time" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label for="end_time" class="form-label">End Time</label>
+                        <label for="end_time" class="form-label">End Time<font color="red">*</font></label>
                         <input type="time" name="end_time" class="form-control" id="end_time" required>
                     </div>
                 </div>
