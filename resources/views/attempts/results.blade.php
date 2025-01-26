@@ -12,20 +12,12 @@
                 <a href="{{ route('others.dashboard') }}">Dashboard</a>
             @endcan
         </li>
-        <li class="breadcrumb-item"><a href="{{ route('attempts.index') }}">Tests List Pge</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('attempts.index') }}">Tests List Page</a></li>
         <li class="breadcrumb-item active">Quiz Results</li>
     </ol>
 
     <div class="card shadow-lg border-0">
         <div class="card-body">
-            <!-- Full Marks Congratulatory Message -->
-            @if ($score == $totalQuestions)
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold text-success animate-pop">🎉 Congratulations! You scored full marks! 🎉</h2>
-                    <p class="text-muted">Fantastic job! Keep up the great work!</p>
-                </div>
-            @endif
-
             <div class="text-center mb-4">
                 <h3 class="fw-bold text-primary">Test Completed!</h3>
                 <p class="text-muted">Here are your performance details:</p>
@@ -76,24 +68,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Animation Styling -->
-    <style>
-        /* Animation for Full Marks Message */
-        .animate-pop {
-            animation: pop-animation 1s ease-in-out infinite alternate;
-        }
-
-        @keyframes pop-animation {
-            from {
-                transform: scale(1);
-                opacity: 0.9;
-            }
-
-            to {
-                transform: scale(1.1);
-                opacity: 1;
-            }
-        }
-    </style>
 @endsection

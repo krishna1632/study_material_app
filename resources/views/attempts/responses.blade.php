@@ -43,7 +43,7 @@
                                     <input type="radio" class="form-check-input" disabled
                                         @if ($option === $question['selected_option']) checked @endif>
                                     <label
-                                        class="form-check-label text-dark {{ $option === $question['selected_option'] ? ($question['is_correct'] ? 'text-success fw-bold' : 'text-danger fw-bold') : '' }}">
+                                        class="form-check-label text-dark {{ $option === $question['selected_option'] ? ($question['is_correct'] ? 'text-success fw-bold' : 'text-danger fw-bold') : '' }} ">
                                         {{ $option }}
                                     </label>
                                 </div>
@@ -52,7 +52,9 @@
 
                         <!-- Response Details -->
                         <div class="mt-3">
-                            @if ($question['is_correct'])
+                            @if (is_null($question['selected_option']))
+                                <p class="text-warning fw-bold">✘ Not Attempted</p>
+                            @elseif ($question['is_correct'])
                                 <p class="text-success fw-bold">✔ Your answer is correct!</p>
                             @else
                                 <p class="text-danger fw-bold">✘ Your answer is incorrect.</p>
@@ -97,6 +99,10 @@
 
         .breadcrumb a:hover {
             text-decoration: underline;
+        }
+
+        .text-warning {
+            color: #ff9800;
         }
     </style>
 @endsection

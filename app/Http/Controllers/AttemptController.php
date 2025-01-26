@@ -238,14 +238,17 @@ class AttemptController extends Controller implements HasMiddleware
 
         // Initialize variables
         $correctAnswersCount = 0;
-        $totalQuestions = $quiz->questions->count();
+        $attemptedQuestionsCount = $responses->count(); // Count of attempted questions
+        $totalAttemptsAllowed = $quiz->attempt_no; // Use `attempt_no` for calculation
 
-        // Check each question's response
-        foreach ($quiz->questions as $question) {
-            $response = $responses->firstWhere('question_id', $question->id);
+        // Only consider the first 'attempt_no' responses
+        $filteredResponses = $responses->take($totalAttemptsAllowed);
 
-            // If response exists and matches the correct option
-            if ($response && strtolower($response->selected_option) === strtolower($question->correct_option)) {
+        // Check each filtered response for correctness
+        foreach ($filteredResponses as $response) {
+            $question = $quiz->questions->firstWhere('id', $response->question_id);
+
+            if ($question && strtolower($response->selected_option) === strtolower($question->correct_option)) {
                 $correctAnswersCount++;
             }
         }
@@ -257,10 +260,11 @@ class AttemptController extends Controller implements HasMiddleware
         return view('attempts.results', [
             'quiz' => $quiz,
             'attempt' => $attempt,
-            'totalQuestions' => $totalQuestions,
+            'totalQuestions' => $totalAttemptsAllowed, // Total questions to consider
+            'attemptedQuestions' => $attemptedQuestionsCount, // Actual attempted questions
             'correctAnswersCount' => $correctAnswersCount,
             'score' => $score,
-            'responses' => $responses, // Pass responses to the view
+            'responses' => $filteredResponses, // Pass filtered responses to the view
         ]);
     }
 

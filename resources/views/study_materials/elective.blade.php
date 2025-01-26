@@ -100,7 +100,7 @@
             const semester = @json(auth()->user()->semester);
             const department = 'ELECTIVE';
 
-            const studyMaterialsContainer = document.getElementById('study-materials');
+            const studyMaterialsContainer = document.getElementById('study-materials-container');
             studyMaterialsContainer.innerHTML = ''; // Clear previous results
 
             // Show loading spinner
