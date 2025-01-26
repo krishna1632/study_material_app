@@ -129,40 +129,40 @@ class AttemptController extends Controller implements HasMiddleware
         return view('attempts.elective');
     }
 
-    // public function filterQuiz(Request $request)
-    // {
-    //     // Validate the incoming request data
-    //     $validated = $request->validate([
-    //         'subject_type' => 'required|string',
-    //         'department' => 'required|string',
-    //         'semester' => 'required|string',
-    //         'subject_name' => 'required|string',
-    //     ]);
+    public function filterQuiz(Request $request, $id)
+    {
+        // $quiz = Quiz::findOrFail($id);
 
-    //     // Trim subject_name to remove any extra spaces
-    //     $validated['subject_name'] = trim($validated['subject_name']);
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'subject_type' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required|string',
+            'subject_name' => 'required|string',
+        ]);
 
-    //     try {
-    //         $studyMaterials = StudyMaterial::where('subject_type', $validated['subject_type'])
-    //             ->where('department', $validated['department'])
-    //             ->where('semester', $validated['semester'])
+        // Trim subject_name to remove any extra spaces
+        $validated['subject_name'] = trim($validated['subject_name']);
 
-    //             ->get();
+        // Fetch quizzes based on filters
+        $quizzes = Quiz::where('subject_type', $validated['subject_type'])
+            ->where('department', $validated['department'])
+            ->where('semester', $validated['semester'])
+            ->where('subject_name', $validated['subject_name'])
+            ->where('status', 1) // Active quizzes
+            ->get(['id', 'subject_name']); // Only fetch necessary columns
 
+        // Check if quizzes are found
+        if ($quizzes->isEmpty()) {
+            return response()->json(['data' => [], 'message' => 'No quizzes found for the provided filters.'], 200);
+        }
 
-    //         // Check if any data is found
-    //         if ($studyMaterials->isEmpty()) {
-    //             return response()->json(['message' => 'No study materials found for the provided filters.'], 404);
-    //         }
+        // Transform the results into a key-value pair for dropdown options
+        $subjects = $quizzes->pluck('subject_name', 'id');
 
-    //         // Return the filtered data as JSON
-    //         return response()->json(['data' => $studyMaterials], 200);
-
-    //     } catch (\Exception $e) {
-    //         // Log error details
-    //         return response()->json(['error' => 'No study materials found for the provided filters.', 'details' => $e->getMessage()], 500);
-    //     }
-    // }
+        // Return the quizzes as a JSON response
+        return response()->json(['data' => $quizzes], 200);
+    }
 
 
     // Add a new method to fetch quiz questions

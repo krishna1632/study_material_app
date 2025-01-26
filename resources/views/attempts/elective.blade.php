@@ -91,72 +91,89 @@
             });
         });
 
+        document.getElementById('subject_name').addEventListener('change', function() {
+            const selectedSubjectName = this.options[this.selectedIndex].text; // Get selected subject name
+            const subjectName = this.value; // Correct variable for subject ID
+            const subjectType = document.getElementById('subject_type').value;
+            const semester = @json(auth()->user()->semester);
+            const department = 'ELECTIVE';
 
+            const quizContainer = document.getElementById('elective-test-container');
+            quizContainer.innerHTML = ''; // Clear previous results
 
-        // document.getElementById('subject_name').addEventListener('change', function() {
-        //     const selectedSubjectName = this.options[this.selectedIndex].text; // Get selected subject name
-        //     const subjectName = this.value; // Correct variable for subject ID
-        //     const subjectType = document.getElementById('subject_type').value;
-        //     const semester = @json(auth()->user()->semester);
-        //     const department = 'ELECTIVE';
+            // Show loading spinner
+            document.getElementById('loading-spinner').classList.remove('d-none');
 
-        //     const studyMaterialsContainer = document.getElementById('study-materials-container');
-        //     studyMaterialsContainer.innerHTML = ''; // Clear previous results
+            // Using AJAX to fetch study materials
+            $.ajax({
+                url: '/filter-quiz',
+                method: 'POST',
+                data: {
+                    subject_type: subjectType,
+                    subject_name: subjectName, // Fixed key
+                    semester: semester,
+                    department: department,
+                    _token: '{{ csrf_token() }}', // Include CSRF token
+                },
+                success: function(response) {
+                    document.getElementById('loading-spinner').classList.add('d-none');
 
-        //     // Show loading spinner
-        //     document.getElementById('loading-spinner').classList.remove('d-none');
+                    if (response.data && response.data.length > 0) {
+                        let htmlContent = `
+                        <table class="table table-striped table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Subject Type</th>
+                                    <th>Department</th>
+                                    <th>Semester</th>
+                                    <th>Subject Name</th>
+                                    <th>Faculty Name</th>
+                                    <th>Date</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        `;
 
-        //     // Using AJAX to fetch study materials
-        //     $.ajax({
-        //         url: '/filter-study',
-        //         method: 'POST',
-        //         data: {
-        //             subject_type: subjectType,
-        //             subject_name: subjectName, // Fixed key
-        //             semester: semester,
-        //             department: department,
-        //             _token: '{{ csrf_token() }}', // Include CSRF token
-        //         },
-        //         success: function(studyMaterials) {
-        //             document.getElementById('loading-spinner').classList.add('d-none');
-        //             if (studyMaterials.data && studyMaterials.data.length > 0) {
-        //                 let htmlContent = '<h3>Study Materials</h3>';
-        //                 htmlContent += '<ul class="list-group">';
-        //                 for (let i = 0; i < studyMaterials.data.length; i++) {
-        //                     const material = studyMaterials.data[i];
+                        response.data.forEach((quiz, index) => {
+                            htmlContent += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${quiz.subject_type}</td>
+                                <td>${quiz.department}</td>
+                                <td>${quiz.semester}</td>
+                                <td>${quiz.subject_name}</td>
+                                <td>${quiz.faculty_name}</td>
+                                <td>${quiz.date}</td>
+                                <td>${quiz.start_time}</td>
+                                <td>${quiz.end_time}</td>
+                                <td>
+                                    <a href="{{ route('attempts.create', '') }}/${quiz.id}" class="btn btn-primary btn-sm">Start Quiz</a>
+                                </td>
+                            </tr>
+                            `;
+                        });
 
-        //                     // Check if the subject name matches the selected subject
-        //                     if (material.subject_name === selectedSubjectName) {
-        //                         htmlContent += `
-    //                 <li class="list-group-item">
-    //                     <p><strong>Subject Name:</strong> ${material.subject_name}</p>
-    //                     <p><strong>Faculty Name:</strong> ${material.faculty_name}</p>
-    //                     <p><strong>Description:</strong> ${material.description || 'No description available'}</p>
-    //                     <a href="/storage/${material.file}" target="_blank" class="btn btn-primary btn-sm">View File</a>
-    //                 </li>`;
-        //                     }
-        //                 }
-        //                 htmlContent += '</ul>';
-        //                 studyMaterialsContainer.innerHTML = htmlContent;
-
-        //                 // If no materials are found, display a message
-        //                 if (htmlContent === '<h3>Study Materials</h3><ul class="list-group"></ul>') {
-        //                     studyMaterialsContainer.innerHTML =
-        //                         '<p class="text-danger">No study materials found for the selected subject.</p>';
-        //                 }
-        //             } else {
-        //                 studyMaterialsContainer.innerHTML =
-        //                     '<p class="text-danger">No study materials found for the selected subject.</p>';
-        //             }
-        //         },
-        //         error: function(error) {
-        //             console.error(error);
-        //             document.getElementById('loading-spinner').classList.add('d-none');
-        //             studyMaterialsContainer.innerHTML =
-        //                 '<p class="text-danger">No study materials found for the provided filters.</p>';
-        //         }
-        //     });
-        // });
+                        htmlContent += `
+                            </tbody>
+                        </table>`;
+                        quizContainer.innerHTML = htmlContent;
+                    } else {
+                        quizContainer.innerHTML =
+                            '<p class="text-danger">No quizzes found for the provided filters.</p>';
+                    }
+                },
+                error: function(error) {
+                    console.error(error);
+                    document.getElementById('loading-spinner').classList.add('d-none');
+                    quizContainer.innerHTML =
+                        '<p class="text-danger">Error fetching quizzes. Please try again.</p>';
+                },
+            });
+        });
     </script>
 
 
