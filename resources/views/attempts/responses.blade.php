@@ -3,26 +3,37 @@
 @section('title', 'View Responses')
 
 @section('content')
-    <h1 class="mt-4 text-center">Quiz Responses: {{ $attempt->quiz->subject_name }}</h1>
-    <ol class="breadcrumb mb-4 justify-content-center"></ol>
+    <h1 class="mt-4 text-center text-primary">Quiz Responses: <span
+            class="text-dark">{{ $attempt->quiz->subject_name }}</span></h1>
+    <ol class="breadcrumb mb-4 justify-content-center">
+        <li class="breadcrumb-item">
+            @can('is superadmin')
+                <a href="{{ route('superadmin.dashboard') }}">Dashboard</a>
+            @else
+                <a href="{{ route('others.dashboard') }}">Dashboard</a>
+            @endcan
+        </li>
+        <li class="breadcrumb-item"><a href="{{ route('attempts.index') }}">Quiz List</a></li>
+        <li class="breadcrumb-item active">View Responses</li>
+    </ol>
 
-    <div class="card shadow-lg border-0">
-        <div class="card-body p-4">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-body p-5">
             <!-- Display Score -->
-            <div class="text-center mb-4">
+            <div class="text-center mb-5">
                 <h1 class="display-4 fw-bold text-success">Your Score: {{ $score }}</h1>
+                <p class="text-muted">Review your answers and compare them to the correct ones.</p>
             </div>
 
+            <!-- Your Responses Section -->
             <h3 class="fw-bold text-primary text-center mb-4">Your Responses</h3>
 
-            <!-- Questions and Responses -->
             <div id="responsesContainer">
                 @foreach ($questionsWithResponses as $question)
-                    <div class="mb-5 p-3 border rounded shadow-sm bg-light">
+                    <div class="mb-4 p-4 border rounded shadow-sm bg-light">
                         <!-- Question Text -->
-                        <p class="fw-bold text-dark">
-                            <span class="text-primary">Q{{ $loop->iteration }}:</span>
-                            {{ $question['question_text'] }}
+                        <p class="fw-bold text-dark mb-2">
+                            <span class="text-primary">Q{{ $loop->iteration }}:</span> {{ $question['question_text'] }}
                         </p>
 
                         <!-- Options -->
@@ -40,21 +51,52 @@
                         </div>
 
                         <!-- Response Details -->
-                        <div class="mt-2">
+                        <div class="mt-3">
                             @if ($question['is_correct'])
-                                <p class="text-success">Your answer is correct!</p>
+                                <p class="text-success fw-bold">✔ Your answer is correct!</p>
                             @else
-                                <p class="text-danger">Your answer is incorrect.</p>
-                                <p class="text-success">Correct Option: {{ $question['correct_option'] }}</p>
+                                <p class="text-danger fw-bold">✘ Your answer is incorrect.</p>
+                                <p class="text-success fw-light">Correct Option: {{ $question['correct_option'] }}</p>
                             @endif
                         </div>
                     </div>
                 @endforeach
             </div>
 
-            <div class="text-center">
-                <a href="{{ route('attempts.index', $attempt->quiz->id) }}" class="btn btn-secondary">Back to Dashboard</a>
+            <!-- Back to Dashboard Button -->
+            <div class="text-center mt-5">
+                <a href="{{ route('attempts.index', $attempt->quiz->id) }}"
+                    class="btn btn-secondary px-5 py-2 rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- Custom Styling -->
+    <style>
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-check-label {
+            font-size: 1rem;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            font-size: 0.95rem;
+        }
+
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
 @endsection

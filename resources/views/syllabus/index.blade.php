@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <h1 class="mt-4">Syllabus</h1>
+    <h1 class="mt-4">Syllabus List</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item">
             @can('is superadmin')
@@ -16,40 +16,36 @@
         <li class="breadcrumb-item active">Syllabus</li>
     </ol>
 
-    <div class="card mb-4">
-        <div class="card-header">
+    <div class="card mb-4 shadow-lg rounded-lg">
+        <div class="card-header bg-primary text-white rounded-top">
             <i class="fas fa-book me-1"></i>
             Syllabus List
             @can('create syllabus')
-                <a href="{{ route('syllabus.create') }}" class="btn btn-primary btn-sm float-end">Add New Syllabus</a>
+                <a href="{{ route('syllabus.create') }}" class="btn btn-light btn-sm float-end">Add New Syllabus</a>
             @endcan
         </div>
         <div class="card-body">
-            <table id="datatablesSimple" class="table table-striped">
-                <thead>
+            <table id="datatablesSimple" class="table table-striped table-bordered">
+                <thead class="thead-dark">
                     <tr>
-                        {{-- @if (!auth()->user()->hasRole('student')) --}}
                         <th>Department</th>
-                        {{-- @endif --}}
                         <th>File</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($syllabus as $material)
-                        <tr>
-                            {{-- @if (!auth()->user()->hasRole('student')) --}}
+                        <tr class="table-hover">
                             <td>{{ $material->department }}</td>
-                            {{-- @endif --}}
-
                             <td>
                                 @if ($material->file)
-                                    <a href="{{ asset('storage/' . $material->file) }}" target="_blank"
-                                        class="btn btn-primary btn-sm">
-                                        View File
+                                    <a href="{{ asset('storage/' . $material->file) }}" target="_blank">
+                                        <button class="btn btn-info btn-sm">
+                                            <i class="fas fa-file-alt"></i> View File
+                                        </button>
                                     </a>
                                 @else
-                                    No File
+                                    <span class="text-muted">No File</span>
                                 @endif
                             </td>
                             <td>
@@ -66,15 +62,13 @@
                                 @can('delete syllabus')
                                     <form id="delete-form-{{ $material->id }}"
                                         action="{{ route('syllabus.destroy', $material->id) }}" method="POST"
-                                        style="display: none;">
+                                        style="display:inline;">
                                         @csrf
                                         @method('DELETE')
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="confirmDelete({{ $material->id }})">Delete</button>
                                     </form>
-                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $material->id }})">
-                                        Delete
-                                    </button>
                                 @endcan
-
                             </td>
                         </tr>
                     @endforeach
@@ -121,5 +115,17 @@
             });
         }
     </script>
+
+    <style>
+        /* Table Hover Effect */
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Button Hover Effects */
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
 
 @endsection

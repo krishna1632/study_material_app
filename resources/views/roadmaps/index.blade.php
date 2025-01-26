@@ -3,7 +3,7 @@
 @section('title', 'Roadmaps')
 
 @section('content')
-    <h1 class="mt-4">Roadmaps</h1>
+    <h1 class="mt-4">Roadmap List</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item">
             @can('is superadmin')
@@ -15,22 +15,22 @@
         <li class="breadcrumb-item active">Roadmaps</li>
     </ol>
 
-
-    <div class="card mb-4">
-        <div class="card-header">
+    <div class="card mb-4 shadow-lg rounded-lg">
+        <div class="card-header bg-primary text-white rounded-top">
             <i class="fas fa-map me-1"></i>
             Roadmap List
+
             @can('create roadmaps')
-                <a href="{{ route('roadmaps.create') }}" class="btn btn-primary btn-sm float-end">Add New Roadmap</a>
+                <a href="{{ route('roadmaps.create') }}" class="btn btn-light btn-sm float-end">Add New Roadmap</a>
             @endcan
         </div>
         <div class="card-body">
-            <table id="datatablesSimple" class="table table-striped">
-                <thead>
+            <table id="datatablesSimple" class="table table-striped table-bordered">
+                <thead class="thead-dark">
                     <tr>
                         <th>S.N.</th>
                         <th>Department</th>
-                        <th>Subject type</th>
+                        <th>Subject Type</th>
                         <th>Semester</th>
                         <th>Subject Name</th>
                         <th>Faculty Name</th>
@@ -41,7 +41,7 @@
                 </thead>
                 <tbody>
                     @foreach ($roadmaps as $index => $roadmap)
-                        <tr>
+                        <tr class="table-hover">
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $roadmap->department }}</td>
                             <td>{{ $roadmap->subject_type }}</td>
@@ -52,13 +52,14 @@
                             <td>
                                 @if ($roadmap->file)
                                     <a href="{{ asset('storage/' . $roadmap->file) }}" target="_blank">
-                                        <button class="btn btn-primary btn-sm">View File</button>
+                                        <button class="btn btn-info btn-sm">
+                                            <i class="fas fa-file-alt"></i> View File
+                                        </button>
                                     </a>
                                 @else
-                                    No File
+                                    <span class="text-muted">No File</span>
                                 @endif
                             </td>
-
                             <td>
                                 <a href="{{ route('roadmaps.show', Crypt::encryptString($roadmap->id)) }}"
                                     class="btn btn-info btn-sm">
@@ -66,12 +67,9 @@
                                 </a>
                                 @can('edit roadmaps')
                                     <a href="{{ route('roadmaps.edit', Crypt::encryptString($roadmap->id)) }}"
-                                        class="btn btn-warning btn-sm">
-                                        Edit
-                                    </a>
+                                        class="btn btn-warning btn-sm">Edit</a>
                                 @endcan
                                 @can('delete roadmaps')
-                                    <!-- Delete Form -->
                                     <form id="delete-form-{{ $roadmap->id }}"
                                         action="{{ route('roadmaps.destroy', $roadmap->id) }}" method="POST"
                                         style="display:inline;">
@@ -126,4 +124,16 @@
             }
         </script>
     @endif
+
+    <style>
+        /* Table Hover Effect */
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Button Hover Effects */
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
 @endsection

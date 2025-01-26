@@ -67,7 +67,8 @@
                             <td>
                                 @if ($material->file)
                                     <a href="{{ asset('storage/' . $material->file) }}" target="_blank">
-                                        <button class="btn btn-info btn-sm">View File</button>
+                                        <button class="btn btn-info btn-sm"><i class="fas fa-file-alt"></i>View
+                                            File</button>
                                     </a>
                                 @else
                                     No File

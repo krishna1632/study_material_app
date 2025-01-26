@@ -1,31 +1,34 @@
 @extends('layouts.user')
 
 @section('content')
-    <h1 class="mt-4" style="font-size:35px">Welcome,
-        <span class="navbar-text me-3 mt-7 text-primary" style="font-size:35px">
+    <h1 class="mt-4" style="font-size: 36px; color: #2c3e50;">
+        Welcome,
+        <span class="navbar-text me-3 mt-7" style="font-size: 36px; color: #2980b9;">
             {{ Auth::user()->name }}
         </span>
     </h1>
+
     <ol class="breadcrumb mb-4"></ol>
+
     <div class="row justify-content-center mt-5">
         <!-- Profile Picture and Static Info (Enhanced Design) -->
         <div class="col-md-4">
-            <div class="card text-center shadow-lg border-0 rounded-4" style="background-color: #f8f9fa;">
+            <div class="card text-center shadow-lg border-0 rounded-4" style="background-color: #ecf0f1;">
                 <div class="card-body p-4">
                     <!-- Profile Picture -->
                     <div class="profile-pic-wrapper mb-4">
                         <img src="{{ asset($other->profilePic) }}" alt="Profile Picture"
                             class="rounded-circle border border-4 border-dark shadow-sm" width="150" height="150">
                     </div>
-                    <h3 class="mt-3 font-weight-bold" style="font-family: 'Arial', sans-serif; color: #343a40;">
+                    <h3 class="mt-3 font-weight-bold" style="font-family: 'Arial', sans-serif; color: #34495e;">
                         {{ $other->name }}</h3>
-                    <hr class="my-4" style="border-color: #000000;">
+                    <hr class="my-4" style="border-color: #7f8c8d;">
                     <div class="static-info mt-4">
-                        <p class="mb-3"><strong>College:</strong> <span style="color: #6c757d;">Ramanujan College</span>
+                        <p class="mb-3"><strong>College:</strong> <span style="color: #7f8c8d;">Ramanujan College</span>
                         </p>
-                        <hr class=" mx-auto" style="border-color: #000000;">
+                        <hr class=" mx-auto" style="border-color: #7f8c8d;">
                         <p class="mb-0"><strong>Department:</strong> <span
-                                style="color: #6c757d;">{{ $other->department }}</span></p>
+                                style="color: #7f8c8d;">{{ $other->department }}</span></p>
                     </div>
                 </div>
             </div>
@@ -34,7 +37,7 @@
         <!-- Editable Form (Right Card) -->
         <div class="container col-md-8">
             <div class="card shadow-lg rounded-4">
-                <div class="card-header bg-dark text-white rounded-top-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
                     <h5 class="mb-0">User Profile</h5>
                 </div>
                 <div class="card-body p-4">
@@ -81,7 +84,7 @@
 
                         <!-- Buttons -->
                         <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-dark">Update Profile</button>
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
                             <button type="button" class="btn btn-secondary" onclick="togglePasswordForm()">Change
                                 Password</button>
                         </div>
@@ -156,7 +159,7 @@
     <!-- Include SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- SweetAlert Success Popup -->
+    <!-- Success popup -->
     @if (session('success'))
         <script>
             window.onload = function() {
@@ -179,7 +182,7 @@
         </script>
     @endif
 
-    <!-- SweetAlert Error Popup for Password Update -->
+    <!-- Error popup for password update -->
     @if ($errors->updatePassword->any())
         <script>
             window.onload = function() {
@@ -200,7 +203,7 @@
         </script>
     @endif
 
-    <!-- JavaScript to toggle the Change Password form -->
+    <!-- Toggle Change Password form -->
     <script>
         function togglePasswordForm() {
             const passwordForm = document.getElementById('passwordForm');
@@ -231,7 +234,6 @@
         @endif
     </script>
 
-    <!-- CSS to further ensure the popup centers correctly -->
     <style>
         .my-swal-popup {
             margin: 0 auto !important;
