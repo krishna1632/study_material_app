@@ -176,6 +176,8 @@ Route::middleware('auth')->group(function () {
     Route::post('attempts/{quizId}/submit', [AttemptController::class, 'submitTest'])->name('attempts.submitTest');
     Route::get('attempts/{quizId}/results', [AttemptController::class, 'results'])->name('attempts.results');
     Route::get('/attempt/{attemptId}/responses', [AttemptController::class, 'responses'])->name('attempts.responses');
+    Route::get('/attempts/elective', [AttemptController::class, 'elective'])->name('attempts.elective');
+    Route::post('/filter-quiz', [AttemptController::class, 'filterQuiz']);
 
     // Quiz Reports
     Route::get('quiz_reports/', [QuizReportController::class, 'index'])->name('quiz_reports.index');

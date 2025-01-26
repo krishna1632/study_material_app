@@ -238,65 +238,65 @@ class QuizReportController extends Controller implements HasMiddleware
     //     return Excel::download(new \App\Exports\QuizResultsExport($exportData), 'quiz_results.xlsx');
     // }
 
-    public function exportToWord($quiz_id)
-    {
-        $studentsResults = $this->fetchResults($quiz_id);
-        $quiz = Quiz::find($quiz_id);
+    // public function exportToWord($quiz_id)
+    // {
+    //     $studentsResults = $this->fetchResults($quiz_id);
+    //     $quiz = Quiz::find($quiz_id);
 
-        $phpWord = new PhpWord();
-        $section = $phpWord->addSection([
-            'borderColor' => '2E75B6',
-            'borderSize' => 12,
-        ]);
+    //     $phpWord = new PhpWord();
+    //     $section = $phpWord->addSection([
+    //         'borderColor' => '2E75B6',
+    //         'borderSize' => 12,
+    //     ]);
 
-        // Add Quiz Details
-        $section->addText('Quiz Report', ['bold' => true, 'size' => 20, 'color' => '2E75B6'], ['alignment' => 'center']);
-        $section->addText("Quiz Name: {$quiz->name}", ['bold' => true, 'size' => 14]);
-        $section->addText("Subject: {$quiz->subject_name}", ['bold' => true, 'size' => 14]);
-        $section->addText("Faculty: {$quiz->faculty_name}", ['bold' => true, 'size' => 14]);
-        $section->addText("Department: {$quiz->department}", ['bold' => true, 'size' => 14]);
-        $section->addText("Semester: {$quiz->semester}", ['bold' => true, 'size' => 14]);
-        $section->addTextBreak(1);
+    //     // Add Quiz Details
+    //     $section->addText('Quiz Report', ['bold' => true, 'size' => 20, 'color' => '2E75B6'], ['alignment' => 'center']);
+    //     $section->addText("Quiz Name: {$quiz->name}", ['bold' => true, 'size' => 14]);
+    //     $section->addText("Subject: {$quiz->subject_name}", ['bold' => true, 'size' => 14]);
+    //     $section->addText("Faculty: {$quiz->faculty_name}", ['bold' => true, 'size' => 14]);
+    //     $section->addText("Department: {$quiz->department}", ['bold' => true, 'size' => 14]);
+    //     $section->addText("Semester: {$quiz->semester}", ['bold' => true, 'size' => 14]);
+    //     $section->addTextBreak(1);
 
-        // Add table with colorful styles
-        $tableStyle = [
-            'borderSize' => 6,
-            'borderColor' => '2E75B6',
-            'cellMargin' => 80,
-        ];
-        $cellStyle = ['valign' => 'center'];
-        $fontHeader = ['bold' => true, 'color' => 'FFFFFF', 'size' => 12];
-        $fontBody = ['size' => 12];
-        $phpWord->addTableStyle('Quiz Results Table', $tableStyle);
-        $table = $section->addTable('Quiz Results Table');
+    //     // Add table with colorful styles
+    //     $tableStyle = [
+    //         'borderSize' => 6,
+    //         'borderColor' => '2E75B6',
+    //         'cellMargin' => 80,
+    //     ];
+    //     $cellStyle = ['valign' => 'center'];
+    //     $fontHeader = ['bold' => true, 'color' => 'FFFFFF', 'size' => 12];
+    //     $fontBody = ['size' => 12];
+    //     $phpWord->addTableStyle('Quiz Results Table', $tableStyle);
+    //     $table = $section->addTable('Quiz Results Table');
 
-        // Add Table Header
-        $table->addRow();
-        $table->addCell(1000, ['bgColor' => '2E75B6'])->addText('S.N.', $fontHeader, $cellStyle);
-        $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Name', $fontHeader, $cellStyle);
-        $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Roll No', $fontHeader, $cellStyle);
-        $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Semester', $fontHeader, $cellStyle);
-        $table->addCell(3000, ['bgColor' => '2E75B6'])->addText('Department', $fontHeader, $cellStyle);
-        $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Marks', $fontHeader, $cellStyle);
+    //     // Add Table Header
+    //     $table->addRow();
+    //     $table->addCell(1000, ['bgColor' => '2E75B6'])->addText('S.N.', $fontHeader, $cellStyle);
+    //     $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Name', $fontHeader, $cellStyle);
+    //     $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Roll No', $fontHeader, $cellStyle);
+    //     $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Semester', $fontHeader, $cellStyle);
+    //     $table->addCell(3000, ['bgColor' => '2E75B6'])->addText('Department', $fontHeader, $cellStyle);
+    //     $table->addCell(2000, ['bgColor' => '2E75B6'])->addText('Marks', $fontHeader, $cellStyle);
 
-        // Add Table Rows
-        foreach ($studentsResults as $result) {
-            $table->addRow();
-            $table->addCell(1000)->addText($index + 1, $fontBody, $cellStyle);
-            $table->addCell(2000)->addText($result['name'], $fontBody, $cellStyle);
-            $table->addCell(2000)->addText($result['roll_no'], $fontBody, $cellStyle);
-            $table->addCell(2000)->addText($result['semester'], $fontBody, $cellStyle);
-            $table->addCell(3000)->addText($result['department'], $fontBody, $cellStyle);
-            $table->addCell(2000)->addText($result['marks'], $fontBody, $cellStyle);
-        }
+    //     // Add Table Rows
+    //     foreach ($studentsResults as $result) {
+    //         $table->addRow();
+    //         $table->addCell(1000)->addText($index + 1, $fontBody, $cellStyle);
+    //         $table->addCell(2000)->addText($result['name'], $fontBody, $cellStyle);
+    //         $table->addCell(2000)->addText($result['roll_no'], $fontBody, $cellStyle);
+    //         $table->addCell(2000)->addText($result['semester'], $fontBody, $cellStyle);
+    //         $table->addCell(3000)->addText($result['department'], $fontBody, $cellStyle);
+    //         $table->addCell(2000)->addText($result['marks'], $fontBody, $cellStyle);
+    //     }
 
-        // Save the Word document
-        $fileName = 'quiz_reports.docx';
-        $filePath = storage_path("app/{$fileName}");
-        $phpWord->save($filePath, 'Word2007');
+    //     // Save the Word document
+    //     $fileName = 'quiz_reports.docx';
+    //     $filePath = storage_path("app/{$fileName}");
+    //     $phpWord->save($filePath, 'Word2007');
 
-        return response()->download($filePath)->deleteFileAfterSend(true);
-    }
+    //     return response()->download($filePath)->deleteFileAfterSend(true);
+    // }
 
     public function exportToPDF($quiz_id)
     {

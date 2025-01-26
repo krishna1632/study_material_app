@@ -17,15 +17,13 @@ class AttemptController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:view attempts', only: ['index']),
+            // new Middleware('permission:view attempts', only: ['elective']),
             // new Middleware('permission:create attempts', only: ['create']),
             // new Middleware('permission:edit attempts', only: ['edit']),
             // new Middleware('permission:destroy attempts', only: ['destroy']),
         ];
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     /**
      * Display a listing of the resource.
      */
@@ -126,7 +124,45 @@ class AttemptController extends Controller implements HasMiddleware
         ]);
     }
 
+    public function elective(Request $request)
+    {
+        return view('attempts.elective');
+    }
 
+    // public function filterQuiz(Request $request)
+    // {
+    //     // Validate the incoming request data
+    //     $validated = $request->validate([
+    //         'subject_type' => 'required|string',
+    //         'department' => 'required|string',
+    //         'semester' => 'required|string',
+    //         'subject_name' => 'required|string',
+    //     ]);
+
+    //     // Trim subject_name to remove any extra spaces
+    //     $validated['subject_name'] = trim($validated['subject_name']);
+
+    //     try {
+    //         $studyMaterials = StudyMaterial::where('subject_type', $validated['subject_type'])
+    //             ->where('department', $validated['department'])
+    //             ->where('semester', $validated['semester'])
+
+    //             ->get();
+
+
+    //         // Check if any data is found
+    //         if ($studyMaterials->isEmpty()) {
+    //             return response()->json(['message' => 'No study materials found for the provided filters.'], 404);
+    //         }
+
+    //         // Return the filtered data as JSON
+    //         return response()->json(['data' => $studyMaterials], 200);
+
+    //     } catch (\Exception $e) {
+    //         // Log error details
+    //         return response()->json(['error' => 'No study materials found for the provided filters.', 'details' => $e->getMessage()], 500);
+    //     }
+    // }
 
 
     // Add a new method to fetch quiz questions

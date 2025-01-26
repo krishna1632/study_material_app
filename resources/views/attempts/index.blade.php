@@ -22,12 +22,15 @@
 
             <!-- Quiz Table Card -->
             <div class="card shadow-lg rounded-lg">
-                <div class="card-header bg-primary text-white d-flex align-items-center">
+                <div class="card-header bg-primary text-white rounded-top">
                     <i class="fas fa-question-circle me-2"></i>
-                    <h5 class="mb-0">Quiz Information</h5>
+                    Quiz Information
+                    <a href="{{ route('attempts.elective') }}" class="btn btn-light btn-sm float-end me-2">
+                        Attempt Elective Test
+                    </a>
                 </div>
                 <div class="card-body p-4">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-responsive">
                         <thead class="table-primary">
                             <tr>
                                 <th>#</th>
@@ -148,6 +151,7 @@
             font-size: 1.25rem;
             font-weight: bold;
         }
+
 
         table thead {
             font-size: 1rem;
