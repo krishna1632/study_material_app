@@ -28,6 +28,7 @@
                     <a href="{{ route('attempts.elective') }}" class="btn btn-light btn-sm float-end me-2">
                         Attempt Elective Test
                     </a>
+                    
                 </div>
                 <div class="card-body p-4">
                     <table class="table table-striped table-hover table-responsive">

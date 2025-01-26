@@ -168,6 +168,7 @@ Route::middleware('auth')->group(function () {
 
     // Attempt Quiz Routes
     Route::get('attempts/', [AttemptController::class, 'index'])->name('attempts.index');
+    Route::get('attempts/elective', [AttemptController::class, 'elective'])->name('attempts.elective');
     Route::get('/attempts/create/{id}', [AttemptController::class, 'create'])->name('attempts.create');
     Route::post('/attempts', [AttemptController::class, 'store'])->name('attempts.store');
     Route::get('/attempts/{id}', [AttemptController::class, 'show'])->name('attempts.show');
@@ -176,8 +177,6 @@ Route::middleware('auth')->group(function () {
     Route::post('attempts/{quizId}/submit', [AttemptController::class, 'submitTest'])->name('attempts.submitTest');
     Route::get('attempts/{quizId}/results', [AttemptController::class, 'results'])->name('attempts.results');
     Route::get('/attempt/{attemptId}/responses', [AttemptController::class, 'responses'])->name('attempts.responses');
-    Route::get('/attempts/elective', [AttemptController::class, 'elective'])->name('attempts.elective');
-    Route::post('/filter-quiz', [AttemptController::class, 'filterQuiz']);
 
     // Quiz Reports
     Route::get('quiz_reports/', [QuizReportController::class, 'index'])->name('quiz_reports.index');
