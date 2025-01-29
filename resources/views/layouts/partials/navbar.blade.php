@@ -22,21 +22,32 @@
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user fa-fw"></i>
-                    <!-- Display the logged-in user's name -->
                     @auth
-                        {{ Auth::user()->name }} <!-- Replace 'name' with any other field if necessary -->
+                        {{ Auth::user()->name }}
                     @endauth
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <!-- <li><a class="dropdown-item" href="#!">Settings</a></li>
-                    <li><a class="dropdown-item" href="#!">Activity Log</a></li> -->
-                    <!-- <li><hr class="dropdown-divider" /></li> -->
+                    <li>
+                        @can('is superadmin')
+                            <a class="dropdown-item" href="{{ url('superadmin/dashboard') }}">
+                                <i class="fas fa-user-circle"></i> Profile
+                            </a>
+                        @else
+                            <a class="dropdown-item" href="{{ url('others/dashboard') }}">
+                                <i class="fas fa-user-circle"></i> Profile
+                            </a>
+                        @endcan
+
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                <i class="fas fa-sign-out-alt"></i> {{ __('Log Out') }}
                             </a>
                         </form>
                     </li>
