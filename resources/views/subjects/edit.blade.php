@@ -33,19 +33,64 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="department" class="form-label">Department</label>
+                    <label for="department" class="form-label">Department</label>
                         <select name="department" id="department" class="form-select" required>
                             <option value="" disabled>Select Department</option>
-                            <option value="Applied Psychology" {{ $subject->department == 'Applied Psychology' ? 'selected' : '' }}>Department of Applied Psychology</option>
-                            <option value="Computer Science" {{ $subject->department == 'Computer Science' ? 'selected' : '' }}>Department of Computer Science</option>
-                            <option value="B.voc(Software Development)" {{ $subject->department == 'B.voc(Software Development)' ? 'selected' : '' }}>Department of B.voc (Software Development)</option>
-                            <option value="Economics" {{ $subject->department == 'Economics' ? 'selected' : '' }}>Department of Economics</option>
-                            <option value="English" {{ $subject->department == 'English' ? 'selected' : '' }}>Department of English</option>
-                            <option value="Environmental Studies" {{ $subject->department == 'Environmental Studies' ? 'selected' : '' }}>Department of Environmental Studies</option>
-                            <option value="Commerce" {{ $subject->department == 'Commerce' ? 'selected' : '' }}>Department of Commerce</option>
-                            <option value="Punjabi" {{ $subject->department == 'Punjabi' ? 'selected' : '' }}>Department of Punjabi</option>
-                            <option value="ELECTIVE" {{ $subject->department == 'ELECTIVE' ? 'selected' : '' }}>ELECTIVE</option>
+                            <option value="Applied Psychology"
+                                {{ old('department', $subject->department) == 'Applied Psychology' ? 'selected' : '' }}>
+                                Department of Applied Psychology</option>
+                            <option value="Computer Science"
+                                {{ old('department', $subject->department) == 'Computer Science' ? 'selected' : '' }}>
+                                Department of Computer Science</option>
+                            <option value="B.voc(Software Development)"
+                                {{ old('department', $subject->department) == 'B.voc(Software Development)' ? 'selected' : '' }}>
+                                Department of B.voc (Software Development)</option>
+                            <option value="Economics"
+                                {{ old('department', $subject->department) == 'Economics' ? 'selected' : '' }}>Department of
+                                Economics</option>
+                            <option value="English"
+                                {{ old('department', $subject->department) == 'English' ? 'selected' : '' }}>Department of
+                                English</option>
+                            <option value="Environmental Studies"
+                                {{ old('department', $subject->department) == 'Environmental Studies' ? 'selected' : '' }}>
+                                Department of Environmental Studies</option>
+                            <option value="Commerce"
+                                {{ old('department', $subject->department) == 'Commerce' ? 'selected' : '' }}>Department of
+                                Commerce</option>
+                            <option value="Punjabi"
+                                {{ old('department', $subject->department) == 'Punjabi' ? 'selected' : '' }}>Department of
+                                Punjabi</option>
+                            <option value="Hindi" {{ old('department', $subject->department) == 'Hindi' ? 'selected' : '' }}>
+                                Department of Hindi</option>
+                            <option value="History"
+                                {{ old('department', $subject->department) == 'History' ? 'selected' : '' }}>Department of
+                                History</option>
+                            <option value="Management Studies"
+                                {{ old('department', $subject->department) == 'Management Studies' ? 'selected' : '' }}>
+                                Department of Management Studies</option>
+                            <option value="Mathematics"
+                                {{ old('department', $subject->department) == 'Mathematics' ? 'selected' : '' }}>Department of
+                                Mathematics</option>
+                            <option value="Philosophy"
+                                {{ old('department', $subject->department) == 'Philosophy' ? 'selected' : '' }}>Department of
+                                Philosophy</option>
+                            <option value="Physical Education"
+                                {{ old('department', $subject->department) == 'Physical Education' ? 'selected' : '' }}>
+                                Department of Physical Education</option>
+                            <option value="Political Science"
+                                {{ old('department', $subject->department) == 'Political Science' ? 'selected' : '' }}>
+                                Department of Political Science</option>
+                            <option value="Statistics"
+                                {{ old('department', $subject->department) == 'Statistics' ? 'selected' : '' }}>Department of
+                                Statistics</option>
+                            
+                            <option value="B.voc(Banking Operations)"
+                                {{ old('department', $subject->department) == 'B.voc(Banking Operations)' ? 'selected' : '' }}>
+                                Department of B.voc (Banking)</option>
                         </select>
+                        @error('department')
+                            <div class="text-danger mt-2">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 

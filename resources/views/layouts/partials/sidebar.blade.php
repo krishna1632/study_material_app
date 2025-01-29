@@ -124,7 +124,7 @@
             <!-- Access Management Section -->
 
 
-
+            @canany(['view quiz', 'view attempts', 'view reports'])
             <!-- Quiz Mast Section -->
             <div class="sb-sidenav-menu-heading">More Actions</div>
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseQuizMast"
@@ -133,6 +133,7 @@
                 Quiz Mast
                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
+            @endcanany
             <div class="collapse" id="collapseQuizMast" aria-labelledby="headingQuizMast"
                 data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">

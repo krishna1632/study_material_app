@@ -204,7 +204,7 @@ class QuizController extends Controller implements HasMiddleware
         }
 
         // Determine departments based on roles
-        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+       
             // If Admin or SuperAdmin, show all departments
             $departments = [
                 'Applied Psychology',
@@ -226,10 +226,7 @@ class QuizController extends Controller implements HasMiddleware
                 'B.voc(Banking Operations)',
                 'ELECTIVE',
             ];
-        } else {
-            // If the user has other roles, show only their department
-            $departments = [$user->department, 'ELECTIVE'];
-        }
+       
 
         // Fetch subjects based on department, subject type, and semester
         $subjects = Subject::where('department', $quiz->department)
