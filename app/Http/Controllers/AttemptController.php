@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AttemptDetails;
 use App\Models\Quiz;
+use App\Models\User;
 use App\Models\AttemptQuizDetails;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -126,43 +127,122 @@ class AttemptController extends Controller implements HasMiddleware
 
     public function elective(Request $request)
     {
-        return view('attempts.elective');
-    }
+        $user = auth()->user(); // Currently logged-in user
+        $roles = $user->getRoleNames(); // Fetch assigned roles for the user
 
-    public function filterQuiz(Request $request, $id)
-    {
-        // $quiz = Quiz::findOrFail($id);
-
-        // Validate the incoming request data
-        $validated = $request->validate([
-            'subject_type' => 'required|string',
-            'department' => 'required|string',
-            'semester' => 'required|string',
-            'subject_name' => 'required|string',
-        ]);
-
-        // Trim subject_name to remove any extra spaces
-        $validated['subject_name'] = trim($validated['subject_name']);
-
-        // Fetch quizzes based on filters
-        $quizzes = Quiz::where('subject_type', $validated['subject_type'])
-            ->where('department', $validated['department'])
-            ->where('semester', $validated['semester'])
-            ->where('subject_name', $validated['subject_name'])
-            ->where('status', 1) // Active quizzes
-            ->get(['id', 'subject_name']); // Only fetch necessary columns
-
-        // Check if quizzes are found
-        if ($quizzes->isEmpty()) {
-            return response()->json(['data' => [], 'message' => 'No quizzes found for the provided filters.'], 200);
+        // Filter faculties based on role
+        if ($roles->contains('Admin') || $roles->contains('SuperAdmin')) {
+            // If Admin or SuperAdmin, fetch all users with the "Faculty" role
+            $faculties = User::role('Faculty')->get(); // Assuming you use Spatie Roles
+        } elseif ($roles->contains('Faculty')) {
+            // If the user is a faculty, show only their own data
+            $faculties = collect([$user]); // Wrap in a collection for consistency
+        } else {
+            // If the user doesn't have access, return an empty collection
+            $faculties = collect();
         }
 
-        // Transform the results into a key-value pair for dropdown options
-        $subjects = $quizzes->pluck('subject_name', 'id');
-
-        // Return the quizzes as a JSON response
-        return response()->json(['data' => $quizzes], 200);
+        $departments = [
+            'Applied Psychology',
+            'Computer Science',
+            'B.voc(Software Development)',
+            'Economics',
+            'English',
+            'Environmental Studies',
+            'Commerce',
+            'Punjabi',
+            'Hindi',
+            'History',
+            'Management Studies',
+            'Mathematics',
+            'Philosophy',
+            'Physical Education',
+            'Political Science',
+            'Statistics',
+            'B.voc(Banking Operations)',
+            'ELECTIVE',
+        ];
+        // Initial empty subject list
+        $subjects = [];
+        return view('attempts.elective', compact('departments', 'subjects', 'faculties', 'roles'));
     }
+
+    public function filterQuiz(Request $request)
+    {
+        $user = auth()->user(); // Current logged-in student
+        $semester = $user->semester;
+        $departments = [
+            'Applied Psychology',
+            'Computer Science',
+            'B.voc(Software Development)',
+            'Economics',
+            'English',
+            'Environmental Studies',
+            'Commerce',
+            'Punjabi',
+            'Hindi',
+            'History',
+            'Management Studies',
+            'Mathematics',
+            'Philosophy',
+            'Physical Education',
+            'Political Science',
+            'Statistics',
+            'B.voc(Banking Operations)',
+            'ELECTIVE',
+        ];
+        // Validate incoming data
+        $validated = $request->validate([
+            'subject_type' => 'nullable|string',
+            'department' => 'nullable|string',
+            'semester' => 'nullable|integer',
+            'subject_name' => 'nullable|string',
+        ]);
+
+        // Query to fetch quizzes
+        $query = Quiz::query();
+
+        // Apply filters only if they are provided
+        if ($request->filled('subject_type')) {
+            $query->where('subject_type', $validated['subject_type']);
+        }
+        if ($request->filled('subject_name')) {
+            $query->where('subject_name', $validated['subject_name']);
+        }
+        if ($request->filled('department')) {
+            $query->where('department', $validated['department']);
+        }
+        if ($request->filled('semester')) {
+            $query->where('semester', $validated['semester']);
+        }
+
+        // Get the quizzes with a status of 1 (active)
+        $quizzes = $query->where('status', 1)
+            ->whereRaw("CONCAT(date, ' ', start_time) > ?", [now()])
+            ->get();
+
+        // Check if any quiz is already submitted for the logged-in student
+        $alertMessage = '';
+        foreach ($quizzes as $quiz) {
+            $existingAttempt = AttemptDetails::where('quiz_id', $quiz->id)
+                ->where('student_id', auth()->id())
+                ->first();
+
+            if ($existingAttempt && $existingAttempt->status == 1) {
+                // If the quiz is already submitted, set the alert message
+                $alertMessage = 'Quiz already submitted.';
+                break;
+            }
+        }
+
+        if ($alertMessage) {
+            return redirect()->route('attempts.index')->with('error', $alertMessage);
+        }
+
+        return view('attempts.elective', compact('quizzes', 'departments'));
+    }
+
+
 
 
     // Add a new method to fetch quiz questions

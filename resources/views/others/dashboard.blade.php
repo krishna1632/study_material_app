@@ -18,7 +18,7 @@
                     <!-- Profile Picture -->
                     <div class="profile-pic-wrapper mb-4">
                         <img src="{{ asset($other->profilePic) }}" alt="Profile Picture"
-                            class="rounded-circle border border-4 border-dark shadow-sm" width="150" height="150">
+                            class="rounded-circle border border-dark shadow-sm" width="150" height="150">
                     </div>
                     <h3 class="mt-3 font-weight-bold" style="font-family: 'Arial', sans-serif; color: #34495e;">
                         {{ $other->name }}</h3>
