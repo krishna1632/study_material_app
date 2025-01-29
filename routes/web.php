@@ -169,7 +169,7 @@ Route::middleware('auth')->group(function () {
     // Attempt Quiz Routes
     Route::get('attempts/', [AttemptController::class, 'index'])->name('attempts.index');
     Route::get('attempts/elective', [AttemptController::class, 'elective'])->name('attempts.elective');
-    Route::post('/filter-quiz', [AttemptController::class, 'filterQuiz'])->name('filter.quiz');
+    Route::post('/attempts/filter-quiz', [AttemptController::class, 'filterQuiz'])->name('attempts.filter-quiz');
     Route::get('/attempts/create/{id}', [AttemptController::class, 'create'])->name('attempts.create');
     Route::post('/attempts', [AttemptController::class, 'store'])->name('attempts.store');
     Route::get('/attempts/{id}', [AttemptController::class, 'show'])->name('attempts.show');
