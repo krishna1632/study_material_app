@@ -13,22 +13,29 @@
     <div class="row justify-content-center mt-5">
         <!-- Profile Picture and Static Info (Enhanced Design) -->
         <div class="col-md-4">
-            <div class="card text-center shadow-lg border-0 rounded-4" style="background-color: #ecf0f1;">
-                <div class="card-body p-4">
+            <div class="card text-center shadow-sm border-4 border-black rounded-4" style="background-color: #f9fcfc;">
+                <div class="card-body p-4 border-0">
                     <!-- Profile Picture -->
                     <div class="profile-pic-wrapper mb-4">
                         <img src="{{ asset($other->profilePic) }}" alt="Profile Picture"
                             class="rounded-circle border border-dark shadow-sm" width="150" height="150">
                     </div>
-                    <h3 class="mt-3 font-weight-bold" style="font-family: 'Arial', sans-serif; color: #34495e;">
+                    <h3 class="mt-3 font-weight-bold" style="font-family: 'Arial', sans-serif; color: #1273d4;">
                         {{ $other->name }}</h3>
-                    <hr class="my-4" style="border-color: #7f8c8d;">
+                    <hr class="my-4" style="border-color: black; border-width: 1.5px;">
                     <div class="static-info mt-4">
-                        <p class="mb-3"><strong>College:</strong> <span style="color: #7f8c8d;">Ramanujan College</span>
+                        <p class="mb-3"><strong style="color:#1273d4;">College:</strong> <span
+                                style="color: #2e3636;">Ramanujan College</span>
                         </p>
-                        <hr class=" mx-auto" style="border-color: #7f8c8d;">
-                        <p class="mb-0"><strong>Department:</strong> <span
-                                style="color: #7f8c8d;">{{ $other->department }}</span></p>
+                        <hr class=" mx-auto" style="border-color: #black;">
+                        <p class="mb-0"><strong style="color:#1273d4;">Department:</strong> <span
+                                style="color: #2e3636;">{{ $other->department }}</span></p>
+                        @if (Auth::user()->hasRole('student'))
+                            <hr class=" mx-auto" style="border-color: #black;">
+                            <p class="mb-0"><strong style="color:#1273d4;">Semester:</strong> <span
+                                    style="color: #2e3636;">{{ $other->semester }}</span></p>
+                        @endif
+
                     </div>
                 </div>
             </div>
@@ -36,7 +43,7 @@
 
         <!-- Editable Form (Right Card) -->
         <div class="container col-md-8">
-            <div class="card shadow-lg rounded-4">
+            <div class="card shadow-sm rounded-4">
                 <div class="card-header bg-primary text-white rounded-top-4">
                     <h5 class="mb-0">User Profile</h5>
                 </div>
@@ -50,7 +57,7 @@
                             <label for="fullName" class="col-sm-3 col-form-label">Full Name</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="fullName" value="{{ $other->name }}"
-                                    readonly>
+                                    style="background-color: aliceblue" readonly>
                             </div>
                         </div>
 
@@ -74,6 +81,18 @@
                             </div>
                         </div>
 
+                        @if (Auth::user()->hasRole('student'))
+                            <!-- Roll number -->
+                            <div class="row mb-3">
+                                <label for="phone" class="col-sm-3 col-form-label">Roll Number <span
+                                        class="text-danger">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="phone" id="phone"
+                                        value="{{ $other->roll_no }}" style="background-color: aliceblue" readonly>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Profile Picture Upload -->
                         <div class="row mb-3">
                             <label for="profilePic" class="col-sm-3 col-form-label">Profile Picture</label>
@@ -93,7 +112,7 @@
             </div>
 
             <!-- Change Password Form (Hidden initially) -->
-            <div id="passwordForm" class="card mt-4 shadow-lg rounded-4" style="display: none;">
+            <div id="passwordForm" class="card mt-4 shadow-sm rounded-4" style="display: none;">
                 <div class="card-header bg-secondary text-white rounded-top-4">
                     <h5 class="mb-0">Change Password</h5>
                 </div>
@@ -101,7 +120,8 @@
                     <p class="mt-1 text-sm text-muted">Ensure your account is using a long, random password to stay secure.
                     </p>
 
-                    <form id="updatePasswordForm" method="post" action="{{ route('password.update') }}" class="mt-4">
+                    <form id="updatePasswordForm" method="post" action="{{ route('password.update') }}"
+                        class="mt-4">
                         @csrf
                         @method('PUT')
 
@@ -110,8 +130,8 @@
                             <label for="update_password_current_password"
                                 class="col-sm-4 col-form-label">{{ __('Current Password') }}</label>
                             <div class="col-sm-8">
-                                <x-text-input id="update_password_current_password" name="current_password" type="password"
-                                    class="form-control" required autocomplete="current-password" />
+                                <x-text-input id="update_password_current_password" name="current_password"
+                                    type="password" class="form-control" required autocomplete="current-password" />
                                 <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
                             </div>
                         </div>
