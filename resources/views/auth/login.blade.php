@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beautiful Login</title>
+    <title>Study Material App</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -56,11 +56,18 @@
 </head>
 
 <body>
+
     <div class="login-container text-white">
         <div class="text-center mb-4">
             <img src="/assets/image/Ramanujan_College_Logo.jpg" alt="Logo" style="height: 80px;">
             <h3 class="mt-2">Welcome Back!</h3>
+
         </div>
+        @if ($errors->has('email'))
+            <div class="alert alert-danger text-center">
+                {{ $errors->first('email') }}
+            </div>
+        @endif
         <form method="POST" action="{{ route('login') }}">
             @csrf
             <div class="mb-3">

@@ -61,6 +61,11 @@
             <img src="/assets/image/Ramanujan_College_Logo.jpg" alt="Logo" style="height: 80px;">
             <h3 class="mt-2">Welcome Back!</h3>
         </div>
+        @if ($errors->has('email'))
+            <div class="alert alert-danger text-center">
+                {{ $errors->first('email') }}
+            </div>
+        @endif
         <form method="POST" action="{{ route('login') }}">
             @csrf
             <div class="mb-3">
