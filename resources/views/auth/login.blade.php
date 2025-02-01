@@ -59,7 +59,7 @@
 
     <div class="login-container text-white">
         <div class="text-center mb-4">
-            <img src="/assets/image/Ramanujan_College_Logo.jpg" alt="Logo" style="height: 80px;">
+            <img src="/assets/image/Ramanujan_College_Logo.png" alt="Logo" style="height: 80px;">
             <h3 class="mt-2">Welcome Back!</h3>
 
         </div>
