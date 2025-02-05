@@ -141,6 +141,13 @@
                     submitDueToIllegalActivity();
                 }
             });
+
+            // Function to handle window resize (detect restore button click)
+            window.addEventListener('resize', () => {
+                if (window.innerWidth < screen.width || window.innerHeight < screen.height) {
+                    if (!formSubmitted) submitDueToIllegalActivity();
+                }
+            });
         }
 
         // Start monitoring illegal activity
