@@ -75,6 +75,24 @@ npm install && npm run dev
 php artisan serve
 ```
 
+## 📸 Screenshots
+
+### 📚 SuperAdmin Dashboard
+![Superadmin Dashboard](screenshots/superadmin_dashboard.png)
+
+### 🔐 Login Page
+![Login Page](public/assets/screenshots/login.png)
+
+
+### 📚 Student Dashboard
+![Student Dashboard](public/assets/screenshots/student_dashboard.png)
+
+### 🧪 Quiz Interface
+![Quiz Interface](public/assets/screenshots/quiz.png)
+
+### 📊 Report Page
+![Report Page](public/assets/screenshots/report.png)
+
 ## 🙋‍♂️ Contact
 
 For any queries, contact the developer: **Prashant Kumar, Dwaipyan Singha**
