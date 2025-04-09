@@ -78,7 +78,7 @@ php artisan serve
 ## 📸 Screenshots
 
 ### 📚 SuperAdmin Dashboard
-![Superadmin Dashboard](screenshots/superadmin_dashboard.png)
+![Superadmin Dashboard](public/assets/screenshots/superadmin_dashboard.png)
 
 ### 🔐 Login Page
 ![Login Page](public/assets/screenshots/login.png)
